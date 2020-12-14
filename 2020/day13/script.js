@@ -1,6 +1,5 @@
-var busId = 939;var departs = [7,13,0,0,59,0,31,19]; // 0 = x
-var departs = [7, 13, 0, 0, 59];
-//var busId = 1002461;var departs = [29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0,0,0,521,0,0,0,0,0,0,0,23,0,0,0,0,13,0,0,0,17,0,0,0,0,0,0,0,0,0,0,0,0,0,601,0,0,0,0,0,37,0,0,0,0,0,0,0,0,0,0,0,0,19];
+var busId = 1002461;
+var departs = [29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0,0,0,521,0,0,0,0,0,0,0,23,0,0,0,0,13,0,0,0,17,0,0,0,0,0,0,0,0,0,0,0,0,0,601,0,0,0,0,0,37,0,0,0,0,0,0,0,0,0,0,0,0,19];
 
 // p1
 /*
@@ -35,6 +34,9 @@ console.log(maxDepartId);
 
 var len = inputMinutes.length;
 /*
+// ugly brute-force part 2
+// completed in finite time and found correct answer, ahem..
+
 var found = false;
 var i = 1;
 var timerHandle;
@@ -75,7 +77,7 @@ function timedTick() {
 timedTick();
 */
 
-// vyrazne hezci inspirovane reseni
+// a much much nicer part 2 solution
 
 var tempTimeStamp = 1;
 var multiplicator = 1;
@@ -101,6 +103,6 @@ console.log('inputMinutes', inputMinutes);
 
 /*
 bruteforced p2:
-handbreaking after 1207 ticks last checked timestamp 725.407 B
+breaking after 1207 ticks last checked timestamp 725.407 B
 found one! 1207737579535 725850285300475
 */
