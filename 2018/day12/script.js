@@ -1,56 +1,3 @@
-//var initState = '#..#.#..##......###...###';
-var initState = '##.#...#.#.#....###.#.#....##.#...##.##.###..#.##.###..####.#..##..#.##..#.......####.#.#..#....##.#';
-/*var rules = [
-{from:'...##',to:'#'},
-{from:'..#..',to:'#'},
-{from:'.#...',to:'#'},
-{from:'.#.#.',to:'#'},
-{from:'.#.##',to:'#'},
-{from:'.##..',to:'#'},
-{from:'.####',to:'#'},
-{from:'#.#.#',to:'#'},
-{from:'#.###',to:'#'},
-{from:'##.#.',to:'#'},
-{from:'##.##',to:'#'},
-{from:'###..',to:'#'},
-{from:'###.#',to:'#'},
-{from:'####.',to:'#'}]
-*/
-var rules = [
-{from:'#.#.#',to:'#'},
-{from:'..#.#',to:'.'},
-{from:'.#.##',to:'#'},
-{from:'.##..',to:'.'},
-{from:'##...',to:'#'},
-{from:'##..#',to:'#'},
-{from:'#.##.',to:'#'},
-{from:'.#..#',to:'#'},
-{from:'.####',to:'.'},
-{from:'....#',to:'.'},
-{from:'#....',to:'.'},
-{from:'#.###',to:'.'},
-{from:'###.#',to:'#'},
-{from:'.#.#.',to:'.'},
-{from:'#...#',to:'.'},
-{from:'.#...',to:'#'},
-{from:'##.#.',to:'#'},
-{from:'#..##',to:'#'},
-{from:'..##.',to:'.'},
-{from:'####.',to:'#'},
-{from:'.###.',to:'.'},
-{from:'#####',to:'.'},
-{from:'#.#..',to:'.'},
-{from:'...#.',to:'.'},
-{from:'..#..',to:'.'},
-{from:'###..',to:'#'},
-{from:'#..#.',to:'.'},
-{from:'.##.#',to:'.'},
-{from:'.....',to:'.'},
-{from:'##.##',to:'#'},
-{from:'..###',to:'#'},
-{from:'...##',to:'#'}];
-
-
 var states = [];
 
 String.prototype.replaceAt = function(index, replacement) {
@@ -89,7 +36,6 @@ function tick(oldState) {
     for (var i = 0; i < oldState.length;i++) newState = newState+'.';
     for (var i = 2; i < oldState.length-2;i++){
         var sample = getSample(oldState, i);
-        //console.log(sample);
         var ruleId = false;
         rules.some((rule, index) => {
             if (rule.from == sample)  {
@@ -98,7 +44,6 @@ function tick(oldState) {
             }
         })
         if (ruleId !== false) {
-            //console.log('replacing', i, sample, rules[ruleId].to);
             newState = newState.replaceAt(i, rules[ruleId].to);
         }
     }
@@ -123,6 +68,6 @@ for (var i = 0; i < 300; i++) {
 console.log('zeroShifted', zeroShifted);
 console.log('final score', computeScore(state, zeroShifted));
 
-// score po 300 generacich je 15695
-// s kazdou dalsi generaci vzroste o 50
-// finalni score je 15695+50*(50000000000-300)
+// score after 300 generations is 15695
+// it ticks another 50 with each generation
+// thus the final score is 15695+50*(50000000000-300)

@@ -1,8 +1,7 @@
-var depth = 510; var target = {x: 10, y: 10}
+//var depth = 510; var target = {x: 10, y: 10}
 var depth = 6084; var target = {x: 14, y: 709}
 
-var ext = {y:20, x:20}; // maximum of 111 (meaning map sizes 121*121) for t:10,10
-// max of 7 for t:14,709, mapsize of 21,716 
+var ext = {y:20, x:20};
 
 var erosionLevelMap = [], map = [], fastestMap = [];
 
@@ -152,8 +151,4 @@ while ((!stop) && (pointer < paths.length)) {
 renderMap();
 console.log('getting to target', fastestMap[target.y][target.x]);
 // p2
-// 959 too high
-// 920 too low
-// 955 too high
-// 945 not right
 // 952 YAY
