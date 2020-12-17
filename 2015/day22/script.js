@@ -1,5 +1,5 @@
-// This is one of my most loved puzzles from whole AOC.
-// Despite the AOC site not validating solutions correctly - see comments at the bottom of this file.
+// This is one of my most loved puzzles from whole AOC. Solved with good old brute force.
+// Despite possible the AOC site not validating solutions correctly - see comments at the bottom of this file.
 
 var stack = []; // begining of turn effects stack, ex. {turn: 123, effect: () => {player.mana += 120;}}
 var verboseBattle = true;
