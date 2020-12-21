@@ -1,4 +1,4 @@
-var screen = [], pre, timerHandle, res;
+var pre, res;
 var comp = new Computer();
 
 var root = $('#root');
