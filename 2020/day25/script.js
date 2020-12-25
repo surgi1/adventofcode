@@ -7,7 +7,7 @@ function transform(num, initSN) {
 
 function getKey(num, loopSize) {
     var n = num;
-    for (var i = 2; i <= loopSize; i++) {
+    for (var i = 1; i < loopSize; i++) {
         n = transform(n, num);
     }
     return n;
