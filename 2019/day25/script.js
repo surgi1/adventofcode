@@ -57,8 +57,10 @@ const initGUI = () => {
     })
 }
 
-const generateVariantsCommands = () => {
-    let items = ['mouse', 'whirled peas', 'planetoid', 'klein bottle', 'mutex', 'dark matter', 'fuel cell', 'antenna'];
+const generateVariantsCommands = (baseCommands) => {
+    // distill the items
+    let items = [];
+    baseCommands.filter(com => com.indexOf('take ') > -1).map(com => items.push(com.substr(5)))
 
     let dropCommands = [];
     items.map(i => dropCommands.push('drop '+i));
@@ -83,4 +85,4 @@ tick();
 
 let baseCommands = ['west','take mouse','west','west','east','south','take dark matter','north','east','north','east','take klein bottle','west','south','west','east','east','south','take fuel cell','north','north','west','south','take planetoid','west', 'take antenna', 'east','east','take mutex','east','west','south','take whirled peas', 'south', 'east']
 
-//command([...baseCommands, ...generateVariantsCommands()]); // uncomment once you have the base commands ready
+//command([...baseCommands, ...generateVariantsCommands(baseCommands)]); // uncomment once you have the base commands ready
