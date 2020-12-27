@@ -1,5 +1,5 @@
 // play the text game, it is lot of fun!
-// find 8 items, navigate to final location, export your journey up to that point, then power up the automatization
+// find 8 items, navigate to final location, export your journey up to that point into baseCommands, then power up the brute-force
 
 let pre, commands = [];
 const comp = new Computer();
