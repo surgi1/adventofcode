@@ -2,11 +2,11 @@
 
 https://adventofcode.com/2019
 
-Puzzles of 2019's AoC resided around the Intcode Computer, an implementation of an universal Turing Machine that attendees had to create, extend and maintain. Through the run of puzzles, the Computer started to communicate in ASCII, organize arrays of otself into a network, play a bunch of games or control a number of peripherials. This, and the way it was presented, resembles the single most memorable AoC experience for me.
+Puzzles of 2019's AoC resided around the Intcode Computer, an implementation of an universal Turing Machine that attendees had to create, extend and maintain. As attendees progressed through the puzzles, the Computer started to communicate in ASCII, organize arrays of itself into a network, play a bunch of games or control a number of peripherals. This, and the way it was presented, resembles the single most memorable AoC experience for me.
 
-As for those whole set, the year of 2019 was very challenging, some advanced math and out of the box thinking was mandatory in more than few puzzles.
+As for those whole set, the year of 2019 was very challenging, some advanced math and out of the box thinking was mandatory in more than a handful of puzzles.
 
-After 2018's set, this deserves another repeated standing ovations to the author.
+After 2018's set, this deserves another standing ovations to the author.
 
 JavaScript implementation
 
