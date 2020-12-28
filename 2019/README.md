@@ -18,6 +18,7 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 * [Day 11: Space Police](https://adventofcode.com/2019/day/11) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day11) - Completed Intcode Computer controls its first device - a painting bot
 * [Day 12: The N-Body Problem](https://adventofcode.com/2019/day/12) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day12)
 * [Day 13: Care Package](https://adventofcode.com/2019/day/13) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day13) - A game of **Arkanoid** *on the Intode Computer*!
+* [Day 13: Day 15: Oxygen System](https://adventofcode.com/2019/day/15) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day15) - A game of **Maze** *on the Intode Computer*!
 * [Day 18: Many-Worlds Interpretation](https://adventofcode.com/2019/day/18) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day18)
 * [Day 20: Donut Maze](https://adventofcode.com/2019/day/20) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day20) - Sneaky Plutonians and their recursively-folded space!
 * [Day 22: Slam Shuffle](https://adventofcode.com/2019/day/22) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day22) - Where out-of-the-box thinking is not enough and one needs to (re-)visit some modulo arithmetics and Euclid's algorithm. Single most difficult AoC puzzle I've encountered so far.
@@ -30,6 +31,10 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 ### Day 13: Intcode Arkanoid
 
 ![Intcode Arkanoid](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_13.png)
+
+### Day 13: Intcode Maze
+
+![Intcode Maze](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_15.png)
 
 ### Day 25: Intcode Computer Text-Game
 
