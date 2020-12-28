@@ -25,8 +25,8 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ### Day 15: Battle between elves and goblins in full swing
 
-![Battle between elves and goblins in full swing](https://github.com/surgi1/adventofcode/blob/main/screenshots/2015_15.png)
+![Battle between elves and goblins in full swing](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_15.png)
 
 ### Day 17: Reservoirs FTW!
 
-![Reservoirs FTW!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2015_17.png)
+![Reservoirs FTW!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_17.png)
