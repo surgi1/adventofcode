@@ -14,7 +14,7 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 * [Day 13: Mine Cart Madness](https://adventofcode.com/2018/day/13) - [solution](https://github.com/surgi1/adventofcode/tree/main/2018/day13)
 * [Day 15: Beverage Bandits](https://adventofcode.com/2018/day/15) - [solution](https://github.com/surgi1/adventofcode/tree/main/2018/day15)
-* [Day 17: Beverage Bandits](https://adventofcode.com/2018/day/17) - [solution](https://github.com/surgi1/adventofcode/tree/main/2018/day17)
+* [Day 17: Reservoir Research](https://adventofcode.com/2018/day/17) - [solution](https://github.com/surgi1/adventofcode/tree/main/2018/day17)
 * [Day 20: A Regular Map](https://adventofcode.com/2018/day/20) - [solution](https://github.com/surgi1/adventofcode/tree/main/2018/day20)
 * [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21) - [solution](https://github.com/surgi1/adventofcode/tree/main/2018/day21)
 * [Day 22: Mode Maze](https://adventofcode.com/2018/day/22) - [solution](https://github.com/surgi1/adventofcode/tree/main/2018/day22)
