@@ -10,10 +10,10 @@ Contains visualisations or playable games where possible or available.
 
 ## Teasers
 
-### AoC 2019 - Day 13: Intcode Arkanoid
+### [AoC 2019](https://github.com/surgi1/adventofcode/tree/main/2019) - [Day 13](https://github.com/surgi1/adventofcode/tree/main/2019/day13): Intcode Arkanoid
 
 ![Intcode Arkanoid](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_13.png)
 
-### AoC 2018 - Day 15: Battle between elves and goblins in full swing
+### [AoC 2018](https://github.com/surgi1/adventofcode/tree/main/2018) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2018/day15): Battle between elves and goblins in full swing
 
 ![Battle between elves and goblins in full swing](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_15.png)
