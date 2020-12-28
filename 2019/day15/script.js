@@ -30,7 +30,7 @@ function getPos(tileId) {
     }
 }
 
-function gameTick(actionId) {
+function advanceWithCallback(actionId, callback) {
     var result = comp.run([actionId]);
 
     var x = bot.x, y = bot.y;
@@ -44,13 +44,32 @@ function gameTick(actionId) {
     }
     if (result.output[0] == 1) {
         screen[y][x] = 2; // empty space
-        bot.x = x;bot.y = y;
     }
     if (result.output[0] == 2) {
         screen[y][x] = 3; // oxygen station
-        bot.x = x;bot.y = y;
         console.log('Found Oxygen Station!');
     }
+    callback(result.output, x, y);
+}
+
+function thereAndBack(actionId, backActionId) {
+    advanceWithCallback(actionId, (out, x, y) => {
+        if (out != 0) {
+            comp.run([backActionId]);
+        }
+    })
+}
+
+function gameTick(actionId) {
+    advanceWithCallback(actionId, (out, x, y) => {
+        if (out != 0) {
+            bot.x = x;bot.y = y;
+        }
+    })
+
+    // scan around a bit
+    thereAndBack(1, 2); thereAndBack(2, 1);
+    thereAndBack(3, 4); thereAndBack(4, 3);
 
     renderScreen();
 }
@@ -73,7 +92,7 @@ function initGame() {
         ArrowDown: 2,
     };
 
-    $(document).keyup(function(e) {
+    $(document).keydown(function(e) {
         if (keyMap[e.key] !== undefined) {
             gameTick(keyMap[e.key]);
         }
