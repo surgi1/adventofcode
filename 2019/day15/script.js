@@ -1,24 +1,62 @@
 // Contains visuals and playable game of maze.
 
-var screen = [], pre, timerHandle;
+var screen = [], root, timerHandle;
 var comp = new Computer();
 var size = 42, bot = {x:size/2,y:size/2};
+var colors = ['#fff', '#444', '#eee', '#99f']
 
-function renderScreen() {
-    pre.empty();
+function prepareScreen() {
+    root.empty();
     for (var y = 0; y < size; y++) {
         var line = '';
         for (var x = 0; x <= size; x++) {
             var tileId = screen[y][x] || 0;
             var char = ' ';
-            if (tileId == 1) char = '#';
-            if (tileId == 2) char = '.';
-            if (tileId == 3) char = 'O';
-            if (x == bot.x && y == bot.y) char = '@';
-            line = line+char;
+            var div = $('<div>', {
+                id: 'tile_'+y*42+x,
+                css: {
+                    backgroundColor: colors[tileId],
+                    left: x*16+'px',
+                    top: y*16+'px',
+                }
+            })
+            div.addClass('tile');
+            div.html(' ');
+            root.append(div);
         }
-        pre.append(line);
-        pre.append('<br>');
+    }
+}
+
+function exportScreen() {
+    var s = '';
+    var chars = ['#', '#', '.', 'O']
+    for (var y = 0; y < size; y++) {
+        var line = '';
+        for (var x = 0; x <= size; x++) {
+            var tileId = screen[y][x] || 0;
+            var char = chars[tileId];
+            if (x == bot.x && y == bot.y) {
+                char = '@';
+            }
+            line += char;
+        }
+        s += '"'+line + "\",\n";
+    }
+    console.log('['+s+']');
+}
+
+function renderScreen() {
+    $('.tile').removeClass('bot');
+    for (var y = 0; y < size; y++) {
+        var line = '';
+        for (var x = 0; x <= size; x++) {
+            var tileId = screen[y][x] || 0;
+            var div = $('#tile_'+y*42+x);
+            div.css('background-color', colors[tileId]);
+            if (x == bot.x && y == bot.y) {
+                div.addClass('bot');
+            }
+        }
     }
 }
 
@@ -75,8 +113,7 @@ function gameTick(actionId) {
 }
 
 function initGame() {
-    pre = $('<pre>');
-    $('#root').append(pre);
+    root = $('#root');
 
     comp.load(input);
 
@@ -92,19 +129,24 @@ function initGame() {
         ArrowDown: 2,
     };
 
+    var lastTick = 0;
+
     $(document).keydown(function(e) {
+        if (new Date().getTime() - lastTick < 20) return;
         if (keyMap[e.key] !== undefined) {
+            lastTick = new Date().getTime();
             gameTick(keyMap[e.key]);
         }
     });
 
+    prepareScreen();
     renderScreen();
 }
 
 function autoPlay() {
 }
 
-initGame(); // part 1; playing game resulted in mapInput below
+initGame(); // play game, export via exportScreen() once completed
 
 var mapInput = [
 '#########################################',
