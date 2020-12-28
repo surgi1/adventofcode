@@ -14,6 +14,6 @@ Contains visualisations or playable games where possible or available.
 
 ![Intcode Arkanoid](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_13.png)
 
-### Aoc 2018 - Day 15: Battle between elves and goblins in full swing
+### AoC 2018 - Day 15: Battle between elves and goblins in full swing
 
 ![Battle between elves and goblins in full swing](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_15.png)
