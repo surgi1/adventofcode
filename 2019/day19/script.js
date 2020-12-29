@@ -1,17 +1,17 @@
 // just part 2
-var map = [], size = 120, offset = {x:1509, y: 773}; // guesstimated and fine-tuned on screen
+let map = [], size = 120, offset = {x:1509, y: 773}; // guesstimated and fine-tuned on screen
 
-var root = $('#root');
-var pre = $('<pre />');
+let root = $('#root');
+let pre = $('<pre />');
 root.append(pre);
 
-function renderScreen() {
+const renderScreen = () => {
     pre.empty();
-    for (var y = 0; y < size; y++) {
-        var line = '';
-        for (var x = 0; x < size; x++) {
-            var tileId = map[y][x] || 0;
-            var char = ' ';
+    for (let y = 0; y < size; y++) {
+        let line = '';
+        for (let x = 0; x < size; x++) {
+            let tileId = map[y][x] || 0;
+            let char = ' ';
             if (tileId == 1) char = '#';
             if (y < 100 && x < 100 && map[y][x] == 1) char = 'O';
             line = line+char;
@@ -21,12 +21,12 @@ function renderScreen() {
     }
 }
 
-function renderBeam(offset) {
-    for (var y = 0; y < size; y++) {
+const renderBeam = (offset) => {
+    for (let y = 0; y < size; y++) {
         map[y] = [];
-        for (var x = 0; x < size; x++) {
+        for (let x = 0; x < size; x++) {
             comp.reset();
-            var result = comp.run([x+offset.x,y+offset.y]);
+            let result = comp.run([x+offset.x,y+offset.y]);
             map[y][x] = result.output[0];
         }
     }
@@ -34,6 +34,6 @@ function renderBeam(offset) {
     renderScreen();
 }
 
-var comp = new Computer();
+let comp = new Computer();
 comp.load(input);
 renderBeam(offset);

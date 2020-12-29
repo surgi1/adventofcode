@@ -1,33 +1,33 @@
-var input = [[28,3,35,27,19,40,14,15,17,22,45,47,26,13,32,38,43,24,29,5,31,48,49,41,25], [34,12,2,50,16,1,44,11,36,6,10,42,20,8,46,9,37,4,7,18,23,39,30,33,21]];
+let input = [[28,3,35,27,19,40,14,15,17,22,45,47,26,13,32,38,43,24,29,5,31,48,49,41,25], [34,12,2,50,16,1,44,11,36,6,10,42,20,8,46,9,37,4,7,18,23,39,30,33,21]];
 
-function deckToKey(deck) {
-    var s = '';
+const deckToKey = (deck) => {
+    let s = '';
     deck.map(n => s += n);
     return s;
 }
 
-function calcDeckScore(deck) {
-    var score = 0, len = deck.length;
+const calcDeckScore = (deck) => {
+    let score = 0, len = deck.length;
     deck.map((n, i) => score += n*(len-i));
     return score;
 }
 
-function calcWinnerScore(decks) {
+const calcWinnerScore = (decks) => {
     return calcDeckScore(decks[0].length ? decks[0] : decks[1]);
 }
 
-function playMatch(deck1, deck2) {
-    var history = {};
+const playMatch = (deck1, deck2) => {
+    let history = {};
 
     while (deck1.length != 0 && deck2.length != 0) {
-        var key = deckToKey(deck1) + '_' + deckToKey(deck2);
+        let key = deckToKey(deck1) + '_' + deckToKey(deck2);
 
         if (history[key]) return [deck1, []]; else history[key] = 1;
 
-        var draw1 = deck1.shift(), draw2 = deck2.shift();
+        let draw1 = deck1.shift(), draw2 = deck2.shift();
 
         if (draw1 <= deck1.length && draw2 <= deck2.length) {
-            var subMatchResult = playMatch(deck1.slice(0, draw1), deck2.slice(0, draw2));
+            let subMatchResult = playMatch(deck1.slice(0, draw1), deck2.slice(0, draw2));
             if (subMatchResult[0].length >= subMatchResult[1].length) deck1.push(draw1, draw2); else deck2.push(draw2, draw1);
         } else {
             if (draw1 > draw2) deck1.push(draw1, draw2); else deck2.push(draw2, draw1);
@@ -36,9 +36,9 @@ function playMatch(deck1, deck2) {
     return [deck1, deck2];
 }
 
-function playMatchPart1(deck1, deck2) {
+const playMatchPart1 = (deck1, deck2) => {
     while (deck1.length != 0 && deck2.length != 0) {
-        var draw1 = deck1.shift(), draw2 = deck2.shift();
+        let draw1 = deck1.shift(), draw2 = deck2.shift();
         if (draw1 > draw2) deck1.push(draw1, draw2); else deck2.push(draw2, draw1);
     }
     return [deck1, deck2];

@@ -1,22 +1,22 @@
-var map = [], states = [], mapSize = input.length;
+let map = [], states = [], mapSize = input.length;
 
-function readInput() {
-    for (var y = 0; y < input.length; y++) {
-        var line = input[y];
+const readInput = () => {
+    for (let y = 0; y < input.length; y++) {
+        let line = input[y];
         map[y] = [];
-        for (var x = 0; x < line.length; x++) {
+        for (let x = 0; x < line.length; x++) {
             map[y][x] = line[x];
         }
     }
 }
 
-function getAdjacent(map, xx, yy) {
-    var adj = [];
-    for (var i = -1; i <= 1; i++) {
-        var y = yy+i;
+const getAdjacent = (map, xx, yy) => {
+    let adj = [];
+    for (let i = -1; i <= 1; i++) {
+        let y = yy+i;
         if (y < 0 || y >= mapSize) continue;
-        for (var j = -1; j <= 1; j++) {
-            var x = xx+j;
+        for (let j = -1; j <= 1; j++) {
+            let x = xx+j;
             if (x < 0 || x >= mapSize) continue;
             if ((i == 0) && (j == 0)) continue;
             adj.push(map[y][x]);
@@ -25,10 +25,10 @@ function getAdjacent(map, xx, yy) {
     return adj;
 }
 
-function cmpStates(s1,s2) {
-    var res = true;
-    for (var y = 0; y < mapSize; y++) {
-        for (var x = 0; x < mapSize; x++) {
+const cmpStates = (s1,s2) => {
+    let res = true;
+    for (let y = 0; y < mapSize; y++) {
+        for (let x = 0; x < mapSize; x++) {
             if (s1[y][x] != s2[y][x]) {
                 res = false;
                 break;
@@ -38,14 +38,14 @@ function cmpStates(s1,s2) {
     return res;
 }
 
-function nextState(lastState) {
-    var newState = $.extend(true, [], lastState);
+const nextState = (lastState) => {
+    let newState = $.extend(true, [], lastState);
 
-    for (var y = 0; y < mapSize; y++) {
-        for (var x = 0; x < mapSize; x++) {
-            var adj = getAdjacent(lastState, x, y);
-            var trees = 0, lumbs = 0, alen = adj.length;
-            for (var i = 0; i < alen; i++) {
+    for (let y = 0; y < mapSize; y++) {
+        for (let x = 0; x < mapSize; x++) {
+            let adj = getAdjacent(lastState, x, y);
+            let trees = 0, lumbs = 0, alen = adj.length;
+            for (let i = 0; i < alen; i++) {
                 if (adj[i] == '|') trees++;
                 if (adj[i] == '#') lumbs++;
             }
@@ -66,9 +66,9 @@ function nextState(lastState) {
         }
     }
 
-    for (var i = 0; i < states.length;i++) {
+    for (let i = 0; i < states.length;i++) {
         if (cmpStates(states[i], newState)) {
-            console.log('mame duplicitu!!', i, states.length, states[i], newState);
+            console.log('duplicity detected!', i, states.length, states[i], newState);
             console.log('resource value', getCount(newState, '|')*getCount(newState, '#'));
         }
     }
@@ -79,10 +79,10 @@ function nextState(lastState) {
 };
 
 
-function getCount(map, what) {
-    var count = 0;
-    for (var y = 0; y < mapSize; y++) {
-        for (var x = 0; x < mapSize; x++) {
+const getCount = (map, what) => {
+    let count = 0;
+    for (let y = 0; y < mapSize; y++) {
+        for (let x = 0; x < mapSize; x++) {
             if (map[y][x] == what) count++;
         }
     }
@@ -95,22 +95,15 @@ readInput();
 //console.log('adj', getAdjacent(map, 0, 0));
 
 console.time('Execution time');
-var newState = nextState(map);
-for (var i = 1; i < 600;i++) newState = nextState(newState); // 1 000 000 000 ugh
-// od states[508] se po 28 stavy opakuji, tj stav 536 je totozny
-// states[508] je stav po 510 minutach imo
+let newState = nextState(map);
+for (let i = 1; i < 600;i++) newState = nextState(newState); // 1 000 000 000 ugh
+// from states[508] the states repeat each 28 states, meaning 536 states is the same
+// states[508] is state after 510 minutes
 // 1 000 000 000
 //   999 999 986 = 510+28*35714267
-// tedy potrebuju data ke stavu states[508+14] (522) // 196876 not correct ; too low | 523 - 197276 correct
+// so I need data for states[508+14] (522) // 196876 not correct ; too low | 523 - 197276 correct
 
 console.log('resource value', getCount(newState, '|')*getCount(newState, '#'));
-//for (var i = 1; i < 10000000; i++) getAdjacent(map, 3, 7);
 console.timeEnd('Execution time');
 
 console.log(newState);
-
-/*
-times: 10 000 :  6228ms
-      100 000 : 63658ms
-1G = 10k minut
-*/

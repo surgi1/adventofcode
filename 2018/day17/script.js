@@ -1,13 +1,12 @@
+let data = [], map = [], mapInitialized = false, water = [], maxY = 0, minY = 1000;
 
-var data = [], map = [], mapInitialized = false, water = [], maxY = 0, minY = 1000;
-
-function readInput() {
+const readInput = () => {
     input.map(s => {
-        var tmp = {};
-        var pars = s.split(', ');
+        let tmp = {};
+        let pars = s.split(', ');
         pars.map(par => {
-            var subpars = par.split('=');
-            var dat;
+            let subpars = par.split('=');
+            let dat;
             if (subpars[1].indexOf('..') >= 0) {
                 dat = subpars[1].split('..').map(i => i = parseInt(i));
             } else {
@@ -19,17 +18,17 @@ function readInput() {
     })
 }
 
-function addMapPoint(x,y,type) {
+const addMapPoint = (x,y,type) => {
     if (y > maxY) maxY = y;
     if (y < minY) minY = y;
     if (!map[y]) map[y] = [];
     map[y][x] = type;
 }
 
-function drawScene() {
-    var root = $('#root').empty();
+const drawScene = () => {
+    let root = $('#root').empty();
     data.map(d => {
-        var x = 0, y = 0, w = 0, h = 0;
+        let x = 0, y = 0, w = 0, h = 0;
         if (Array.isArray(d.x)) {
             y = d.y;h = 1;
             x = d.x[0];w = d.x[1]-d.x[0]+1;
@@ -39,7 +38,7 @@ function drawScene() {
         } else {
             w = 1;h = 1;x = d.x;y = d.y;
         }
-        var div = $('<div />', {css: {
+        let div = $('<div />', {css: {
             left: x*2+'px',
             top: y*2+'px',
             width: w*2+'px',
@@ -50,14 +49,14 @@ function drawScene() {
 
         if (!mapInitialized) {
             if (Array.isArray(d.x)) {
-                for (var i = d.x[0];i<=d.x[1]; i++) addMapPoint(i,y,'R');
+                for (let i = d.x[0];i<=d.x[1]; i++) addMapPoint(i,y,'R');
             } else if (Array.isArray(d.y)) {
-                for (var i = d.y[0];i<=d.y[1]; i++) addMapPoint(x,i,'R');
+                for (let i = d.y[0];i<=d.y[1]; i++) addMapPoint(x,i,'R');
             }
         }
     })
     mapInitialized = true;
-    var springDiv = $('<div />', {css: {
+    let springDiv = $('<div />', {css: {
         left: 500*2+'px',
         top: 0*2+'px',
         width: 1*2+'px',
@@ -66,11 +65,11 @@ function drawScene() {
     root.append(springDiv);
 
     // draw water
-    for (var y = minY; y < maxY; y++) {
+    for (let y = minY; y < maxY; y++) {
         if (!map[y]) map[y] = [];
-        for (var x = 0; x < map[y].length; x++) {
+        for (let x = 0; x < map[y].length; x++) {
             if (map[y][x] == 'W') {
-                var div = $('<div />', {css: {
+                let div = $('<div />', {css: {
                     left: x*2+'px',
                     top: y*2+'px',
                     width: '2px',
@@ -79,7 +78,7 @@ function drawScene() {
                 root.append(div);
             }
             if (map[y][x] == 'S') {
-                var div = $('<div />', {css: {
+                let div = $('<div />', {css: {
                     left: x*2+'px',
                     top: y*2+'px',
                     width: '2px',
@@ -94,11 +93,11 @@ function drawScene() {
 readInput();
 drawScene();
 
-function advanceWater(p) {
-    var arr = [p], ptr = 0;
+const advanceWater = (p) => {
+    let arr = [p], ptr = 0;
     while (ptr < arr.length) {
-        for (var i = ptr; i < arr.length; i++) {
-            var point = arr[i];
+        for (let i = ptr; i < arr.length; i++) {
+            let point = arr[i];
             if (point.y > maxY+2) break;
             if (!map[point.y]) map[point.y] = [];
             if (!map[point.y+1]) map[point.y+1] = [];
@@ -114,35 +113,33 @@ function advanceWater(p) {
             }
         }
 
-        ptr = ptr+i+1;
-        //drainWater();
+        ptr = ptr+arr.length;
     }
-    for (var y = 0; y < maxY; y++) {
+    for (let y = 0; y < maxY; y++) {
         if (!map[y]) map[y] = [];
-        for (var x = 0; x < map[y].length; x++) {
+        for (let x = 0; x < map[y].length; x++) {
             if (map[y][x] == 'w') map[y][x] = 'W';
         }
     }
 }
 
-// udelat chytrejsi drainWater
-function drainWater() {
-    for (var y = 0; y < maxY; y++) {
+const drainWater = () => {
+    for (let y = 0; y < maxY; y++) {
         if (!map[y]) map[y] = [];
-        for (var x = 0; x < map[y].length; x++) {
+        for (let x = 0; x < map[y].length; x++) {
             //if (map[y][x] == 'w') map[y][x] = 'W';
             if (map[y][x] == 'W') {
                 if ( (!['W','R'].includes(map[y][x-1])) || (!['W','R'].includes(map[y][x+1])) ) {
                     map[y][x] = 'S';
                 } else {
                     // lze utect vpravo?
-                    var escX = x;
+                    let escX = x;
                     while (map[y][escX] == 'W') {escX++}
                     if (!['W','R'].includes(map[y+1][escX])) {
                         map[y][x] = 'S';
                     } else {
                         // lze utect vlevo?
-                        var escX = x;
+                        let escX = x;
                         while (map[y][escX] == 'W') {escX--}
                         if (!['W','R'].includes(map[y+1][escX])) map[y][x] = 'S';
                     }
@@ -152,17 +149,13 @@ function drainWater() {
     }
 }
 
-var ticks = 0;
+let ticks = 0;
 
-function tick() {
-
+const tick = () => {
     console.log('ticked');
 
     drainWater();
-
-    //water.push({x:500,y:1});
     advanceWater({x:500,y:1});
-    //drainWater();
 
     if (ticks % 100 == 0) 
         drawScene();
@@ -173,5 +166,3 @@ function tick() {
 setTimeout(() => tick(), 1000);
 
 console.log('data', data);
-// watur: 30500+1 (spodni) - 6 (invalid fill) = 30495 UUUIIIIIII
-// watur p2 24905 - 6 = 24

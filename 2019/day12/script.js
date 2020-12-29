@@ -1,18 +1,18 @@
 // so the trick for part 2 was to realize that the coordinates are independent of each other (facepalm)
-var ticks = 1000000;
+let ticks = 1000000;
 
-var bodiesBase = [
+let bodiesBase = [
     {pos:{x:5, y:-1, z:5}, v:{x:0, y:0, z:0}, lastVMatch: 0, lastPMatch: 0},
     {pos:{x:0, y:-14, z:2}, v:{x:0, y:0, z:0}, lastVMatch: 0, lastPMatch: 0},
     {pos:{x:16, y:4, z:0}, v:{x:0, y:0, z:0}, lastVMatch: 0, lastPMatch: 0},
     {pos:{x:18, y:1, z:16}, v:{x:0, y:0, z:0}, lastVMatch: 0, lastPMatch: 0},
 ]
 
-var bodies = $.extend(true, [], bodiesBase);
+let bodies = $.extend(true, [], bodiesBase);
 
-function applyGravityPair(id1, id2) {
+const applyGravityPair = (id1, id2) => {
     ['x', 'y', 'z'].map(coord => {
-        var diff = bodies[id2].pos[coord]-bodies[id1].pos[coord];
+        let diff = bodies[id2].pos[coord]-bodies[id1].pos[coord];
         if (diff != 0) {
             bodies[id1].v[coord] += Math.sign(diff);
             bodies[id2].v[coord] -= Math.sign(diff);
@@ -20,13 +20,13 @@ function applyGravityPair(id1, id2) {
     })
 }
 
-function moveBody(id) {
+const moveBody = (id) => {
     ['x', 'y', 'z'].map(coord => {
         bodies[id].pos[coord] += bodies[id].v[coord];
     })
 }
 
-function applyGravity() {
+const applyGravity = () => {
     applyGravityPair(0,1);
     applyGravityPair(0,2);
     applyGravityPair(1,2);
@@ -35,8 +35,8 @@ function applyGravity() {
     applyGravityPair(2,3);
 }
 
-function bodyEnergy(id) {
-    var potential = 0, kinetic = 0;
+const bodyEnergy = (id) => {
+    let potential = 0, kinetic = 0;
     ['x', 'y', 'z'].map(coord => {
         potential += Math.abs(bodies[id].pos[coord]);
         kinetic += Math.abs(bodies[id].v[coord]);
@@ -44,8 +44,8 @@ function bodyEnergy(id) {
     return potential*kinetic;
 }
 
-function cmpVect(v1, v2) {
-    var match = true;
+const cmpVect = (v1, v2) => {
+    let match = true;
     ['x', 'y', 'z'].some(coord => {
         if (v1[coord] != v2[coord]) {
             match = false;
@@ -55,11 +55,11 @@ function cmpVect(v1, v2) {
     return match;
 }
 
-var root = $('#root');
+let root = $('#root');
 
-function drawBody(id) {
+const drawBody = (id) => {
     if (!bodies[id].div) {
-        var div = $('<div id="body'+id+'" class="planet" />').html('');
+        let div = $('<div id="body'+id+'" class="planet" />').html('');
         bodies[id].div = div;
         root.append(div);
     }
@@ -69,9 +69,9 @@ function drawBody(id) {
     })
 }
 
-var t = 0;
+let t = 0;
 
-function tick() {
+const tick = () => {
     if (t < ticks) {
         applyGravity();
         bodies.map((b, id) => moveBody(id));
@@ -94,7 +94,7 @@ function tick() {
 
 }
 
-//var timerHandle = setInterval(() => tick(), 20); // do this is you want some pretty visuals
+//let timerHandle = setInterval(() => tick(), 20); // do this is you want some pretty visuals
 
 while (t < ticks) {
     applyGravity();
@@ -103,7 +103,7 @@ while (t < ticks) {
     t++;
 
     ['x', 'y', 'z'].map(coord => {
-        var match = true;
+        let match = true;
         bodies.some((b, id) => {
             if (b.pos[coord] != bodiesBase[id].pos[coord] || b.v[coord] != bodiesBase[id].v[coord]) {
                 match = false;
@@ -115,7 +115,7 @@ while (t < ticks) {
 
 }
 
-var totalEnergy = 0;
+let totalEnergy = 0;
 bodies.map((b, id) => {
     totalEnergy += bodyEnergy(id);
 })

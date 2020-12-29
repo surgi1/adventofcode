@@ -1,16 +1,16 @@
 // TAKE 2, lazy walk with stacked control characters
 
-var root = $('#root');
-var pre = $('<pre>');
+let root = $('#root');
+let pre = $('<pre>');
 root.append(pre);
 
-function renderMap(filling) {
+const renderMap = (filling) => {
     if (!filling) filling = ' ';
     pre.empty();
 
-    for (var y=0;y<mapSize;y++) {
-        var line = '';
-        for (var x=0;x<mapSize;x++) {
+    for (let y=0;y<mapSize;y++) {
+        let line = '';
+        for (let x=0;x<mapSize;x++) {
             line = line+(map[y][x] ? (map[y][x] == '?' ? '#' : map[y][x]) : filling);
         }
         pre.append(line);
@@ -18,19 +18,19 @@ function renderMap(filling) {
     }
 }
 
-var map = [], mapSize = 201, distanceMap =[]; //[y][x]
-for (var y=0;y<mapSize;y++) {
+let map = [], mapSize = 201, distanceMap =[]; //[y][x]
+for (let y=0;y<mapSize;y++) {
     map[y] = [];
     distanceMap[y] = [];
 }
 
-var startX = Math.round(mapSize/2)-6, startY=Math.round(mapSize/2)-2;
+let startX = Math.round(mapSize/2)-6, startY=Math.round(mapSize/2)-2;
 map[startY][startX] = 'X';
 
-var minx = 0,miny = 0,maxx = 0,maxy = 0;
-var pointer = 0, x = startX, y = startY, stack = [];
+let minx = 0,miny = 0,maxx = 0,maxy = 0;
+let pointer = 0, x = startX, y = startY, stack = [];
 
-function drawPoint(ch) {
+const drawPoint = (ch) => {
     if (ch == '^') return false;
     if (ch == '$') return false;
     if (ch == '(') return false;
@@ -64,15 +64,15 @@ function drawPoint(ch) {
     return true;
 }
 
-var furthest = 0;
-var savedFurthests = [], stackF = [];;
+let furthest = 0;
+let savedFurthests = [], stackF = [];;
 
-var stackX = [], stackY = [], stop = false;
+let stackX = [], stackY = [], stop = false;
 
-var ticks = 0;
+let ticks = 0;
 
-function tick() {
-    var ch = input[pointer];
+const tick = () => {
+    let ch = input[pointer];
     while (drawPoint(ch)) {
         pointer++;
         ch = input[pointer];
@@ -110,7 +110,7 @@ function tick() {
     }
 }
 
-function spread(x,y,dist) {
+const spread = (x,y,dist) => {
     if (!(distanceMap[y][x]) || (distanceMap[y][x] > dist)) {
         distanceMap[y][x] = dist;
         if (map[y][x-1] == '|') spread(x-2,y,dist+1);
@@ -120,15 +120,15 @@ function spread(x,y,dist) {
     }
 }
 
-function generateDistanceMap() {
+const generateDistanceMap = () => {
     //distanceMap[startY][startX] = 0;
     spread(startX,startY,0);
 
-    var distances = [];
-    var over1k = 0;
+    let distances = [];
+    let over1k = 0;
 
-    for (var y=0;y<mapSize;y++) {
-        for (var x=0;x<mapSize;x++) {
+    for (let y=0;y<mapSize;y++) {
+        for (let x=0;x<mapSize;x++) {
             if (distanceMap[y][x]) {
                 distances.push(distanceMap[y][x]);
                 if (distanceMap[y][x] >= 1000) over1k++;

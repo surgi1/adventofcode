@@ -1,13 +1,13 @@
 // much graphics, so wow
 
-var tickDelay = 25;
-var stopRound = false;
+let tickDelay = 25;
+let stopRound = false;
 
-var map = []; // [y][x]: W = wall, S = space
-var mapSize = data[0].length;
-var creatures = [];
+let map = []; // [y][x]: W = wall, S = space
+let mapSize = data[0].length;
+let creatures = [];
 
-function addCreature(type, x, y) {
+const addCreature = (type, x, y) => {
     creatures.push({
         type: type,
         health: 200,
@@ -18,65 +18,65 @@ function addCreature(type, x, y) {
     })
 }
 
-function readInput() {
+const readInput = () => {
     data.map((line, y) => {
         if (!map[y]) map[y] = [];
-        for (var x = 0; x < line.length; x++) {
+        for (let x = 0; x < line.length; x++) {
             map[y][x] = (line[x] == '#' ? 'W' : 'S');
             if (['G', 'E'].includes(line[x])) addCreature(line[x], x, y);
         }
     })
 }
 
-function baseDiv(cls, x, y) {
+const baseDiv = (cls, x, y) => {
     cls.push('grid_'+y+'_'+x);
-    var div = $('<div />', {css: {
+    let div = $('<div />', {css: {
         left: x*16+'px',
         top: y*16+'px'
     }}).addClass(cls.join(' '));
     return div;
 }
 
-function drawMap(root) {
-    for (var y = 0; y < mapSize; y++) {
-        for (var x = 0; x < mapSize; x++) {
-            var mDiv = baseDiv(['mappoint', map[y][x]], x, y);
+const drawMap = (root) => {
+    for (let y = 0; y < mapSize; y++) {
+        for (let x = 0; x < mapSize; x++) {
+            let mDiv = baseDiv(['mappoint', map[y][x]], x, y);
             //if (distanceMap) { if (distanceMap[y][x] != 'W' && distanceMap[y][x] != 'S') mDiv.text(distanceMap[y][x]); }
             root.append(mDiv);
         }
     }
 }
 
-function drawCreatures(root) {
+const drawCreatures = (root) => {
     creatures.map((creature, index) => {
         if (creature.status != 'DEAD') {
-            var cDiv = baseDiv(['creature', creature.type], creature.x, creature.y);
+            let cDiv = baseDiv(['creature', creature.type], creature.x, creature.y);
             cDiv.append( $('<div class="health"/>').html(creature.health) );
             root.append(cDiv);
         }
     })
 }
 
-function drawScene() {
-    var root = $('#root');
+const drawScene = () => {
+    let root = $('#root');
     root.empty();
     drawMap(root);
     drawCreatures(root);
 }
 
-function computeDistanceMap(spreadX, spreadY) {
-    var distanceMap = $.extend(true, [], map); // init
+const computeDistanceMap = (spreadX, spreadY) => {
+    let distanceMap = $.extend(true, [], map); // init
     // add creatures
     creatures.map((creature, index) => {
         if ((creature.status != 'DEAD') && ( !((spreadX == creature.x) && (spreadY == creature.y)) )) {
             distanceMap[creature.y][creature.x] = 'W'; // maybe unit type?
         }
     })
-    var toSpread = [{x: spreadX, y: spreadY, dist: 0}];
-    var processed = 0;
+    let toSpread = [{x: spreadX, y: spreadY, dist: 0}];
+    let processed = 0;
     while (processed < toSpread.length) {
-        for (var i = processed; i < toSpread.length; i++) {
-            var point = distanceMap[toSpread[i].y][toSpread[i].x];
+        for (let i = processed; i < toSpread.length; i++) {
+            let point = distanceMap[toSpread[i].y][toSpread[i].x];
             if (point != 'W') {
                 if ((point == 'S') || (point > toSpread[i].dist)) {
                     distanceMap[toSpread[i].y][toSpread[i].x] = toSpread[i].dist;
@@ -113,15 +113,15 @@ function computeDistanceMap(spreadX, spreadY) {
     return distanceMap;
 }
 
-function findAdjacentPoints(targetCreatures, dm) {
-    var adjMap = $.extend(true, [], map); // init
+const findAdjacentPoints = (targetCreatures, dm) => {
+    let adjMap = $.extend(true, [], map); // init
     // add creatures
     creatures.map((creature, index) => {
         if (creature.status != 'DEAD') {
             adjMap[creature.y][creature.x] = 'W'; // maybe unit type?
         }
     })
-    var adjacentPoints = []; // {x,y}
+    let adjacentPoints = []; // {x,y}
     targetCreatures.map(creature => {
         if (adjMap[creature.y-1][creature.x] == 'S' && dm[creature.y-1][creature.x] != 'S') adjacentPoints.push({x: creature.x, y: creature.y-1});
         if (adjMap[creature.y+1][creature.x] == 'S' && dm[creature.y+1][creature.x] != 'S') adjacentPoints.push({x: creature.x, y: creature.y+1});
@@ -131,38 +131,38 @@ function findAdjacentPoints(targetCreatures, dm) {
     return adjacentPoints;
 }
 
-function creatureTargets(creature) {
-    var targetType = (creature.type == 'G' ? 'E' : 'G');
-    var targets = [];
+const creatureTargets = (creature) => {
+    let targetType = (creature.type == 'G' ? 'E' : 'G');
+    let targets = [];
     creatures.map((c, i) => {
         if ((c.type == targetType) && (c.status != 'DEAD')) targets.push(c);
     })
     return targets;
 }
 
-function getTargetsInRange(creature, targets) {
-    var targetsInRange = [];
+const getTargetsInRange = (creature, targets) => {
+    let targetsInRange = [];
     targets.map(target => {
         if ((Math.abs(target.x-creature.x) + Math.abs(target.y-creature.y)) == 1) targetsInRange.push(target);
     })
     return targetsInRange;
 }
 
-function performAttack(from, to) {
+const performAttack = (from, to) => {
     to.health = Math.max(0, to.health-from.attack);
     if (to.health == 0) to.status = 'DEAD';
 }
 
-function getTotalHealth() {
-    var h = 0;
+const getTotalHealth = () => {
+    let h = 0;
     creatures.map(c => {
         if (c.status != 'DEAD') h = h+c.health;
     })
     return h;
 }
 
-function deads(type) {
-    var cnt = 0;
+const deads = (type) => {
+    let cnt = 0;
     creatures.map(c => {
         if (c.status == "DEAD" && c.type == type) cnt++;
     })
@@ -172,22 +172,22 @@ function deads(type) {
 readInput();
 drawScene();
 
-var eob = false; // end of battle
-var roundsPassed = 0;
+let eob = false; // end of battle
+let roundsPassed = 0;
 
-function tick() {
+const tick = () => {
 
     creatures.sort((a,b) => {
         return (a.y*mapSize+a.x) - (b.y*mapSize+b.x);
     })
 
-    for (var i = 0; i < creatures.length; i++) {
-        var creature = creatures[i];
+    for (let i = 0; i < creatures.length; i++) {
+        let creature = creatures[i];
         if (creature.status == 'DEAD') continue;
 
-        var targets = creatureTargets(creature);
+        let targets = creatureTargets(creature);
         if (targets.length == 0) {
-            var h = getTotalHealth();
+            let h = getTotalHealth();
             console.log('battle ended with dead elves:', deads('E'), ' and dead goblins:', deads('G'), creatures);
             console.log('full rounds ticked', roundsPassed);
             console.log('remaining creatures total health', h);
@@ -197,10 +197,10 @@ function tick() {
         }
 
         // does he need to move?
-        var targetsInRange = getTargetsInRange(creature, targets);
+        let targetsInRange = getTargetsInRange(creature, targets);
         if (targetsInRange.length == 0) {
-            var dmFromCreature = computeDistanceMap(creature.x, creature.y);
-            var moveTargets = findAdjacentPoints(targets, dmFromCreature);
+            let dmFromCreature = computeDistanceMap(creature.x, creature.y);
+            let moveTargets = findAdjacentPoints(targets, dmFromCreature);
 
             // if yes, can he move (at least 1 adjacent field accessible)?
             if (moveTargets.length > 0) {
@@ -213,7 +213,7 @@ function tick() {
                 // dist map from movement target
                 dmFromTargetField = computeDistanceMap(moveTargets[0].x, moveTargets[0].y);
 
-                var possibleMoves = [], x = creature.x, y = creature.y;
+                let possibleMoves = [], x = creature.x, y = creature.y;
                 if (dmFromTargetField[y][x-1] != 'W' && dmFromTargetField[y][x-1] != 'S') possibleMoves.push({x: x-1, y: y});
                 if (dmFromTargetField[y][x+1] != 'W' && dmFromTargetField[y][x+1] != 'S') possibleMoves.push({x: x+1, y: y});
                 if (dmFromTargetField[y-1][x] != 'W' && dmFromTargetField[y-1][x] != 'S') possibleMoves.push({x: x, y: y-1});
@@ -260,9 +260,3 @@ function tick() {
 }
 
 if (!eob) setTimeout(() => tick(), 2000);
-
-/*
-full rounds ticked 74
-remaining creatures total health 2453
-BATTLE STATUS 181522
-*/

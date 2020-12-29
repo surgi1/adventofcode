@@ -1,9 +1,9 @@
-var reindeers = [];
-var timeToEnd = 2503;
+let reindeers = [];
+let timeToEnd = 2503;
 
 input.map(line => {
-    var nums = line.match(/\d+/g).map(n => parseInt(n));
-    var name = line.split(' ')[0];
+    let nums = line.match(/\d+/g).map(n => parseInt(n));
+    let name = line.split(' ')[0];
     reindeers.push({
         name: name,
         speed: nums[0],
@@ -16,10 +16,10 @@ input.map(line => {
     })
 })
 
-function part1() {
+const part1 = () => {
     reindeers.map(rdeer => {
         rdeer.distance += Math.floor(timeToEnd/rdeer.period)*rdeer.distancePerPeriod; // base distance
-        var timeLeft = timeToEnd % rdeer.period;
+        let timeLeft = timeToEnd % rdeer.period;
         if (timeLeft < rdeer.moveTime) rdeer.distance += timeLeft*rdeer.speed; else rdeer.distance += rdeer.distancePerPeriod;
     })
 
@@ -28,10 +28,10 @@ function part1() {
     })
 }
 
-function part2() {
-    for (var i = 0; i < timeToEnd; i++) {
+const part2 = () => {
+    for (let i = 0; i < timeToEnd; i++) {
         reindeers.map(rdeer => {
-            var timeIn = i % rdeer.period;
+            let timeIn = i % rdeer.period;
             if (timeIn < rdeer.moveTime) rdeer.distance += rdeer.speed;
         })
         reindeers.sort((a,b) => {

@@ -1,13 +1,13 @@
-var equations = [];
-var operations = ['AND', 'OR', 'RSHIFT', 'LSHIFT', 'NOT'];
-var mem = {};
+let equations = [];
+let operations = ['AND', 'OR', 'RSHIFT', 'LSHIFT', 'NOT'];
+let mem = {};
 
-function parseEqLiteral(line) {
-    var tmp = {
+const parseEqLiteral = (line) => {
+    let tmp = {
         dependsOn: [],
         solvable: false
     };
-    var eq = line.split(' -> ');
+    let eq = line.split(' -> ');
     tmp.right = eq[1];
     tmp.left = eq[0].split(' ');
 
@@ -18,13 +18,13 @@ function parseEqLiteral(line) {
     equations.push(tmp);
 }
 
-function equationFor(varName) {
-    return equations.filter(eq => eq.right == varName)[0];
+const equationFor = (letName) => {
+    return equations.filter(eq => eq.right == letName)[0];
 }
 
-function findSolvables(iter) {
+const findSolvables = (iter) => {
     equations.filter(eq => eq.solvable === false).map(eq => {
-        var solvable = true;
+        let solvable = true;
         eq.dependsOn.some(dep => {
             if (!equationFor(dep)?.solvable) solvable = false;
         })
@@ -35,12 +35,12 @@ function findSolvables(iter) {
     })
 }
 
-function value(v) {
+const value = (v) => {
     if (!isNaN(v)) return parseInt(v);
     else return mem[v];
 }
 
-function solveLeftSide(left) {
+const solveLeftSide = (left) => {
     if (left.length == 1) {
         return value(left[0]);
     } else if (left.length == 2) {
@@ -56,16 +56,16 @@ function solveLeftSide(left) {
     }
 }
 
-function solveEquation(eq) {
+const solveEquation = (eq) => {
     if (!mem[eq.right]) mem[eq.right] = solveLeftSide(eq.left);
     console.log('solving', eq.right, '=', mem[eq.right]);
 }
 
 input.map(line => parseEqLiteral(line));
 
-function solve() {
+const solve = () => {
     // create sorting strategy
-    var i = 1;
+    let i = 1;
     while (equations.filter(eq => eq.solvable === false).length > 0) {
         findSolvables(i);
         i++;
@@ -84,7 +84,7 @@ function solve() {
 solve();
 
 // part1 result
-var part1Result = mem['a'];
+let part1Result = mem['a'];
 
 // reset
 mem = {'b': part1Result};

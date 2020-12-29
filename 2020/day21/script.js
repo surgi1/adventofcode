@@ -1,10 +1,10 @@
-var foods = [],
+let foods = [],
     allergens = {},
     ingredients = [];
 
-function readInput() {
+const readInput = () => {
     input.map(line => {
-        var arr = line.split(' contains ');
+        let arr = line.split(' contains ');
         foods.push({
             ingredients: arr[0].split(' '),
             allergens: arr[1].split(', ')
@@ -12,7 +12,7 @@ function readInput() {
     })
 }
 
-function initAllergens() {
+const initAllergens = () => {
     foods.map((food, foodId) => {
         food.allergens.map(allergen => {
             if (!allergens[allergen]) allergens[allergen] = {foods: [], resolved: false, value: ''};
@@ -21,7 +21,7 @@ function initAllergens() {
     })
 }
 
-function initIngredients() {
+const initIngredients = () => {
     foods.map((food, foodId) => {
         food.ingredients.map(ing => {
             if (!ingredients.includes(ing)) ingredients.push(ing);
@@ -29,19 +29,19 @@ function initIngredients() {
     })
 }
 
-function getAvailableIngredients(ings) {
-    var result = [];
+const getAvailableIngredients = (ings) => {
+    let result = [];
     ings.map(ing => {
         if (resolvedAllergens().filter(([name, o]) => o.value == ing).length == 0) result.push(ing);
     })
     return result;
 }
 
-function findMatchingIngredients(foodIds) {
-    var foundIngredients = [];
+const findMatchingIngredients = (foodIds) => {
+    let foundIngredients = [];
     foodIds.map(f1id => {
         getAvailableIngredients(foods[f1id].ingredients).map(ing1 => {
-            var ingMatch = true;
+            let ingMatch = true;
             if (!foundIngredients.includes(ing1)) {
                 foodIds.filter(f2id => f2id != f1id).some(f2id => {
                     if (!foods[f2id].ingredients.includes(ing1)) {
@@ -56,11 +56,11 @@ function findMatchingIngredients(foodIds) {
     return foundIngredients;
 }
 
-function unresolvedAllergens() {
+const unresolvedAllergens = () => {
     return Object.entries(allergens).filter(([name, o]) => o.resolved !== true);
 }
 
-function resolvedAllergens() {
+const resolvedAllergens = () => {
     return Object.entries(allergens).filter(([name, o]) => o.resolved === true);
 }
 
@@ -68,11 +68,11 @@ readInput();
 initAllergens();
 initIngredients();
 
-var knownAllergenIngredients = [];
+let knownAllergenIngredients = [];
 
 while (unresolvedAllergens().length > 0) {
     unresolvedAllergens().map(([name, o]) => {
-        var found = findMatchingIngredients(o.foods);
+        let found = findMatchingIngredients(o.foods);
         if (found.length == 1) {
             o.resolved = true;
             o.value = found[0];
@@ -81,12 +81,12 @@ while (unresolvedAllergens().length > 0) {
     })
 }
 
-var part1Count = 0;
+let part1Count = 0;
 foods.map(food => {
     part1Count += food.ingredients.filter(ing => !knownAllergenIngredients.includes(ing)).length;
 })
 
-var part2Answer = [];
+let part2Answer = [];
 Object.keys(allergens).sort().map(k => part2Answer.push(allergens[k].value));
 
 console.log('part 1 answer', part1Count);

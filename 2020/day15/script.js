@@ -1,19 +1,19 @@
 // p2 is pretty slow, around 7 minutes
 
-var data = [2,20,0,4,1,17];
-//var stopNr = 2020; // p1
-var stopNr = 30000000; // p2
+let data = [2,20,0,4,1,17];
+//let stopNr = 2020; // p1
+let stopNr = 30000000; // p2
 
-var history = [];
-var len = data.length;
+let history = [];
+let len = data.length;
 
 data.map((d,i) => history[d] = [i]);
 
-var last = data.pop();
+let last = data.pop();
 
 console.time('runtime');
-for (var i = len; i < stopNr; i++) {
-    var num = 0;
+for (let i = len; i < stopNr; i++) {
+    let num = 0;
     if (history[last].length > 1) num = history[last][1]-history[last].shift();
 
     if (!history[num]) history[num] = [];

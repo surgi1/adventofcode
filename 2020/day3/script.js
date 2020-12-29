@@ -1,5 +1,5 @@
-function traverse(vx, vy) {
-    var y = 0,
+const traverse = (vx, vy) => {
+    let y = 0,
         x = 0,
         l = arr.length,
         trees = 0;
@@ -14,7 +14,7 @@ function traverse(vx, vy) {
     return trees;
 }
 
-var paths = [
+let paths = [
 {vx: 1, vy: 1},
 {vx: 3, vy: 1},
 {vx: 5, vy: 1},

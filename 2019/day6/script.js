@@ -1,6 +1,6 @@
-var nodes = [];
+let nodes = [];
 
-function addNode(value, parentNode) {
+const addNode = (value, parentNode) => {
     nodes.push({
         id: nodes.length,
         value: value,
@@ -8,8 +8,8 @@ function addNode(value, parentNode) {
     })
 }
 
-function getNodeByValue(value) {
-    var found = false;
+const getNodeByValue = value => {
+    let found = false;
     nodes.some(n => {
         if (n.value == value) {
             found = n;
@@ -19,16 +19,16 @@ function getNodeByValue(value) {
     return found;
 }
 
-function readInput() {
-    var bodyNames = [];
-    var parsedLines = [];
+const readInput = () => {
+    let bodyNames = [];
+    let parsedLines = [];
     input.map(line => {
-        var tmp = line.split(')');
+        let tmp = line.split(')');
         parsedLines.push({centralBody: tmp[0], orbitingBody: tmp[1], processed: false});
     })
     while(parsedLines.filter(line => line.processed).length < input.length) {
         parsedLines.filter(line => !line.processed).map(line => {
-            var centralBodyNode = getNodeByValue(line.centralBody);
+            let centralBodyNode = getNodeByValue(line.centralBody);
             if (centralBodyNode) {
                 addNode(line.orbitingBody, centralBodyNode);
                 line.processed = true;
@@ -37,9 +37,9 @@ function readInput() {
     }
 }
 
-function nodePath(value) {
-    var n = getNodeByValue(value);
-    var path = [];
+const nodePath = value => {
+    let n = getNodeByValue(value);
+    let path = [];
     while(n.parentId) {
         n = nodes[n.parentId];
         path.push(n.value);
@@ -47,10 +47,10 @@ function nodePath(value) {
     return path;
 }
 
-function part1() {
-    var count = 0;
+const part1 = () => {
+    let count = 0;
     nodes.filter(n => n.value != 'COM').map(n => {
-        var m = n;
+        let m = n;
         while(m.parentId != undefined) {
             count++;
             m = nodes[m.parentId];
@@ -59,13 +59,13 @@ function part1() {
     console.log('total orbits', count);
 }
 
-function part2() {
+const part2 = () => {
     // paths
-    var path1 = nodePath('YOU');
-    var path2 = nodePath('SAN');
+    let path1 = nodePath('YOU');
+    let path2 = nodePath('SAN');
 
     // common body
-    var firstCommonBodyName = '';
+    let firstCommonBodyName = '';
     path1.some(name => {
         if (path2.includes(name)) {
             firstCommonBodyName = name;

@@ -1,9 +1,9 @@
-var rules = [];
+let rules = [];
 
-function readRulesInput() {
+const readRulesInput = () => {
     rulesInput.map(r => {
-        var arr = r.split(': ');
-        var nums = arr[1].match(/\d+/g);
+        let arr = r.split(': ');
+        let nums = arr[1].match(/\d+/g);
         rules.push({
             name: arr[0],
             possibleIndexes: [],
@@ -15,12 +15,12 @@ function readRulesInput() {
     })
 }
 
-function checkRange(num, range) {
+const checkRange = (num, range) => {
     return (num >= range.from) && (num <= range.to);
 }
 
-function hasValidRange(num, ranges) {
-    var result = false;
+const hasValidRange = (num, ranges) => {
+    let result = false;
     ranges.some(r => {
         if (checkRange(num, r)) {
             result = true;
@@ -32,15 +32,15 @@ function hasValidRange(num, ranges) {
 
 readRulesInput();
 
-var allRanges = [];
+let allRanges = [];
 rules.map(r => allRanges.push(...r.ranges));
 
-var validTickets = [];
+let validTickets = [];
 validTickets.push(myTicket);
 
-var sumOfInvalidNumbers = 0;
+let sumOfInvalidNumbers = 0;
 nearbyTickets.map(ticket => {
-    var valid = true;
+    let valid = true;
     ticket.map(num => {
         if (!hasValidRange(num, allRanges)) {
             sumOfInvalidNumbers += num;
@@ -53,14 +53,14 @@ nearbyTickets.map(ticket => {
 
 console.log(validTickets);
 
-var identifiedIndexes = [];
+let identifiedIndexes = [];
 
 while(identifiedIndexes.length < validTickets[0].length) {
     rules.map(r => {
         r.possibleIndexes = [];
-        for (var i = 0; i < validTickets[0].length; i++) {
+        for (let i = 0; i < validTickets[0].length; i++) {
             if (identifiedIndexes.includes(i)) continue;
-            var indexIsPossible = true;
+            let indexIsPossible = true;
             validTickets.some(ticket => {
                 if (!hasValidRange(ticket[i], r.ranges)) {
                     indexIsPossible = false;
@@ -81,8 +81,8 @@ while(identifiedIndexes.length < validTickets[0].length) {
 
 console.log(rules);
 
-var p2Answer = 1;
-for (var i = 0; i <= 5; i++) {
+let p2Answer = 1;
+for (let i = 0; i <= 5; i++) {
     p2Answer *= myTicket[rules[i].index];
 }
 

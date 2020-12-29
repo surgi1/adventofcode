@@ -1,8 +1,8 @@
-var instructions = ['addr','addi','mulr','muli','banr','bani','borr','bori','setr','seti','gtir','gtri','gtrr','eqir','eqri','eqrr'];
-var program = [], directives = [], regs = [0,0,0,0,0,0], ipRegister = false;
+let instructions = ['addr','addi','mulr','muli','banr','bani','borr','bori','setr','seti','gtir','gtri','gtrr','eqir','eqri','eqrr'];
+let program = [], directives = [], regs = [0,0,0,0,0,0], ipRegister = false;
 
-function runInstruction(code, params, regIn) {
-    var regOut = regIn;
+const runInstruction = (code, params, regIn) => {
+    let regOut = regIn;
     switch (code) {
         case 'addr': regOut[params[2]] = regIn[params[0]]+regIn[params[1]]; break;
         case 'addi': regOut[params[2]] = regIn[params[0]]+params[1]; break;
@@ -25,18 +25,18 @@ function runInstruction(code, params, regIn) {
 }
 
 
-function runDirective(code, params) {
+const runDirective = (code, params) => {
     switch (code) {
         case '#ip': ipRegister = params[0]; break;
     }
 }
 
 
-function readInput() {
+const readInput = () => {
     input.map(line => {
         lineParsed = line.split(' ');
-        for (var i = 1; i < lineParsed.length; i++) lineParsed[i] = parseInt(lineParsed[i]);
-        var params = lineParsed.slice(1);
+        for (let i = 1; i < lineParsed.length; i++) lineParsed[i] = parseInt(lineParsed[i]);
+        let params = lineParsed.slice(1);
         if (lineParsed[0] == '#ip') {
             directives.push({code: lineParsed[0], params: params});
         } else {
@@ -45,43 +45,43 @@ function readInput() {
     })
 }
 
-function cmpRegs(a,b) {
-    var res = true;
-    for (var i = 0; i < a.length; i++) {
+const cmpRegs = (a,b) => {
+    let res = true;
+    for (let i = 0; i < a.length; i++) {
         res = res && a[i] == b[i];
     }
     return res;
 }
 
-function init() {
+const init = () => {
     directives.map(dir => runDirective(dir.code, dir.params));
 }
 
-function runWithAutoIP() {
+const runWithAutoIP = () => {
     program.map(line => {
         regs = runInstruction(line.code, line.params, regs);
     })
 }
 
-var timerHandle;
-var ticks = 0;
-var ip;
+let timerHandle;
+let ticks = 0;
+let ip;
 
-function tick() {
-    var line = program[ip];
+const tick = () => {
+    let line = program[ip];
     regs = runInstruction(line.code, line.params, regs);
     regs[ipRegister]++;
     ip = regs[ipRegister];
     ticks++;
 }
 
-function runWithManualIP() {
+const runWithManualIP = () => {
     ip = regs[ipRegister];
     while(program[ip]) {
-        var line = program[ip];
+        let line = program[ip];
         tick();
         //if (ticks > 6290000) console.log('tick', ticks, 'last ins', line.code, line.params, 'regs', regs); // p1 debug
-        var ptick = ticks % 1000000000;
+        let ptick = ticks % 1000000000;
         if (ptick < 200) console.log('tick', ticks, 'last ins', line.code, line.params, 'regs', regs);
         if (ptick > 999999800) console.log('tick', ticks, 'last ins', line.code, line.params, 'regs', regs);
         if (ptick == 999999999) {
@@ -92,7 +92,7 @@ function runWithManualIP() {
     }
 }
 
-function run() {
+const run = () => {
     if (ipRegister === false) {
         console.log('running with automatic IP handling');
         runWithAutoIP()
@@ -108,15 +108,14 @@ function run() {
 //init();
 //run();
 
-var target = 887;
-var target = 10551287;
+let target = 10551287;
 
-function printDivisors(n)  { 
-    for (var i = 1; i <= n; i++)  {
+const printDivisors = (n)  => { 
+    for (let i = 1; i <= n; i++)  {
         if (n % i == 0) console.log(i);
     }
 } 
 
-printDivisors(target)
+printDivisors(target);
 
 // 1+127+251+331+31877+42037+83081+10551287

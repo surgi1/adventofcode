@@ -1,11 +1,11 @@
-var inputRow = 2978, inputColumn = 3083;
-var firstCode = 20151125;
+let inputRow = 2978, inputColumn = 3083;
+let firstCode = 20151125;
 
-function nextCode(code) {
+const nextCode = (code) => {
     return (code*252533) % 33554393;
 }
 
-var ymax = 2, xmas = 1, lastCode = firstCode,
+let ymax = 2, xmas = 1, lastCode = firstCode,
     x = xmas, y = ymax, stop = false;
 
 while (!stop) {

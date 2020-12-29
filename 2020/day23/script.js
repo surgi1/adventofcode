@@ -1,9 +1,9 @@
-var input = '942387615';
-var list = [], currentId = 0, max, min = 1, labelToId = [],
+let input = '942387615';
+let list = [], currentId = 0, max, min = 1, labelToId = [],
     movesPart1 = 100, movesPart2 = 10000000, maxPart2 = 1000000;
 
-function addNode(params) {
-    var id = list.length;
+const addNode = params => {
+    let id = list.length;
     list.push({
         id: id,
         left: params.left,
@@ -14,10 +14,10 @@ function addNode(params) {
     labelToId[params.label] = id;
 }
 
-function initList(s, genMax) {
-    var len = s.length;
+const initList = (s, genMax) => {
+    let len = s.length;
     if (!genMax) genMax = len;
-    for (var i = 0; i < genMax; i++) addNode({
+    for (let i = 0; i < genMax; i++) addNode({
         left: i > 0 ? i-1 : genMax-1,
         right: i < genMax-1 ? i+1 : 0,
         label: (i < len ? parseInt(s[i]) : i+1)
@@ -25,36 +25,36 @@ function initList(s, genMax) {
     max = genMax;
 }
 
-function right(node) {
+const right = node => {
     return list[node.right];
 }
 
-function left(node) {
+const left = node => {
     return list[node.left];
 }
 
-function connect(node1, node2) {
+const connect = (node1, node2) => {
     node1.right = node2.id;
     node2.left = node1.id;
 }
 
-function move() {
-    var current = list[currentId];
-    var r1 = right(current), r2 = right(r1), r3 = right(r2);
+const move = () => {
+    let current = list[currentId];
+    let r1 = right(current), r2 = right(r1), r3 = right(r2);
     r1.pickedUp = true; r2.pickedUp = true; r3.pickedUp = true;
 
     connect(current, right(r3));
 
     // pick new destination
-    var destinationLabel = current.label - 1;
+    let destinationLabel = current.label - 1;
     if (destinationLabel < min) destinationLabel = max;
     while (list[ labelToId[destinationLabel] ].pickedUp == true ) {
         destinationLabel--;
         if (destinationLabel < min) destinationLabel = max;
     }
 
-    var destinationFrom = list[ labelToId[destinationLabel] ];
-    var destinationTo = right(destinationFrom);
+    let destinationFrom = list[ labelToId[destinationLabel] ];
+    let destinationTo = right(destinationFrom);
 
     connect(destinationFrom, r1);
     connect(r3, destinationTo);
@@ -64,10 +64,10 @@ function move() {
     currentId = right(list[currentId]).id;
 }
 
-function log(num, sep) {
-    var s = '';
+const log = (num, sep) => {
+    let s = '';
     if (!sep) sep = '';
-    var n = right(list[labelToId[1]]);
+    let n = right(list[labelToId[1]]);
     for (i = 0; i < num; i++) {
         s += (s != '' ? sep : '')+n.label;
         n = right(n);
@@ -75,15 +75,15 @@ function log(num, sep) {
     return s;
 }
 
-function part1() {
+const part1 = () => {
     initList(input);
-    for (var i = 0; i < movesPart1; i++) move();
+    for (let i = 0; i < movesPart1; i++) move();
     console.log(log(list.length-1));
 }
 
-function part2() {
+const part2 = () => {
     initList(input, maxPart2);
-    for (var i = 0; i < movesPart2; i++) move();
+    for (let i = 0; i < movesPart2; i++) move();
     console.log(log(2, '*'));
 }
 

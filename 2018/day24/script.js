@@ -1,17 +1,17 @@
 // automatization of the final step missing as I loved to watch the battles play out
 
-var armies = [];
-var groups = [];
-var timerHandle;
+let armies = [];
+let groups = [];
+let timerHandle;
 
-function init() {
+const init = () => {
     Object.entries(input).map(([armyName, unitsLiteral]) => {
-        var army = new Army(armyName, unitsLiteral, armies.length);
+        let army = new Army(armyName, unitsLiteral, armies.length);
         armies.push(army);
     })
 }
 
-function initRound() {
+const initRound = () => {
     groups = []
     armies.map(army => {
         groups.push(...army.getGroups('ALIVE'))
@@ -26,7 +26,7 @@ function initRound() {
     })
 }
 
-function round() {
+const round = () => {
     initRound();
 
     // targeting
@@ -49,10 +49,10 @@ armies[0].boost(36); // 35 -> inf wins, 36 -> immune wins 5252 => yay
 
 armies.map(a => a.log());
 
-var ticks = 1;
-var stop = false;
+let ticks = 1;
+let stop = false;
 
-function tick() {
+const tick = () => {
     round();
     console.log('Round', ticks, 'ended.');
     armies.map(a => {

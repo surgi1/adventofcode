@@ -1,15 +1,13 @@
-//var players = 9;var marbles = 25+1;
-//var players = 10;var marbles = 1618+1; // 8317
-var players = 465; var marbles = 7194000+1;
-var board = [], score = [0];
-
-var list = [];
+//let players = 9;let marbles = 25+1;
+//let players = 10;let marbles = 1618+1; // 8317
+let players = 465; let marbles = 7194000+1;
+let board = [], score = [0], list = [];
 
 // returns new current linked item
-function insertMarble(nr, currentItem) {
-    var ll = list.length; // id noveho clanku
+const insertMarble = (nr, currentItem) => {
+    let ll = list.length; // id noveho clanku
     
-    var tmp = {
+    let tmp = {
         id: ll,
         value: nr
     }
@@ -30,8 +28,8 @@ function insertMarble(nr, currentItem) {
     }
 
     // item to the right of current
-    var right1 = list[currentItem.right];
-    var right2 = list[right1.right];
+    let right1 = list[currentItem.right];
+    let right2 = list[right1.right];
 
     right1.right = tmp.id;
     right2.left = tmp.id;
@@ -42,26 +40,25 @@ function insertMarble(nr, currentItem) {
     list.push(tmp);
 
     return list[ll];
-
 }
 
-var currentItem = false;
+let currentItem = false;
 currentItem = insertMarble(0, currentItem);// start the game
 
 console.time('execute');
 
-for (var i = 1; i < marbles; i++) {
+for (let i = 1; i < marbles; i++) {
 
-    var playerId = ((i-1) % players)+1;
+    let playerId = ((i-1) % players)+1;
     if (!score[playerId]) score[playerId] = 0;
 
     if (i % 23 == 0) {
-        for (var iter = 0; iter < 7; iter++) currentItem = list[currentItem.left];
+        for (let iter = 0; iter < 7; iter++) currentItem = list[currentItem.left];
         
         score[playerId] = score[playerId]+i+currentItem.value;
         
-        var leftItem = list[currentItem.left];
-        var rightItem = list[currentItem.right];
+        let leftItem = list[currentItem.left];
+        let rightItem = list[currentItem.right];
         
         leftItem.right = rightItem.id;
         rightItem.left = leftItem.id;
@@ -75,11 +72,11 @@ for (var i = 1; i < marbles; i++) {
 console.timeLog('execute');
 console.log('game ended', Math.max(...score), score);
 
-function list2array() {
-    var arr = [];
-    var startingIndex = 0;
-    var startingItem = list[startingIndex];
-    var cItem = list[startingIndex];
+const list2array = () => {
+    let arr = [];
+    let startingIndex = 0;
+    let startingItem = list[startingIndex];
+    let cItem = list[startingIndex];
     while (cItem.right != startingIndex) {
         arr.push(cItem.value);
         cItem = list[cItem.right];
@@ -87,5 +84,3 @@ function list2array() {
     arr.push(cItem.value);
     return arr;
 }
-
-//console.log(list2array(), list);

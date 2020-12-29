@@ -1,9 +1,9 @@
 // this is a traveling salesman problem
 // still used brute-force, as was quicker to implement and runs in no time
 
-var points = [];
+let points = [];
 
-function dist(a,b) {
+const dist = (a,b) => {
     return input.filter(line => {
         if ((line[0] == a && line[1] == b) || (line[0] == b && line[1] == a)) return true;
     })[0][2];
@@ -14,17 +14,17 @@ input.map(line => {
     if (!points.includes(line[1])) points.push(line[1]);
 })
 
-var paths = [];
+let paths = [];
 
-function progressPath(path, missingPoints) {
+const progressPath = (path, missingPoints) => {
     if (missingPoints.length == 1) {
         path.push(missingPoints[0]);
         paths.push(path);
     } else {
         missingPoints.map((mp, index) => {
-            var newMPs = missingPoints.slice();
+            let newMPs = missingPoints.slice();
             newMPs.splice(index, 1);
-            var newPath = path.slice();
+            let newPath = path.slice();
             newPath.push(mp);
             progressPath(newPath, newMPs);
         })
@@ -35,11 +35,11 @@ points.map((p,i) => {
     progressPath([p], points.filter((pp,ii) => ii!=i) );
 })
 
-var minFound = false, maxFound = false;
+let minFound = false, maxFound = false;
 
 paths.map(path => {
-    var length = 0;
-    for (var i=1; i<path.length;i++) {
+    let length = 0;
+    for (let i=1; i<path.length;i++) {
         length += dist(path[i-1],path[i]);
     }
     if ((!minFound) || (length < minFound)) minFound = length;

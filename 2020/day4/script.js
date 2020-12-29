@@ -1,6 +1,6 @@
 // phase 1
-/*function validateEntry(e) {
-    var valid = true;
+/*const validateEntry = (e) => {
+    let valid = true;
     if (!e.byr) valid = false;
     if (!e.iyr) valid = false;
     if (!e.eyr) valid = false;
@@ -13,8 +13,8 @@
 }*/
 
 // phase 2
-function validateEntry(e) {
-    var valid = true;
+const validateEntry = (e) => {
+    let valid = true;
     if (!e.byr) valid = false;
     if (!e.iyr) valid = false;
     if (!e.eyr) valid = false;
@@ -37,9 +37,9 @@ function validateEntry(e) {
         if (e.eyr < 2020 || e.eyr > 2030) valid = false;
     }
     if (e.hgt) {
-        var r = e.hgt.match(/^[\d]*(in|cm)$/);
+        let r = e.hgt.match(/^[\d]*(in|cm)$/);
         if (!r) valid = false; else {
-            var v = parseFloat(e.hgt);
+            let v = parseFloat(e.hgt);
             if (r[1] == 'cm') {
                 if (v < 150 || v > 193) valid = false;
             } else if (r[1] == 'in') {
@@ -60,7 +60,7 @@ function validateEntry(e) {
     return valid;
 }
 
-var valids = 0;
+let valids = 0;
 
 data.forEach(e => {
     if (validateEntry(e)) valids++;

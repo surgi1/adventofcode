@@ -1,8 +1,8 @@
-var layers = [];
-var width = 25, height = 6;
+let layers = [];
+let width = 25, height = 6;
 
-var nrOfLayers = input.length/(width*height);
-var i = 0;
+let nrOfLayers = input.length/(width*height);
+let i = 0;
 while(i < nrOfLayers) {
     layers.push(
         input.substr( i*width*height, width*height )
@@ -10,19 +10,19 @@ while(i < nrOfLayers) {
     i++;
 }
 
-function countChars(s, ch) {
-    var count = 0;
-    var len = s.length;
-    for (var i = 0; i < len; i++) {
+const countChars = (s, ch) => {
+    let count = 0;
+    let len = s.length;
+    for (let i = 0; i < len; i++) {
         if (s[i] == ch) count++;
     }
     return count;
 }
 // p1
 /*
-var min = layers[0].length;
-for (var i = 0; i < layers.length; i++) {
-    var countZero = countChars(layers[i], '0');
+let min = layers[0].length;
+for (let i = 0; i < layers.length; i++) {
+    let countZero = countChars(layers[i], '0');
     if (countZero < min) {
         min = countZero;
         console.log('found new minimum', min, 'result', countChars(layers[i], '1')*countChars(layers[i], '2'))
@@ -30,10 +30,10 @@ for (var i = 0; i < layers.length; i++) {
 }
 */
 
-var resultingLayer = '';
-var len = layers[0].length;
+let resultingLayer = '';
+let len = layers[0].length;
 
-for (var i = 0; i < len; i++) {
+for (let i = 0; i < len; i++) {
     layers.some(layer => {
         if (layer[i] != '2') {
             resultingLayer += layer[i];
@@ -42,4 +42,4 @@ for (var i = 0; i < len; i++) {
     })
 }
 
-console.log(resultingLayer);
+console.log(resultingLayer.replace(/(.{25})/g, "$1\n").replace(/0/g, " "));

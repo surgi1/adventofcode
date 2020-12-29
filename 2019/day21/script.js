@@ -1,35 +1,35 @@
-var pre, res;
-var comp = new Computer();
+let pre, res;
+let comp = new Computer();
 
-var root = $('#root');
+let root = $('#root');
 pre = $('<pre>');
 root.append(pre);
 
-function str2command(s) {
-    var res = [];
-    for (var i = 0; i < s.length; i++) {
+const str2command = s => {
+    let res = [];
+    for (let i = 0; i < s.length; i++) {
         res.push(s.charCodeAt(i));
     }
     res.push(10);
     return res;
 }
 
-function str2ascii(s) {
+const str2ascii = s => {
     return str2command(s).join(',');
 }
 
-function tick(pars) {
+const tick = pars => {
     if (!pars) pars = [];
-    var res = comp.run(pars);
+    let res = comp.run(pars);
 
-    var s = '';
+    let s = '';
     res.output.map(code => s += String.fromCharCode(code));
     pre.html(s);
 
     console.log('result', res);
 }
 
-function command(com) {
+const command = com => {
     if (Array.isArray(com)) {
         com.map(c => {
             tick(str2command(c));
@@ -39,13 +39,13 @@ function command(com) {
     }
 }
 
-function textareaValue() {
+const textareaValue = () => {
     return $('#code').val().split(/\n/).filter(l => l.length != 0)
 }
 
-function initGUI() {
+const initGUI = () => {
     $('button').on('click', e => {
-        var arr = textareaValue();
+        let arr = textareaValue();
         arr.push(e.target.innerText);
         comp.reset();
         console.log('running commands', arr);
@@ -54,20 +54,21 @@ function initGUI() {
 }
 
 initGUI();
-
 comp.load(input);
-
 tick();
 
 /*
-// p1
+p1 script:
+
 NOT D T
 OR C T
 NOT T J
 NOT A T
 OR T J
+WALK
 
-// p2
+p2 script:
+
 NOT C J 
 AND D J 
 AND H J
@@ -77,5 +78,4 @@ OR T J
 NOT A T 
 OR T J
 RUN
-
 */

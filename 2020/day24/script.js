@@ -1,18 +1,18 @@
 // size may need adjustment for generic input
-var grid = [], size = 300, steps = 100;
+let grid = [], size = 300, steps = 100;
 
-function init() {
-    for (var y = 0; y < size; y++) {
-        for (var x = 0; x < size; x++) {
+const init = () => {
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
             if (!grid[y]) grid[y] = [];
             grid[y][x] = 0; // starts in white
         }
     }
 
     input.map((line, lineId) => {
-        var x = size/2, y = size/2;
-        for (var i = 0; i < line.length; i++) {
-            var dir = line[i];
+        let x = size/2, y = size/2;
+        for (let i = 0; i < line.length; i++) {
+            let dir = line[i];
             if (!['w', 'e'].includes(dir)) {
                 i++; dir += line[i];
             }
@@ -29,18 +29,18 @@ function init() {
     })
 }
 
-function countBlackTiles() {
-    var count = 0;
-    for (var y = 0; y < size; y++) {
-        for (var x = 0; x < size; x++) {
+const countBlackTiles = () => {
+    let count = 0;
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
             if (grid[y][x] == 1) count++;
         }
     }
     return count;
 }
 
-function getBlackAround(g, x, y) {
-    var count = 0;
+const getBlackAround = (g, x, y) => {
+    let count = 0;
     if (g[y][x-2] == 1) count++;
     if (g[y][x+2] == 1) count++;
     if (g[y-1][x-1] == 1) count++;
@@ -50,12 +50,12 @@ function getBlackAround(g, x, y) {
     return count;
 }
 
-function progressState(oldGrid) {
-    var newGrid = $.extend(true, [], oldGrid);
+const progressState = oldGrid => {
+    let newGrid = $.extend(true, [], oldGrid);
 
-    for (var y = 1; y < size-1; y++) {
-        for (var x = 2; x < size-2; x++) {
-            var blackAround = getBlackAround(oldGrid, x, y);
+    for (let y = 1; y < size-1; y++) {
+        for (let x = 2; x < size-2; x++) {
+            let blackAround = getBlackAround(oldGrid, x, y);
             if (oldGrid[y][x] == 1 && (blackAround == 0 || blackAround > 2)) newGrid[y][x] = 0;
             if (oldGrid[y][x] == 0 && blackAround == 2) newGrid[y][x] = 1;
         }
@@ -66,7 +66,7 @@ function progressState(oldGrid) {
 init();
 console.log('part 1', countBlackTiles());
 
-for (var i = 0; i < steps; i++) {
+for (let i = 0; i < steps; i++) {
     grid = progressState(grid);
 }
 console.log('part 2', countBlackTiles());

@@ -1,16 +1,16 @@
-var boss = {
+let boss = {
     hp: 103,
     dmg: 9,
     armor: 2
 }
 
-var avatarBasic = {
+let avatarBasic = {
     hp: 100,
     dmg: 0,
     armor: 0
 }
 
-var shop = {
+let shop = {
     weapons: [
         {name: 'Dagger', cost: 8, dmg: 4, armor: 0},
         {name: 'Shortsword', cost: 10, dmg: 5, armor: 0}, 
@@ -36,20 +36,20 @@ var shop = {
 }
 
 // returns true if avatar wins, false otherwise
-function battleWon(avatar) {
-    var bossesDmg = boss.dmg-avatar.armor;
+const battleWon = (avatar) => {
+    let bossesDmg = boss.dmg-avatar.armor;
     if (bossesDmg < 1) bossesDmg = 1;
-    var bossATW = Math.ceil(avatar.hp/bossesDmg);
-    var avatarsDmg = avatar.dmg-boss.armor;
+    let bossATW = Math.ceil(avatar.hp/bossesDmg);
+    let avatarsDmg = avatar.dmg-boss.armor;
     if (avatarsDmg < 1) avatarsDmg = 1;
-    var avatarATW = Math.ceil(boss.hp/avatarsDmg);
+    let avatarATW = Math.ceil(boss.hp/avatarsDmg);
     return avatarATW <= bossATW; // avatar attacks first
 }
 
 // applies equipment and returns battler result
-function battle(equipment) {
+const battle = (equipment) => {
     // add equipment stats to avatar's clone
-    var avatar = $.extend(true, {}, avatarBasic);
+    let avatar = $.extend(true, {}, avatarBasic);
     equipment.map(item => {
         avatar.dmg += item.dmg;
         avatar.armor += item.armor;
@@ -57,34 +57,34 @@ function battle(equipment) {
     return battleWon(avatar);
 }
 
-function equipmentCost(equipment) {
-    var sum = 0;
+const equipmentCost = (equipment) => {
+    let sum = 0;
     equipment.map(item => sum += item.cost);
     return sum;
 }
 
-var minimalCost = 1000000;
-var maximalCost = 0;
+let minimalCost = 1000000;
+let maximalCost = 0;
 
-for (var weaponId = 0; weaponId < shop.weapons.length; weaponId++) {
-    for (var armorId = 0; armorId <= shop.armors.length; armorId++) {
-        for (var ring1Id = 0; ring1Id <= shop.rings.length; ring1Id++) {
-            for (var ring2Id = ring1Id; ring2Id <= shop.rings.length; ring2Id++) {
+for (let weaponId = 0; weaponId < shop.weapons.length; weaponId++) {
+    for (let armorId = 0; armorId <= shop.armors.length; armorId++) {
+        for (let ring1Id = 0; ring1Id <= shop.rings.length; ring1Id++) {
+            for (let ring2Id = ring1Id; ring2Id <= shop.rings.length; ring2Id++) {
                 if (ring1Id == ring2Id) continue; // no equipping the same ring twice
-                var equipment = [];
+                let equipment = [];
                 equipment.push(shop.weapons[weaponId]);
                 if (armorId < shop.armors.length) equipment.push(shop.armors[armorId]);
                 if (ring1Id < shop.rings.length) equipment.push(shop.rings[ring1Id]);
                 if (ring2Id < shop.rings.length) equipment.push(shop.rings[ring2Id]);
                 if (battle(equipment)) {
-                    var cost = equipmentCost(equipment);
+                    let cost = equipmentCost(equipment);
                     if (cost < minimalCost) {
-                        //console.log('new minimal cost found', cost, 'gold', equipment); // p1
+                        console.log('new minimal cost found', cost, 'gold', equipment); // p1
                         minimalCost = cost;
                     }
                 }
                 if (!battle(equipment)) {
-                    var cost = equipmentCost(equipment);
+                    let cost = equipmentCost(equipment);
                     if (cost > maximalCost) {
                         console.log('new maximal cost found', cost, 'gold', equipment); // p2
                         maximalCost = cost;

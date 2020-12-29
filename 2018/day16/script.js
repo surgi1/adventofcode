@@ -1,8 +1,8 @@
-var instructions = ['addr','addi','mulr','muli','banr','bani','borr','bori','setr','seti','gtir','gtri','gtrr','eqir','eqri','eqrr'];
+let instructions = ['addr','addi','mulr','muli','banr','bani','borr','bori','setr','seti','gtir','gtri','gtrr','eqir','eqri','eqrr'];
 
-function runInstruction(code, params, regIn) {
+const runInstruction = (code, params, regIn) => {
     if (regIn == undefined) regIn = [0,0,0,0];
-    var regOut = $.extend(true, [], regIn);
+    let regOut = $.extend(true, [], regIn);
     switch (code) {
         case 'addr': regOut[params[2]] = regIn[params[0]]+regIn[params[1]]; break;
         case 'addi': regOut[params[2]] = regIn[params[0]]+params[1]; break;
@@ -24,29 +24,29 @@ function runInstruction(code, params, regIn) {
     return regOut;
 }
 
-function cmpRegs(a,b) {
-    var res = true;
-    for (var i = 0; i < 4; i++) {
+const cmpRegs = (a,b) => {
+    let res = true;
+    for (let i = 0; i < 4; i++) {
         res = res && a[i] == b[i];
     }
     return res;
 }
 
-//var foundThreePluses = 0;
+//let foundThreePluses = 0;
 
 data.map(sample => {
     sample.codeParsed = sample.code.split(' ').map(i => i = parseInt(i));
 })
 
 
-var opcodes = {}, foundOpcodes = 0, opcode2code = {};
+let opcodes = {}, foundOpcodes = 0, opcode2code = {};
 
 while (foundOpcodes < instructions.length) {
     data.map(sample => {
-        var matchedInstructions = 0, matchedIns = '';
+        let matchedInstructions = 0, matchedIns = '';
         instructions.map(code => {
             if (!opcodes[code]) {
-                var output = runInstruction(code, sample.codeParsed.slice(1), sample.from);
+                let output = runInstruction(code, sample.codeParsed.slice(1), sample.from);
                 if (cmpRegs(output, sample.to)) {
                     matchedInstructions++;
                     matchedIns = code;
@@ -69,7 +69,7 @@ while (foundOpcodes < instructions.length) {
 //console.log(data);
 console.log(opcode2code);
 
-var regs = [0,0,0,0];
+let regs = [0,0,0,0];
 
 program.map(line => {
     lineParsed = line.split(' ').map(i => i = parseInt(i));

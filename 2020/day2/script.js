@@ -1,8 +1,8 @@
-var a = [],
+let a = [],
     l = Math.round(arr.length/4);
 
-for (var i=0; i<l; i++) {
-    var o = {
+for (let i=0; i<l; i++) {
+    let o = {
         min: arr[i*4+0],
         max: arr[i*4+1],
         char: arr[i*4+2],
@@ -13,9 +13,9 @@ for (var i=0; i<l; i++) {
 
 console.log('a', a);
 
-function countCharInString(char, s) {
-    var count = 0;
-    for (var i=0; i< s.length; i++) {
+const countCharInString = (char, s) => {
+    let count = 0;
+    for (let i=0; i< s.length; i++) {
         if (s[i] == char) count++;
     }
     return count;
@@ -25,14 +25,14 @@ corrects = 0;
 
 // p1
 /*a.forEach(e => {
-    var cnt = countCharInString(e.char, e.pwd);
+    let cnt = countCharInString(e.char, e.pwd);
     if (cnt >= e.min && cnt <= e.max) corrects++;
 })*/
 
 // p2
 a.forEach(e => {
-    var c1 = e.pwd.charAt(e.min-1);
-    var c2 = e.pwd.charAt(e.max-1);
+    let c1 = e.pwd.charAt(e.min-1);
+    let c2 = e.pwd.charAt(e.max-1);
     if ( (c1 == e.char && c2 != e.char) || (c2 == e.char && c1 != e.char) ) corrects++;
 })
 

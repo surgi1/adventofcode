@@ -1,25 +1,25 @@
-var start = {x:0,y:0}
-var ship = {
+let start = {x:0,y:0}
+let ship = {
     x:start.x,y:start.y,r:0
 }
-var waypoint = {
+let waypoint = {
     x: 10, y: -1
 }
 
 // [x*cos - y*sin, x*sin + y*cos]
-function rotate(p, a) {
-    var sin = Math.round(Math.sin(a*(Math.PI/180)));
-    var cos = Math.round(Math.cos(a*(Math.PI/180)));
+const rotate = (p, a) => {
+    let sin = Math.round(Math.sin(a*(Math.PI/180)));
+    let cos = Math.round(Math.cos(a*(Math.PI/180)));
     return {
         x: p.x*cos-p.y*sin,
         y: p.x*sin+p.y*cos
     }
 }
 
-function advanceShip(step) {
+const advanceShip = (step) => {
     // parse step
-    var action = step[0];
-    var value = parseInt(step.substr(1));
+    let action = step[0];
+    let value = parseInt(step.substr(1));
 
     switch (action) {
         case 'N': waypoint.y = waypoint.y-value; break;
@@ -37,7 +37,7 @@ function advanceShip(step) {
     }
 }
 
-function dist(a,b) {
+const dist = (a,b) => {
     return Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
 }
 

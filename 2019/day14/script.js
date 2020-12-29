@@ -1,32 +1,32 @@
-var reactions = [], leftovers = {}, oreNeeded;
+let reactions = [], leftovers = {}, oreNeeded;
 
-function readInput() {
-    function splitElement(s) {
-        var arr = s.split(' ');
+const readInput = () => {
+    const splitElement = s => {
+        let arr = s.split(' ');
         return {
             amount: parseInt(arr[0]),
             name: arr[1]
         }
     }
     input.map(line => {
-        var tmp = {source: []};
-        var arr = line.split(' => ')
-        var leftArr = arr[0].split(', ');
+        let tmp = {source: []};
+        let arr = line.split(' => ')
+        let leftArr = arr[0].split(', ');
         leftArr.map(s => tmp.source.push(splitElement(s)));
         tmp.product = splitElement(arr[1]);
         reactions.push(tmp);
     })
 }
 
-function getReactionFor(name) {
-    var reaction = false;
+const getReactionFor = name => {
+    let reaction = false;
     reactions.some(r => {
         if (r.product.name == name) reaction = r;
     });
     return reaction;
 }
 
-function create(name, amount) {
+const create = (name, amount) => {
     // deduct whats in leftovers first
     if (leftovers[name]) {
         if (leftovers[name] >= amount) {
@@ -38,9 +38,9 @@ function create(name, amount) {
         }
     }
 
-    var reaction = getReactionFor(name);
-    var times = Math.ceil(amount/reaction.product.amount);
-    var sources = [];
+    let reaction = getReactionFor(name);
+    let times = Math.ceil(amount/reaction.product.amount);
+    let sources = [];
     reaction.source.map(source => {
         sources.push({
             name: source.name,
@@ -48,7 +48,7 @@ function create(name, amount) {
         })
     })
     // add whats going to be left over
-    var leftoverAmount = times*reaction.product.amount - amount;
+    let leftoverAmount = times*reaction.product.amount - amount;
     if (leftoverAmount > 0) {
         if (!leftovers[reaction.product.name]) leftovers[reaction.product.name] = 0;
         leftovers[reaction.product.name] += leftoverAmount;
@@ -78,7 +78,7 @@ function create(name, amount) {
     })
 }
 
-function createFuel(amount) {
+const createFuel = amount => {
     leftovers = {};
     oreNeeded = 0;
     create('FUEL', amount);
@@ -87,7 +87,7 @@ function createFuel(amount) {
 
 readInput();
 
-var headstart = 1180000; // part2 ballpark estimate
+let headstart = 1180000; // part2 ballpark estimate
 while (createFuel(headstart) < 1000000000000) headstart++;
 
 console.log('Created', headstart, 'fuel (better check exact number using createFuel(amount) due to some weird JS shenanigans); ore needed', oreNeeded, 'leftovers', leftovers);

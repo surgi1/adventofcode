@@ -1,10 +1,10 @@
 // ended up with constructing the regexp approach
-var rules = [];
+let rules = [];
 
-function parseRules() {
+const parseRules = () => {
     inputRules.map(rule => {
-        var tmp = {};
-        var arr = rule.split(': ');
+        let tmp = {};
+        let arr = rule.split(': ');
         tmp.originalValue = arr[1];
         if (arr[1].indexOf('"') > -1) tmp.originalValue = arr[1][1];
         rules[arr[0]] = tmp;
@@ -14,8 +14,8 @@ function parseRules() {
 parseRules();
 
 // attempt mk 2
-function combine(s) {
-    var match = s.match(/\d+/g);
+const combine = (s) => {
+    let match = s.match(/\d+/g);
     while (match && match.length > 0) {
         s = s.replace(match[0], '(' + rules[match[0]].originalValue + ')');
         match = s.match(/\d+/g);
@@ -23,12 +23,12 @@ function combine(s) {
     return s.replaceAll(' ', '');
 }
 
-var regexpStr = '^'+combine(rules[0].originalValue)+'$';
-var re = new RegExp(regexpStr);
+let regexpStr = '^'+combine(rules[0].originalValue)+'$';
+let re = new RegExp(regexpStr);
 
 console.log(regexpStr);
 
-var count = 0;
+let count = 0;
 input.map(word => {
     if (word.match(regexpStr)) count++;
 })

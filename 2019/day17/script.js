@@ -1,26 +1,27 @@
-var pre, res;
-var comp = new Computer();
+// check initstate.txt for path routine creation (it is manual)
+let pre, res;
+let comp = new Computer();
 
-var root = $('#root');
+let root = $('#root');
 pre = $('<pre>');
 root.append(pre);
 
 input[0] = 2;
 
-function str2ascii(s) {
-    var res = [];
-    for (var i = 0; i < s.length; i++) {
+const str2ascii = (s) => {
+    let res = [];
+    for (let i = 0; i < s.length; i++) {
         res.push(s.charCodeAt(i));
     }
     res.push(10);
     return res.join(',');
 }
 
-function tick(pars) {
+const tick = (pars) => {
     if (!pars) pars = [];
-    var res = comp.run(pars);
+    let res = comp.run(pars);
 
-    var s = '';
+    let s = '';
     res.output.map(code => s += String.fromCharCode(code));
     pre.html(s);
 

@@ -1,14 +1,14 @@
-var combinations = [];
-var amplifiers = [];
-var highestOutputFound = 0;
+let combinations = [];
+let amplifiers = [];
+let highestOutputFound = 0;
 
-function genCombinations(used, available) {
+const genCombinations = (used, available) => {
     if (available.length == 1) {
         used.push(available[0]);
         combinations.push(used);
     } else {
         available.map((n,i) => {
-            var newUsed = used.slice(), newAvailable = available.slice();
+            let newUsed = used.slice(), newAvailable = available.slice();
             newUsed.push(n);
             newAvailable.splice(i, 1);
             genCombinations(newUsed, newAvailable);
@@ -16,11 +16,11 @@ function genCombinations(used, available) {
     }
 }
 
-function runRelay(serie) {
+const runRelay = serie => {
     console.log('running serie', serie);
-    var signal = 0, result;
-    for (var i = 0; i < 5; i++) {
-        var amp = amplifiers[i];
+    let signal = 0, result;
+    for (let i = 0; i < 5; i++) {
+        let amp = amplifiers[i];
         amp.reset();
         result = amp.run([serie[i], signal]);
         signal = result.output;
@@ -31,18 +31,18 @@ function runRelay(serie) {
     }
 }
 
-function runLooped(serie) {
+const runLooped = serie => {
     console.log('running serie', serie);
-    for (var i = 0; i < 5; i++) {
+    for (let i = 0; i < 5; i++) {
         amplifiers[i].reset();
     }
-    var signal = 0;
-    var loop = 0;
-    var result;
-    var stop = false;
+    let signal = 0;
+    let loop = 0;
+    let result;
+    let stop = false;
     while (!stop) {
-        for (var i = 0; i < 5; i++) {
-            var amp = amplifiers[i];
+        for (let i = 0; i < 5; i++) {
+            let amp = amplifiers[i];
             if (loop == 0) {
                 result = amp.run([serie[i], signal]);
                 signal = result.output;
@@ -63,11 +63,11 @@ function runLooped(serie) {
     }
 }
 
-function part1() {
+const part1 = () => {
     genCombinations([], [0,1,2,3,4]);
 
-    for (var i = 0; i < 5; i++) {
-        var amp = new Computer();
+    for (let i = 0; i < 5; i++) {
+        let amp = new Computer();
         amp.load(input);
         amplifiers.push(amp);
     }
@@ -76,11 +76,11 @@ function part1() {
     console.log('finished with highestOutputFound', highestOutputFound);
 }
 
-function part2() {
+const part2 = () => {
     genCombinations([], [5,6,7,8,9]);
 
-    for (var i = 0; i < 5; i++) {
-        var amp = new Computer();
+    for (let i = 0; i < 5; i++) {
+        let amp = new Computer();
         amp.load(input);
         amplifiers.push(amp);
     }

@@ -3,7 +3,7 @@ const ids = {
     trc: 5
 }
 
-var comp = new Computer();
+let comp = new Computer();
 
 comp.load(input);
 

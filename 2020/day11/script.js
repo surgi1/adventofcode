@@ -1,22 +1,22 @@
-var map = [], states = [], mapSizeY = input.length, mapSizeX = input[0].length;
-function readInput() {
-    for (var y = 0; y < input.length; y++) {
-        var line = input[y];
+let map = [], states = [], mapSizeY = input.length, mapSizeX = input[0].length;
+const readInput = () => {
+    for (let y = 0; y < input.length; y++) {
+        let line = input[y];
         map[y] = [];
-        for (var x = 0; x < line.length; x++) {
+        for (let x = 0; x < line.length; x++) {
             map[y][x] = line[x];
         }
     }
 }
 
 // phase 1
-function getAdjacentP1(map, xx, yy) {
-    var adj = [];
-    for (var i = -1; i <= 1; i++) {
-        var y = yy+i;
+const getAdjacentP1 = (map, xx, yy) => {
+    let adj = [];
+    for (let i = -1; i <= 1; i++) {
+        let y = yy+i;
         if (y < 0 || y >= mapSizeY) continue;
-        for (var j = -1; j <= 1; j++) {
-            var x = xx+j;
+        for (let j = -1; j <= 1; j++) {
+            let x = xx+j;
             if (x < 0 || x >= mapSizeX) continue;
             if ((i == 0) && (j == 0)) continue;
             adj.push(map[y][x]);
@@ -26,17 +26,17 @@ function getAdjacentP1(map, xx, yy) {
 }
 
 // phase 2
-function getAdjacent(map, xx, yy) {
-    var adj = [];
+const getAdjacent = (map, xx, yy) => {
+    let adj = [];
 
-    for (var vy = -1; vy <= 1; vy++) {
-        for (var vx = -1; vx <= 1; vx++) {
+    for (let vy = -1; vy <= 1; vy++) {
+        for (let vx = -1; vx <= 1; vx++) {
             if ((vx == 0) && (vy == 0)) continue;
-            var proceed = true;
-            var dist = 1;
+            let proceed = true;
+            let dist = 1;
             while(proceed) {
-                var x = xx+vx*dist;
-                var y = yy+vy*dist;
+                let x = xx+vx*dist;
+                let y = yy+vy*dist;
 
                 if (y < 0 || y >= mapSizeY || x < 0 || x >= mapSizeX) {
                     proceed = false;
@@ -51,10 +51,10 @@ function getAdjacent(map, xx, yy) {
     return adj;
 }
 
-function cmpStates(s1,s2) {
-    var res = true;
-    for (var y = 0; y < mapSizeY; y++) {
-        for (var x = 0; x < mapSizeX; x++) {
+const cmpStates = (s1,s2) => {
+    let res = true;
+    for (let y = 0; y < mapSizeY; y++) {
+        for (let x = 0; x < mapSizeX; x++) {
             if (s1[y][x] != s2[y][x]) {
                 res = false;
                 break;
@@ -64,14 +64,14 @@ function cmpStates(s1,s2) {
     return res;
 }
 
-function nextState(lastState) {
-    var newState = $.extend(true, [], lastState);
+const nextState = (lastState) => {
+    let newState = $.extend(true, [], lastState);
 
-    for (var y = 0; y < mapSizeY; y++) {
-        for (var x = 0; x < mapSizeX; x++) {
-            var adj = getAdjacent(lastState, x, y);
-            var occupied = 0, alen = adj.length;
-            for (var i = 0; i < alen; i++) {
+    for (let y = 0; y < mapSizeY; y++) {
+        for (let x = 0; x < mapSizeX; x++) {
+            let adj = getAdjacent(lastState, x, y);
+            let occupied = 0, alen = adj.length;
+            for (let i = 0; i < alen; i++) {
                 if (adj[i] == '#') occupied++;
             }
 
@@ -91,10 +91,10 @@ function nextState(lastState) {
 };
 
 
-function getCount(map, what) {
-    var count = 0;
-    for (var y = 0; y < mapSizeY; y++) {
-        for (var x = 0; x < mapSizeX; x++) {
+const getCount = (map, what) => {
+    let count = 0;
+    for (let y = 0; y < mapSizeY; y++) {
+        for (let x = 0; x < mapSizeX; x++) {
             if (map[y][x] == what) count++;
         }
     }
@@ -106,10 +106,10 @@ readInput();
 
 console.time('Execution time');
 
-var oldState = map;
-var newState = nextState(oldState);
+let oldState = map;
+let newState = nextState(oldState);
 
-var ticks = 0;
+let ticks = 0;
 
 while (!cmpStates(oldState, newState)) {
     oldState = newState;

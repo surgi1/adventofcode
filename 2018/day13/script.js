@@ -4,10 +4,10 @@ String.prototype.replaceAt = function(index, replacement) {
     return this.substr(0, index) + replacement + this.substr(index + replacement.length);
 }
 
-var carts = [];
+let carts = [];
 
-function cartVelocity(chr) {
-    var v = {};
+const cartVelocity = chr => {
+    let v = {};
     switch (chr) {
         case '^': v = {x: 0, y: -1}; break;
         case 'v': v = {x: 0, y: 1}; break;
@@ -17,12 +17,12 @@ function cartVelocity(chr) {
     return v;
 }
 
-function initCarts() {
+const initCarts = () => {
     data.map((line, index) => {
-        for (var i=0;i<line.length;i++) {
-            var chr = line[i];
+        for (let i=0;i<line.length;i++) {
+            let chr = line[i];
             if (chr.match(/[\^><v]/g)) {
-                var cart = {
+                let cart = {
                     x: i,
                     y: index,
                     crossings: 0,
@@ -37,21 +37,21 @@ function initCarts() {
 
 initCarts();
 
-function convertForDisplay(layout) {
+const convertForDisplay = layout => {
     layout.map((line, index) => {
         layout[index] = line.replaceAll("I", "\\");
     })
     return layout;
 }
 
-function cartIcon(cart) {
+const cartIcon = cart => {
     if (cart.v.x == 0 && cart.v.y == -1) return '^';
     if (cart.v.x == 0 && cart.v.y == 1) return 'v';
     if (cart.v.x == 1 && cart.v.y == 0) return '>';
     if (cart.v.x == -1 && cart.v.y == 0) return '<';
 }
 
-function drawCarts(layout) {
+const drawCarts = (layout) => {
     carts.map((cart, index) => {
         if (cart.crashed !== true) {
             layout[cart.y] = layout[cart.y].replaceAt(cart.x, cartIcon(cart));
@@ -61,19 +61,19 @@ function drawCarts(layout) {
 
 //console.log(data);
 
-var rootEl = $('#root');
-var preEl = $('<pre>');
+let rootEl = $('#root');
+let preEl = $('<pre>');
 rootEl.empty().append(preEl);
 
-function drawScene() {
-    var layout = $.extend(true, [], data);
+const drawScene = () => {
+    let layout = $.extend(true, [], data);
 
     drawCarts(layout);    
 
     preEl.empty().append(convertForDisplay(layout).join("\n"));
 }
 
-function moveCart(cart) {
+const moveCart = (cart) => {
     cart.x = cart.x+cart.v.x;
     cart.y = cart.y+cart.v.y;
 
@@ -111,9 +111,9 @@ function moveCart(cart) {
 
     // crossing handling
     if (data[cart.y][cart.x] == '+') {
-        var crossingMode = cart.crossings % 3; // 0 -> left, 1 -> straight, 2 -> right
-        var oldX = cart.v.x;
-        var oldY = cart.v.y;
+        let crossingMode = cart.crossings % 3; // 0 -> left, 1 -> straight, 2 -> right
+        let oldX = cart.v.x;
+        let oldY = cart.v.y;
         if (crossingMode == 0) {
             // turn cart left 
             // x,y => y,-x
@@ -133,7 +133,7 @@ function moveCart(cart) {
     }
 }
 
-function detectCollision() {
+const detectCollision = () => {
     carts.map((c1, i1) => {
         carts.map((c2, i2) => {
             if ((c1 != c2) && (c1.crashed !== true) && (c2.crashed !== true) ) {
@@ -147,10 +147,10 @@ function detectCollision() {
     })
 }
 
-function moveCarts() {
+const moveCarts = () => {
     carts.sort((c1,c2) => {
-        var s1 = c1.y*1000+c1.x;
-        var s2 = c2.y*1000+c2.x;
+        let s1 = c1.y*1000+c1.x;
+        let s2 = c2.y*1000+c2.x;
         return s1-s2;
     }).map((cart, index) => {
         if (cart.crashed !== true) {
@@ -160,8 +160,8 @@ function moveCarts() {
     })
 }
 
-var interval = setInterval(() => {
-    var nonCrashedCarts = 0;
+let interval = setInterval(() => {
+    let nonCrashedCarts = 0;
     carts.map(c => {
         if (c.crashed !== true) nonCrashedCarts++;
     })

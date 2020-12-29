@@ -1,12 +1,12 @@
-var chain = [];
+let chain = [];
 
 while (chain.length < input.length) {
-    var last = -1;
-    var min = 5000;
+    let last = -1;
+    let min = 5000;
     if (chain.length > 0) {
         last = chain[chain.length-1];
     }
-    for (var i = 0; i < input.length; i++) {
+    for (let i = 0; i < input.length; i++) {
         if (input[i] > last) {
             if (input[i] < min) min = input[i];
         }
@@ -14,9 +14,9 @@ while (chain.length < input.length) {
     chain.push(min);
 }
 
-function countDifferences(chain) {
-    var dif = [0,0,0,0];
-    for (var i = 1; i < chain.length; i++) {
+const countDifferences = (chain) => {
+    let dif = [0,0,0,0];
+    for (let i = 1; i < chain.length; i++) {
         dif[chain[i]-chain[i-1]]++;
     }
     return dif;
@@ -31,28 +31,26 @@ console.log('resulting chain', chain, countDifferences(chain))
 // how many arbitrary pairs can be tossed out = komb(n,2) = n!/((n-2)!*(2!)
 // this builds a multiplier
 
-function fact(num){
-    var rval=1;
-    for (var i = 2; i <= num; i++)
+const fact = (num)=> {
+    let rval=1;
+    for (let i = 2; i <= num; i++)
         rval = rval * i;
     return rval;
 }
 
-function combNr(top, bottom) {
+const combNr = (top, bottom) => {
     return fact(top)/(fact(top-bottom)*fact(bottom))
 }
 
-function sublenComb(num) {
-    var res = num-2;
+const sublenComb = (num) => {
+    let res = num-2;
     if (res > 1) res = res+combNr((num-2),2);
     return res;
 }
 
-//console.log('fact (3 2)', combNr(3,2) );
-
-var mult = 1, ptr = 1;
+let mult = 1, ptr = 1;
 while(ptr < chain.length) {
-    var subLen = 1;
+    let subLen = 1;
     while((chain[ptr]-chain[ptr-1]) == 1) {subLen++;ptr++;}
     if (subLen>=3) {
         console.log('found sublen', subLen);

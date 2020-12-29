@@ -1,12 +1,12 @@
-var people = {};
+let people = {};
 
 input.map(line => {
-    var arr = line.split(' ');
+    let arr = line.split(' ');
     if (!people[arr[0]]) people[arr[0]] = {};
     people[arr[0]][arr[2]] = parseInt(arr[1]);
 })
 
-var names = Object.keys(people);
+let names = Object.keys(people);
 
 // p2: add Myself
 people['Myself'] = {};
@@ -14,31 +14,31 @@ names.map(n => {
     people[n]['Myself'] = 0;
     people['Myself'][n] = 0;
 })
-var names = Object.keys(people);
+names = Object.keys(people);
 
 console.log(people, names);
 
-var paths = [];
+let paths = [];
 
-function progressPath(path, missingPoints) {
+const progressPath = (path, missingPoints) => {
     if (missingPoints.length == 1) {
         path.push(missingPoints[0]);
         paths.push(path);
     } else {
         missingPoints.map((mp, index) => {
-            var newMPs = missingPoints.slice();
+            let newMPs = missingPoints.slice();
             newMPs.splice(index, 1);
-            var newPath = path.slice();
+            let newPath = path.slice();
             newPath.push(mp);
             progressPath(newPath, newMPs);
         })
     }
 }
 
-function scorePath(path) {
-    var score = 0;
-    for (var i=0;i<path.length;i++) {
-        var leftIndex = i-1, rightIndex = i+1;
+const scorePath = (path) => {
+    let score = 0;
+    for (let i=0;i<path.length;i++) {
+        let leftIndex = i-1, rightIndex = i+1;
         if (leftIndex < 0) leftIndex = path.length-1;
         if (rightIndex > path.length-1) rightIndex = 0;
         score += people[path[i]][path[leftIndex]];
@@ -52,10 +52,10 @@ names.map((p,i) => {
 })
 
 
-var minFound = false, maxFound = false;
+let minFound = false, maxFound = false;
 
 paths.map(path => {
-    var length = scorePath(path);
+    let length = scorePath(path);
     if ((!minFound) || (length < minFound)) minFound = length;
     if ((!maxFound) || (length > maxFound)) maxFound = length;
 })

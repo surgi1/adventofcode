@@ -1,23 +1,23 @@
-var map = [], mapSize = input.length;
-var steps = 100;
+let map = [], mapSize = input.length;
+let steps = 100;
 
-function readInput() {
-    for (var y = 0; y < input.length; y++) {
-        var line = input[y];
+const readInput = () => {
+    for (let y = 0; y < input.length; y++) {
+        let line = input[y];
         map[y] = [];
-        for (var x = 0; x < line.length; x++) {
+        for (let x = 0; x < line.length; x++) {
             map[y][x] = line[x];
         }
     }
 }
 
-function getAdjacent(map, xx, yy) {
-    var adj = [];
-    for (var i = -1; i <= 1; i++) {
-        var y = yy+i;
+const getAdjacent = (map, xx, yy) => {
+    let adj = [];
+    for (let i = -1; i <= 1; i++) {
+        let y = yy+i;
         if (y < 0 || y >= mapSize) continue;
-        for (var j = -1; j <= 1; j++) {
-            var x = xx+j;
+        for (let j = -1; j <= 1; j++) {
+            let x = xx+j;
             if (x < 0 || x >= mapSize) continue;
             if ((i == 0) && (j == 0)) continue;
             adj.push(map[y][x]);
@@ -26,7 +26,7 @@ function getAdjacent(map, xx, yy) {
     return adj;
 }
 
-function adjustState(state) {
+const adjustState = (state) => {
     state[0][0] = '#';
     state[0][mapSize-1] = '#';
     state[mapSize-1][0] = '#';
@@ -34,15 +34,15 @@ function adjustState(state) {
     return state;
 }
 
-function nextState(lastState) {
+const nextState = (lastState) => {
     adjustState(lastState);
-    var newState = $.extend(true, [], lastState);
+    let newState = $.extend(true, [], lastState);
 
-    for (var y = 0; y < mapSize; y++) {
-        for (var x = 0; x < mapSize; x++) {
-            var adj = getAdjacent(lastState, x, y);
-            var lights = 0, alen = adj.length;
-            for (var i = 0; i < alen; i++) {
+    for (let y = 0; y < mapSize; y++) {
+        for (let x = 0; x < mapSize; x++) {
+            let adj = getAdjacent(lastState, x, y);
+            let lights = 0, alen = adj.length;
+            for (let i = 0; i < alen; i++) {
                 if (adj[i] == '#') lights++;
             }
 
@@ -62,10 +62,10 @@ function nextState(lastState) {
     return newState;
 };
 
-function getCount(map, what) {
-    var count = 0;
-    for (var y = 0; y < mapSize; y++) {
-        for (var x = 0; x < mapSize; x++) {
+const getCount = (map, what) => {
+    let count = 0;
+    for (let y = 0; y < mapSize; y++) {
+        for (let x = 0; x < mapSize; x++) {
             if (map[y][x] == what) count++;
         }
     }
@@ -75,9 +75,9 @@ function getCount(map, what) {
 
 readInput();
 
-var newState = $.extend(true, [], map);
+let newState = $.extend(true, [], map);
 
-for (var i = 0; i < steps; i++) {
+for (let i = 0; i < steps; i++) {
     newState = nextState(newState);
 }
 

@@ -1,13 +1,13 @@
-var states = [];
+let states = [];
 
 String.prototype.replaceAt = function(index, replacement) {
     return this.substr(0, index) + replacement + this.substr(index + replacement.length);
 }
 
-var zeroShifted = 0;
+let zeroShifted = 0;
 
-function sanitizeState(_state) {
-    var state = _state.slice();
+const sanitizeState = (_state) => {
+    let state = _state.slice();
     if (state[0] == '#') {
         state = '...'+state;zeroShifted = zeroShifted-3;
     } else if (state[1] == '#') {
@@ -25,18 +25,18 @@ function sanitizeState(_state) {
     return state;
 }
 
-function getSample(state, n) {
-    var sample = state.substr(n-2, 5);
+const getSample = (state, n) => {
+    let sample = state.substr(n-2, 5);
     while (sample.length < 5) sample = sample + '.';
     return sample;
 }
 
-function tick(oldState) {
-    var newState = '';
-    for (var i = 0; i < oldState.length;i++) newState = newState+'.';
-    for (var i = 2; i < oldState.length-2;i++){
-        var sample = getSample(oldState, i);
-        var ruleId = false;
+const tick = (oldState) => {
+    let newState = '';
+    for (let i = 0; i < oldState.length;i++) newState = newState+'.';
+    for (let i = 2; i < oldState.length-2;i++){
+        let sample = getSample(oldState, i);
+        let ruleId = false;
         rules.some((rule, index) => {
             if (rule.from == sample)  {
                 ruleId = index;
@@ -50,9 +50,9 @@ function tick(oldState) {
     return newState;
 }
 
-function computeScore(state, zeroShifted) {
-    var score = 0;
-    for (var i = 0; i < state.length; i++) {
+const computeScore = (state, zeroShifted) => {
+    let score = 0;
+    for (let i = 0; i < state.length; i++) {
         if (state.charAt(i) == '#') {
             score = score+i+zeroShifted;
         }
@@ -60,8 +60,8 @@ function computeScore(state, zeroShifted) {
     return score;
 }
 
-var state = sanitizeState(initState);
-for (var i = 0; i < 300; i++) {
+let state = sanitizeState(initState);
+for (let i = 0; i < 300; i++) {
     state = sanitizeState(tick(state));
     console.log(state);
 }

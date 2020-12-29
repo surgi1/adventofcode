@@ -1,18 +1,18 @@
 // Contains visuals and playable game of maze.
 
-var screen = [], root, timerHandle;
-var comp = new Computer();
-var size = 42, bot = {x:size/2,y:size/2};
-var colors = ['#fff', '#444', '#eee', '#99f']
+let screen = [], root, timerHandle;
+let comp = new Computer();
+let size = 42, bot = {x:size/2,y:size/2};
+let colors = ['#fff', '#444', '#eee', '#99f']
 
-function prepareScreen() {
+const prepareScreen = () => {
     root.empty();
-    for (var y = 0; y < size; y++) {
-        var line = '';
-        for (var x = 0; x <= size; x++) {
-            var tileId = screen[y][x] || 0;
-            var char = ' ';
-            var div = $('<div>', {
+    for (let y = 0; y < size; y++) {
+        let line = '';
+        for (let x = 0; x <= size; x++) {
+            let tileId = screen[y][x] || 0;
+            let char = ' ';
+            let div = $('<div>', {
                 id: 'tile_'+y*42+x,
                 css: {
                     backgroundColor: colors[tileId],
@@ -27,14 +27,14 @@ function prepareScreen() {
     }
 }
 
-function exportScreen() {
-    var s = '';
-    var chars = ['#', '#', '.', 'O']
-    for (var y = 0; y < size; y++) {
-        var line = '';
-        for (var x = 0; x <= size; x++) {
-            var tileId = screen[y][x] || 0;
-            var char = chars[tileId];
+const exportScreen = () => {
+    let s = '';
+    let chars = ['#', '#', '.', 'O']
+    for (let y = 0; y < size; y++) {
+        let line = '';
+        for (let x = 0; x <= size; x++) {
+            let tileId = screen[y][x] || 0;
+            let char = chars[tileId];
             if (x == bot.x && y == bot.y) {
                 char = '@';
             }
@@ -45,13 +45,13 @@ function exportScreen() {
     console.log('['+s+']');
 }
 
-function renderScreen() {
+const renderScreen = () => {
     $('.tile').removeClass('bot');
-    for (var y = 0; y < size; y++) {
-        var line = '';
-        for (var x = 0; x <= size; x++) {
-            var tileId = screen[y][x] || 0;
-            var div = $('#tile_'+y*42+x);
+    for (let y = 0; y < size; y++) {
+        let line = '';
+        for (let x = 0; x <= size; x++) {
+            let tileId = screen[y][x] || 0;
+            let div = $('#tile_'+y*42+x);
             div.css('background-color', colors[tileId]);
             if (x == bot.x && y == bot.y) {
                 div.addClass('bot');
@@ -60,18 +60,18 @@ function renderScreen() {
     }
 }
 
-function getPos(tileId) {
-    for (var y=1;y<=40;y++) {
-        for (var x=0;x<=40;x++) {
+const getPos = tileId => {
+    for (let y=1;y<=40;y++) {
+        for (let x=0;x<=40;x++) {
             if (screen[y][x] == tileId) return {x:x,y:y}
         }
     }
 }
 
-function advanceWithCallback(actionId, callback) {
-    var result = comp.run([actionId]);
+const advanceWithCallback = (actionId, callback) => {
+    let result = comp.run([actionId]);
 
-    var x = bot.x, y = bot.y;
+    let x = bot.x, y = bot.y;
     if (actionId == 1) y--;
     if (actionId == 2) y++;
     if (actionId == 3) x--;
@@ -90,7 +90,7 @@ function advanceWithCallback(actionId, callback) {
     callback(result.output, x, y);
 }
 
-function thereAndBack(actionId, backActionId) {
+const thereAndBack = (actionId, backActionId) => {
     advanceWithCallback(actionId, (out, x, y) => {
         if (out != 0) {
             comp.run([backActionId]);
@@ -98,7 +98,7 @@ function thereAndBack(actionId, backActionId) {
     })
 }
 
-function gameTick(actionId) {
+const gameTick = actionId => {
     advanceWithCallback(actionId, (out, x, y) => {
         if (out != 0) {
             bot.x = x;bot.y = y;
@@ -112,24 +112,22 @@ function gameTick(actionId) {
     renderScreen();
 }
 
-function initGame() {
+const initGame = () => {
     root = $('#root');
-
     comp.load(input);
+    let result = comp.run();
 
-    var result = comp.run();
-
-    for (var y = 0; y < size; y++) screen[y] = [];
+    for (let y = 0; y < size; y++) screen[y] = [];
         screen[bot.y][bot.x] = 2;
 
-    var keyMap = {
+    let keyMap = {
         ArrowLeft: 3,
         ArrowRight: 4,
         ArrowUp: 1,
         ArrowDown: 2,
     };
 
-    var lastTick = 0;
+    let lastTick = 0;
 
     $(document).keydown(function(e) {
         if (new Date().getTime() - lastTick < 20) return;
@@ -143,12 +141,9 @@ function initGame() {
     renderScreen();
 }
 
-function autoPlay() {
-}
-
 initGame(); // play game, export via exportScreen() once completed
 
-var mapInput = [
+let mapInput = [
 '#########################################',
 '#...#...#.....#...#...#...........#.....#',
 '#.###.#.#.#.#.#.###.#.#.#########.#.#####',
@@ -191,15 +186,15 @@ var mapInput = [
 '#...............#...#.......#.....#.#...#',
 '#########################################']
 
-var mapSize = mapInput.length, distanceMap = [], map = [], startX = 9, startY = 5;
+let mapSize = mapInput.length, distanceMap = [], map = [], startX = 9, startY = 5;
 
-function part2() {
-    for (var y = 0; y < mapSize; y++) {
+const part2 = () => {
+    for (let y = 0; y < mapSize; y++) {
         distanceMap[y] = [];
         map[y] = [];
     }
     mapInput.map((line, y) => {
-        for (var x = 0; x < line.length; x++) {
+        for (let x = 0; x < line.length; x++) {
             map[y][x] = line[x];
         }
     })
@@ -207,7 +202,7 @@ function part2() {
 }
 
 
-function spread(x,y,dist) {
+const spread = (x,y,dist) => {
     if (!(distanceMap[y][x]) || (distanceMap[y][x] > dist)) {
         distanceMap[y][x] = dist;
         if (map[y][x-1] != '#') spread(x-1,y,dist+1);
@@ -217,13 +212,13 @@ function spread(x,y,dist) {
     }
 }
 
-function generateDistanceMap() {
+const generateDistanceMap = () => {
     spread(startX, startY, 0);
 
-    var distances = [];
+    let distances = [];
 
-    for (var y=0;y<mapSize;y++) {
-        for (var x=0;x<mapSize;x++) {
+    for (let y=0;y<mapSize;y++) {
+        for (let x=0;x<mapSize;x++) {
             if (distanceMap[y][x]) {
                 distances.push(distanceMap[y][x]);
             }

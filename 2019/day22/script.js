@@ -1,10 +1,10 @@
 // part 2 felt math heavier than any other AOC puzzle, likely just me being a dummy in modular algebra
 // resulting equation has to be solved with wolframalpha.com for now
 
-function readInput(input) {
-    var moves = [];
-    for (var i = 0; i < input.length; i++) {
-        var line = input[i];
+const readInput = (input) => {
+    let moves = [];
+    for (let i = 0; i < input.length; i++) {
+        let line = input[i];
         if (line == 'deal into new stack') {
             moves.push({action: 1});
         } else if (line.indexOf('deal with increment') > -1) {
@@ -16,34 +16,34 @@ function readInput(input) {
     return moves;
 }
 
-function initDeck(cards) {
-    var deck = [];
-    for (var i = 0; i < cards; i++) deck.push(i);
+const initDeck = (cards) => {
+    let deck = [];
+    for (let i = 0; i < cards; i++) deck.push(i);
     return deck;
 }
 
-function dealIntoNewStack(deck) {
-    var newDeck = [];
-    for (var i = deck.length-1; i >= 0; i--) newDeck.push(deck[i]);
+const dealIntoNewStack = (deck) => {
+    let newDeck = [];
+    for (let i = deck.length-1; i >= 0; i--) newDeck.push(deck[i]);
     return newDeck;
 }
 
-function cut(deck, n) {
-    var newDeck = [];
+const cut = (deck, n) => {
+    let newDeck = [];
     if (n > 0) {
-        var cutCards = deck.splice(0, n);
+        let cutCards = deck.splice(0, n);
         newDeck = deck.concat(cutCards);
     } else {
         n = Math.abs(n);
-        var cutCards = deck.splice(deck.length-n, n);
+        let cutCards = deck.splice(deck.length-n, n);
         newDeck = cutCards.concat(deck);
     }
     return newDeck;
 }
 
-function dealWithIncrement(deck, increment) {
-    var newDeck = [], len = deck.length;
-    var newDeckIndex = 0, oldDeckIndex = 0;
+const dealWithIncrement = (deck, increment) => {
+    let newDeck = [], len = deck.length;
+    let newDeckIndex = 0, oldDeckIndex = 0;
     while (oldDeckIndex < len) {
         newDeck[newDeckIndex % len] = deck[oldDeckIndex];
         newDeckIndex += increment;
@@ -52,7 +52,7 @@ function dealWithIncrement(deck, increment) {
     return newDeck;
 }
 
-function shuffle(deck, moves) {
+const shuffle = (deck, moves) => {
     moves.map(line => {
         if (line == 'deal into new stack') {
             deck = dealIntoNewStack(deck);
@@ -65,20 +65,20 @@ function shuffle(deck, moves) {
     return deck;
 }
 
-function part1(size, i) {
-    var moves = readInput(input);
-    var deck = initDeck(size);
+const part1 = (size, i) => {
+    let moves = readInput(input);
+    let deck = initDeck(size);
     deck = shuffle(deck, moves);
     console.log('deck 1', deck/*, 'pos of card 2019', deck.indexOf(2019)*/);
 }
 
-var deckSize;
+let deckSize;
 
-function tracePosDealIntoNewStack(pos) {
+const tracePosDealIntoNewStack = (pos) => {
     return deckSize-pos-1n;
 }
 
-function tracePosCut(pos, cut) {
+const tracePosCut = (pos, cut) => {
     if (cut > 0) {
         pos = (pos+cut) % deckSize;
     } else {
@@ -87,19 +87,19 @@ function tracePosCut(pos, cut) {
     return pos;
 }
 
-function tracePosDealWithIncrement(pos, increment) {
+const tracePosDealWithIncrement = (pos, increment) => {
     if (pos % increment == 0) return pos/increment;
 
-    for (var povlne = 1n; povlne < increment; povlne++) {
+    for (let povlne = 1n; povlne < increment; povlne++) {
         if (increment - (povlne*deckSize % increment) == pos % increment) {
             return 1n+pos/increment+(povlne*deckSize)/increment;
         }
     }
 }
 
-function shufflePart2(pos, moves) {
-    for (var i = moves.length-1; i >= 0; i--) {
-        var line = moves[i];
+const shufflePart2 = (pos, moves) => {
+    for (let i = moves.length-1; i >= 0; i--) {
+        let line = moves[i];
         if (line.action == 1) {
             pos = tracePosDealIntoNewStack(pos);
         } else if (line.action == 2) {
@@ -111,14 +111,14 @@ function shufflePart2(pos, moves) {
     return pos;
 }
 
-function part2(size, input, endingPos) {
-    var moves = readInput(input);
+const part2 = (size, input, endingPos) => {
+    let moves = readInput(input);
     //119315717514047 deck size
     //101741582076661 nr of times to shuffle
 
     deckSize = size;
 
-    var pos = endingPos;
+    let pos = endingPos;
 
     pos = shufflePart2(pos, moves);
     console.log('on pos', endingPos, 'ends up card with number', pos);
@@ -126,9 +126,9 @@ function part2(size, input, endingPos) {
     return pos;
 }
 
-var offset = part2(119315717514047n, input, 0n);
-var direction = part2(119315717514047n, input, 1n)-offset;
+let offset = part2(119315717514047n, input, 0n);
+let direction = part2(119315717514047n, input, 1n)-offset;
 
-console.log('solve with Wolfram Alpha: (', offset, '+', direction, '*X) mod', deckSize, '=2020');
+console.log('function: (', offset, '+', direction, '*X) mod', deckSize, '=2020');
 
 // part1(10007, input);

@@ -57,7 +57,7 @@ const initGUI = () => {
     })
 }
 
-const generateVariantsCommands = (baseCommands) => {
+const generateVariantsCommands = baseCommands => {
     // distill the items
     let items = [];
     baseCommands.filter(com => com.indexOf('take ') > -1).map(com => items.push(com.substr(5)))

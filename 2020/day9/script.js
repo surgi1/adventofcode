@@ -1,13 +1,13 @@
 // p1
 /*
 let chunkSize = 25, len = data.length;
-var ptr = chunkSize;
+let ptr = chunkSize;
 
-var mismatch = false;
+let mismatch = false;
 
 while (mismatch == false && ptr < len) {
     //data[ptr] must be constructed from last 25 nrs
-    var found = false, chunk = data.slice(ptr-chunkSize, ptr);
+    let found = false, chunk = data.slice(ptr-chunkSize, ptr);
     chunk.some((c1, i1) => {
         return chunk.some((c2, i2) => {
             if ((i1 != i2) && ((c1+c2) == data[ptr])) {
@@ -30,10 +30,10 @@ while (mismatch == false && ptr < len) {
 
 let weakness = 248131121, len = data.length, sequenceStart = 0;
 
-var found = false;
+let found = false;
 
 while (found == false && sequenceStart < len) {
-    var sum = 0, i = sequenceStart, sequence = [];
+    let sum = 0, i = sequenceStart, sequence = [];
     while (sum < weakness) {
         sum = sum + data[i];
         sequence.push(data[i]);

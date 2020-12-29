@@ -1,19 +1,19 @@
 // part 2
-var map = [], maps = [], maxLevels = 100, size = {}, start = {level: 0}, portals = {};
+let map = [], maps = [], maxLevels = 100, size = {}, start = {level: 0}, portals = {};
 
-function readInput(input) {
+const readInput = input => {
     size.y = input.length;
     size.x = input[0].length;
-    for (var y = 0; y < size.y; y++) {
+    for (let y = 0; y < size.y; y++) {
         if (!map[y]) map[y] = [];
-        for (var x = 0; x < size.x; x++) {
+        for (let x = 0; x < size.x; x++) {
             map[y][x] = input[y][x];
         }
     }
 }
 
-function initLevels() {
-    for (var level = 0; level < maxLevels; level++) {
+const initLevels = () => {
+    for (let level = 0; level < maxLevels; level++) {
         maps[level] = $.extend(true, [], map);
         if (level == 0) {
             // disable all outer portals sans those with junctions.length == 1
@@ -24,18 +24,18 @@ function initLevels() {
             })
         } else {
             // disable AA and ZZ portals
-            var a = portals['AA'].junctions[0], z = portals['ZZ'].junctions[0];
+            let a = portals['AA'].junctions[0], z = portals['ZZ'].junctions[0];
             maps[level][a.y][a.x] = '#';
             maps[level][z.y][z.x] = '#';
         }
     }
 }
 
-function identifyPortals() {
-    for (var y = 0; y < size.y-1; y++) {
-        for (var x = 0; x < size.x-1; x++) {
+const identifyPortals = () => {
+    for (let y = 0; y < size.y-1; y++) {
+        for (let x = 0; x < size.x-1; x++) {
             if (map[y][x].match(/[A-z]/g)) {
-                var name = map[y][x], entry = {};
+                let name = map[y][x], entry = {};
                 if (map[y][x+1].match(/[A-z]/g)) {
                     name += map[y][x+1];
                     // entrypoint is either left or right
@@ -76,15 +76,15 @@ function identifyPortals() {
     })
 }
 
-function canMoveTo(m, x, y) {
+const canMoveTo = (m, x, y) => {
     if (m[y][x] == '#') return false;
     if (m[y][x] == '.') return true;
     if (m[y][x] == '*') return true;
     return false;
 }
 
-function findDestination(x, y, level) {
-    var dest = false, portal = false;
+const findDestination = (x, y, level) => {
+    let dest = false, portal = false;
     Object.entries(portals).some(([k,v]) => {
         v.junctions.some((point, id) => {
             if ((point.x == x) && (point.y == y) && (v.junctions.length > 1)) {
@@ -107,23 +107,23 @@ function findDestination(x, y, level) {
     return dest;
 }
 
-function spread(distanceMaps, x, y, dist, level) {
-    var points = [];
+const spread = (distanceMaps, x, y, dist, level) => {
+    let points = [];
     points.push({
         x: x,
         y: y,
         dist: dist,
         level: level
     })
-    var len = 0, lastp = -1;
+    let len = 0, lastp = -1;
 
     while (len < points.length) {
         len = points.length;
 
-        for (var pId = lastp+1; pId < len; pId++) {
-            var p = points[pId];
+        for (let pId = lastp+1; pId < len; pId++) {
+            let p = points[pId];
 
-            var distanceMap = distanceMaps[p.level];
+            let distanceMap = distanceMaps[p.level];
             if (!(distanceMap[p.y][p.x]) || (distanceMap[p.y][p.x] > p.dist)) {
                 distanceMap[p.y][p.x] = p.dist;
                 if (canMoveTo(maps[p.level], p.x-1, p.y)) points.push({x: p.x-1, y: p.y, dist: p.dist+1, level: p.level});
@@ -132,9 +132,9 @@ function spread(distanceMaps, x, y, dist, level) {
                 if (canMoveTo(maps[p.level], p.x, p.y+1)) points.push({x: p.x, y: p.y+1, dist: p.dist+1, level: p.level});
                 if (maps[p.level][p.y][p.x] == '*') {
                     // warp!
-                    var dest = findDestination(p.x, p.y, p.level);
+                    let dest = findDestination(p.x, p.y, p.level);
                     if (dest !== false) {
-                        var newLevel = p.level;
+                        let newLevel = p.level;
                         if (dest.type == 'outer') newLevel++; else newLevel--; // entry was opposite of dest.type
                         if (newLevel >= 0 && newLevel < maxLevels) points.push({x: dest.x, y: dest.y, dist: p.dist+1, level: newLevel});
                     }
@@ -145,27 +145,25 @@ function spread(distanceMaps, x, y, dist, level) {
     }
 }
 
-function generateDistanceMaps(point) {
-    var distanceMaps = [];
-    for (var level = 0; level < maxLevels; level++) {
+const generateDistanceMaps = point => {
+    let distanceMaps = [];
+    for (let level = 0; level < maxLevels; level++) {
         distanceMaps[level] = [];
-        for (var y = 0; y < size.y; y++) distanceMaps[level][y] = [];
+        for (let y = 0; y < size.y; y++) distanceMaps[level][y] = [];
     }
     spread(distanceMaps, point.x, point.y, 0, point.level);
     return distanceMaps;
 }
 
-function logDistance(dms) {
-    var z = portals['ZZ'].junctions[0];
+const logDistance = dms => {
+    let z = portals['ZZ'].junctions[0];
     console.log('shortest found distance from AA to ZZ', dms[0][z.y][z.x]);
 }
 
 readInput(input);
-
 identifyPortals();
-
 initLevels();
 
-var dms = generateDistanceMaps(start);
+let dms = generateDistanceMaps(start);
 
 logDistance(dms);

@@ -1,4 +1,4 @@
-var haveOne = false,
+let haveOne = false,
     min = 2020;
 
 arr.forEach(e => min = Math.min(min,e));
@@ -15,7 +15,7 @@ arr.forEach(e1 => {
             if (haveOne) return;
             if (e1+e2+e3 == 2020) {
                 console.log('have one match', e1, e2, e3, e1+e2+e3, e1*e2*e3);
-                var haveOne = true;
+                let haveOne = true;
             }
         })
     })

@@ -5,7 +5,7 @@ let input = [
 '.###.',
 '##..#']
 
-const init = (input) => {
+const init = input => {
     let map = [];
     input.map((line, y) => {
         map[y] = [];
@@ -37,7 +37,7 @@ const part1 = map => {
         let newState = $.extend(true, [], oldState);
         for (let y = 0; y < 5; y++) {
             for (let x = 0; x < 5; x++) {
-                var bugs = getAdjacentBugs(oldState, x, y);
+                let bugs = getAdjacentBugs(oldState, x, y);
                 if (oldState[y][x] == 1) {
                     if (bugs != 1) newState[y][x] = 0;
                 } else {
@@ -62,7 +62,7 @@ const part1 = map => {
 
     while (!stop) {
         newState = progressState(newState);
-        var biodiv = stateToNum(newState);
+        let biodiv = stateToNum(newState);
         if (visitedStates.includes(biodiv)) {
             console.log('we have a second visit with biodiversity of', biodiv);
             stop = true;
@@ -82,12 +82,12 @@ const part2 = map => {
     }
 
     const addPoint = (state, level, x, y, dir) => {
-        var count = 0;
+        let count = 0;
         return count;
     }
 
     const sumColumn = (arr, col) => {
-        var count = 0;
+        let count = 0;
         for (let y = 0; y < 5; y++) count += arr[y][col];
         return count;
     }
@@ -118,7 +118,7 @@ const part2 = map => {
             for (let y = 0; y < 5; y++) {
                 for (let x = 0; x < 5; x++) {
                     if (x == 2 && y == 2) continue;
-                    var bugs = getAdjacentBugsRecursive(oldState, level, x, y);
+                    let bugs = getAdjacentBugsRecursive(oldState, level, x, y);
                     if (oldState[level][y][x] == 1) {
                         if (bugs != 1) newState[level][y][x] = 0;
                     } else {
@@ -135,7 +135,7 @@ const part2 = map => {
     }
 
     const getCount = state => {
-        var count = 0;
+        let count = 0;
         for (let level = activeLevelMin-1; level <= activeLevelMax+1; level++) {
             for (let y = 0; y < 5; y++) {
                 for (let x = 0; x < 5; x++) {
@@ -156,7 +156,7 @@ const part2 = map => {
 
     let activeLevelMin = startingLevel, activeLevelMax = startingLevel, newState = levels;
 
-    for (var i = 0; i < 200; i++) {
+    for (let i = 0; i < 200; i++) {
         newState = progressState(newState);
     }
 

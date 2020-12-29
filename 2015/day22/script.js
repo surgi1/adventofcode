@@ -1,10 +1,10 @@
 // This is one of my most loved puzzles from whole AOC. Solved with good old brute force.
 // Despite possible the AOC site not validating solutions correctly - see comments at the bottom of this file.
 
-var stack = []; // begining of turn effects stack, ex. {turn: 123, effect: () => {player.mana += 120;}}
-var verboseBattle = true;
+let stack = []; // begining of turn effects stack, ex. {turn: 123, effect: () => {player.mana += 120;}}
+let verboseBattle = true;
 
-var playerBase = {
+let playerBase = {
     mana: 500,
     hp: 50,
     armor: 0,
@@ -22,7 +22,7 @@ var playerBase = {
             })
         }},
         {name: 'Poison', cost: 173, effect: (turn) => {
-            for (var i=1; i<=6; i++) stack.push({
+            for (let i=1; i<=6; i++) stack.push({
                 turn: turn+i,
                 effect: () => {
                     if (verboseBattle) console.log('Poison effect applied.');
@@ -31,7 +31,7 @@ var playerBase = {
             })
         }},
         {name: 'Recharge', cost: 229, effect: (turn) => {
-            for (var i=1; i<=5; i++) stack.push({
+            for (let i=1; i<=5; i++) stack.push({
                 turn: turn+i,
                 effect: () => {
                     if (verboseBattle) console.log('Recharge effect applied.');
@@ -41,7 +41,7 @@ var playerBase = {
         }}
     ],
     cast: function(spellIdentifier, turn) {
-        var spell;
+        let spell;
         if (isNaN(spellIdentifier)) {
             spell = player.spells.filter(s => s.name == spellIdentifier)[0];
         } else {
@@ -63,31 +63,31 @@ var playerBase = {
     }
 }
 
-var bossBase = {
+let bossBase = {
     hp: 51,
     dmg: 9,
     armor: 0,
     attack: () => {
-        var attackPower = boss.dmg-player.armor;
+        let attackPower = boss.dmg-player.armor;
         if (attackPower < 1) attackPower = 1;
         if (verboseBattle) console.log('Boss attacks for', attackPower);
         player.hp -= attackPower;
     }
 }
 
-var player = $.extend(true, {}, playerBase);
-var boss = $.extend(true, {}, bossBase);
+let player = $.extend(true, {}, playerBase);
+let boss = $.extend(true, {}, bossBase);
 
-function beginTurn(turn) {
+const beginTurn = turn => {
     if (verboseBattle) console.log('****************************************************');
     if (verboseBattle) console.log('Turn', turn, 'has began!');
 }
 
-function handleStack(turn) {
+const handleStack = turn => {
     stack.filter(s => s.turn == turn).map(s => s.effect())
 }
 
-function checkStatus(noStats) {
+const checkStatus = noStats => {
     if (verboseBattle) {
         if (noStats !== true) console.log('Stats', 'Player', $.extend(true, {}, player));
         if (noStats !== true) console.log('Stats', 'Boss', $.extend(true, {}, boss));
@@ -103,9 +103,9 @@ function checkStatus(noStats) {
     return true;
 }
 
-var lowestManaSpentOnWin = 9001;
+let lowestManaSpentOnWin = 9001;
 
-function battle(playerStrategy, setVerboseTo, applyCurse) {
+const battle = (playerStrategy, setVerboseTo, applyCurse) => {
 
     verboseBattle = setVerboseTo;
 
@@ -119,7 +119,7 @@ function battle(playerStrategy, setVerboseTo, applyCurse) {
         console.log('****************************************************');
     }
 
-    var turn = 0;
+    let turn = 0;
     checkStatus();
     turn++;
 
@@ -162,23 +162,24 @@ function battle(playerStrategy, setVerboseTo, applyCurse) {
 
 }
 
-function playBattle(chain, applyCurse) {
+const playBattle = (chain, applyCurse) => {
     battle((turn) => {
         return chain[(turn-1)/2];
     }, true, applyCurse);
 }
 
-var variant = 0;
-var stop = false;
+let variant = 0;
+let stop = false;
+let applyCurse = true; // part 2 setting
 
 while (!stop) {
 
-    var s = variant.toString(5);
+    let s = variant.toString(5);
     while (s.length < 24+1) s = '0'+s;
 
-    battle((turn) => {
+    battle(turn => {
         return parseInt(s[24-(turn-1)/2]);
-    }, false, false)
+    }, false, applyCurse)
 
     variant++;
     if (variant % 100000 == 0) console.log('Checked', variant, 'possible realities. Lowest mana needed to win is so far', lowestManaSpentOnWin, '. Last used spellchain', s);
