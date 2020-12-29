@@ -1,11 +1,12 @@
-// so the trick for part 2 was to realize that the coordinates are independent of each other (facepalm)
-let ticks = 1000000;
+// Pretty visuals available!
+// The trick for part 2 was to realize that the coordinates are independent of each other (facepalm)
+let ticks = 500000;
 
 let bodiesBase = [
-    {pos:{x:5, y:-1, z:5}, v:{x:0, y:0, z:0}, lastVMatch: 0, lastPMatch: 0},
-    {pos:{x:0, y:-14, z:2}, v:{x:0, y:0, z:0}, lastVMatch: 0, lastPMatch: 0},
-    {pos:{x:16, y:4, z:0}, v:{x:0, y:0, z:0}, lastVMatch: 0, lastPMatch: 0},
-    {pos:{x:18, y:1, z:16}, v:{x:0, y:0, z:0}, lastVMatch: 0, lastPMatch: 0},
+    {pos:{x:5, y:-1, z:5}, v:{x:0, y:0, z:0}},
+    {pos:{x:0, y:-14, z:2}, v:{x:0, y:0, z:0}},
+    {pos:{x:16, y:4, z:0}, v:{x:0, y:0, z:0}},
+    {pos:{x:18, y:1, z:16}, v:{x:0, y:0, z:0}},
 ]
 
 let bodies = $.extend(true, [], bodiesBase);
@@ -64,60 +65,50 @@ const drawBody = (id) => {
         root.append(div);
     }
     $('#body'+id).css({
-        top: 500+bodies[id].pos.y+'px',
-        left: 1200+bodies[id].pos.x+'px'
+        top: 500+bodies[id].pos.y/2+'px',
+        left: 1200+bodies[id].pos.x/2+'px'
     })
 }
-
-let t = 0;
 
 const tick = () => {
-    if (t < ticks) {
-        applyGravity();
-        bodies.map((b, id) => moveBody(id));
-        bodies.map((b, id) => drawBody(id));
-
-        t++;
-        bodies.map((b, id) => {
-            if (cmpVect(bodiesBase[id].pos, bodies[id].pos)) {
-                console.log('time', t, 'body', id, 'POS is match after', t-bodies[id].lastPMatch, 'cycles');
-                bodies[id].lastPMatch = t;
-            }
-            if (cmpVect(bodiesBase[id].v, bodies[id].v)) {
-                console.log('time', t, 'body', id, 'VELOCITY is match after', t-bodies[id].lastVMatch, 'cycles');
-                bodies[id].lastVMatch = t;
-            }
-
-        })
-    }
-    if (t % 10000 == 0) console.log(t, 'time has passed');
-
-}
-
-//let timerHandle = setInterval(() => tick(), 20); // do this is you want some pretty visuals
-
-while (t < ticks) {
     applyGravity();
     bodies.map((b, id) => moveBody(id));
-
-    t++;
-
-    ['x', 'y', 'z'].map(coord => {
-        let match = true;
-        bodies.some((b, id) => {
-            if (b.pos[coord] != bodiesBase[id].pos[coord] || b.v[coord] != bodiesBase[id].v[coord]) {
-                match = false;
-                return true;
-            }
-        })
-        if (match) console.log('coord',coord,'matched for all bodies on', t);
-    })
-
+    bodies.map((b, id) => drawBody(id));
 }
 
-let totalEnergy = 0;
-bodies.map((b, id) => {
-    totalEnergy += bodyEnergy(id);
-})
+const part2 = () => {
+    let t = 0, matches = [];
+    while (t < ticks) {
+        applyGravity();
+        bodies.map((b, id) => moveBody(id));
 
-console.log('total system energy after', ticks, 'ticks', totalEnergy);
+        t++;
+
+        ['x', 'y', 'z'].map((coord, coordId) => {
+            let match = true;
+            bodies.some((b, id) => {
+                if (b.pos[coord] != bodiesBase[id].pos[coord] || b.v[coord] != bodiesBase[id].v[coord]) {
+                    match = false;
+                    return true;
+                }
+            })
+            if (match) {
+                console.log('coord',coord,'matched for all bodies on', t);
+                if (!matches[coordId]) matches[coordId] = t;
+            }
+        })
+        if (matches.filter(m => m != undefined).length == 3) break;
+    }
+
+    let totalEnergy = 0;
+    bodies.map((b, id) => {
+        totalEnergy += bodyEnergy(id);
+    })
+
+    console.log('total system energy after', ticks, 'ticks', totalEnergy);
+    console.log('solution for part 2 is Least Common Multiple of lowest coords x, y and z matches:', matches.join(', '));
+}
+
+part2();
+
+let timerHandle = setInterval(() => tick(), 20);
