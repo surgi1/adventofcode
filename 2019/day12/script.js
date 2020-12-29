@@ -11,6 +11,10 @@ let bodiesBase = [
 
 let bodies = $.extend(true, [], bodiesBase);
 
+const gcd = (a, b) => a ? gcd(b % a, a) : b;
+const lcm = (a, b) => a * b / gcd(a, b);
+const lcmArr = arr => arr.reduce(lcm);
+
 const applyGravityPair = (id1, id2) => {
     ['x', 'y', 'z'].map(coord => {
         let diff = bodies[id2].pos[coord]-bodies[id1].pos[coord];
@@ -106,7 +110,7 @@ const part2 = () => {
     })
 
     console.log('total system energy after', ticks, 'ticks', totalEnergy);
-    console.log('solution for part 2 is Least Common Multiple of lowest coords x, y and z matches:', matches.join(', '));
+    console.log('solution for part 2 is Least Common Multiple of lowest coords x, y and z matches:', matches.join(', '), ':', lcmArr(matches));
 }
 
 part2();
