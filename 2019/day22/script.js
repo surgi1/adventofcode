@@ -126,9 +126,34 @@ const part2 = (size, input, endingPos) => {
     return pos;
 }
 
-let offset = part2(119315717514047n, input, 0n);
-let direction = part2(119315717514047n, input, 1n)-offset;
+let offset1 = part2(119315717514047n, input, 0n);
+let slope1 = part2(119315717514047n, input, 1n)-offset1;
 
-console.log('function: (', offset, '+', direction, '*X) mod', deckSize, '=2020');
+// finally, we need to transfer offset and slope according to the nr. of shuffles
+let offset, slope;
+
+let shuffles = 101741582076661n, shufflesBin = shuffles.toString(2);
+
+let arr = [{offset: offset1, slope: slope1}];
+for (let i = 1; i < shufflesBin.length; i++) {
+    arr.push({
+        offset: (arr[i-1].offset + arr[i-1].offset*arr[i-1].slope) % deckSize,
+        slope: (arr[i-1].slope*arr[i-1].slope) % deckSize
+    })
+}
+
+let shufflesBinReversed = shufflesBin.split('').reverse();
+for (let i = 0; i < shufflesBinReversed.length; i++) {
+    if (shufflesBinReversed[i] == '1') {
+        if (offset == undefined) {
+            offset = arr[i].offset; slope = arr[i].slope;
+        } else {
+            offset = (offset+arr[i].offset*slope) % deckSize;
+            slope = (arr[i].slope*slope) % deckSize;
+        }
+    }
+}
+
+console.log('part 2 answer', (offset+slope*2020n) % deckSize);
 
 // part1(10007, input);
