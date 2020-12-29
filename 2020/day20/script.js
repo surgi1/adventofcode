@@ -1,6 +1,7 @@
-// contains manual jigsaw assembly minigame!
+// implementation-heavier, would benefit from some better structuring..
 
-let tiles = [];
+let tiles = [], map = [], size = 12;
+for (let y = 0; y < size; y++) map[y] = []; // tileIds
 
 Array.prototype.rotate = function() {
     this.unshift(this.pop()); 
@@ -165,18 +166,6 @@ const assignTiles = () => {
 
 }
 
-readInput();
-
-let map = [], size = 12;
-for (let y = 0; y < size; y++) map[y] = []; // tileIds
-
-assignTiles();
-console.log(map); // contains all the tile ids
-// now we need to flip/rotate them
-
-// manual approach
-let root = $('#root');
-
 const exportJigsaw = () => {
     let result = [];
     for (let y = 0; y < size; y++) {
@@ -196,77 +185,72 @@ const exportJigsaw = () => {
     return result;
 }
 
-const renderTile = (tileId) => {
-    let pre = $('<pre>');
+const rotateTile = tileId => {
     let data = getTileById(tileId).data;
-    for (let y = 0; y < 10; y++) {
-        let line = '';
-        for (let x = 0; x < 10; x++) {
-            let ch = ' ';
-            if (data[y][x] == '1') ch = '#';
-            line += ch;
+    let newData = [];
+    for (let i = 0; i < 10; i++) newData[i] = [];
+    for (let yy = 0; yy < 10; yy++) {
+        for (let xx = 0; xx < 10; xx++) {
+            newData[xx][9-yy] = data[yy][xx];
         }
-        pre.append(line+"\n");
     }
-    return pre;
+    for (let i = 0; i < 10; i++) getTileById(tileId).data[i] = newData[i].join('');
 }
 
-const renderActions = (x,y) => {
-    let div = $('<div class="actions">');
-    let rot = $('<a href="#">').text('ROT').on('click', e => {
-        let data = getTileById(map[y][x]).data;
-        let newData = [];
-        for (let i = 0; i < 10; i++) newData[i] = [];
-        for (let yy = 0; yy < 10; yy++) {
-            for (let xx = 0; xx < 10; xx++) {
-                newData[xx][9-yy] = data[yy][xx];
+const flipTileHorizontal = tileId => {
+    getTileById(tileId).data.reverse();
+}
+
+const flipTileVertical = tileId => {
+    getTileById(tileId).data.map((line, index) => {
+        getTileById(tileId).data[index] = reverseString(line);
+    })
+}
+
+const tilesFit = (tileId, referenceTileId, mode = 'left') => {
+    let fits = true, tile = getTileById(tileId).data, refTile = getTileById(referenceTileId).data;
+    if (mode == 'left') {
+        // compare refTile's right col with tile's left col
+        for (let i = 0; i < 10; i++) {
+            if (refTile[i][9] != tile[i][0]) {
+                fits = false;
+                break;
             }
         }
-
-        for (let i = 0; i < 10; i++) getTileById(map[y][x]).data[i] = newData[i].join('');
-        renderJigsaw();
-        return false;
-    })
-    let hor = $('<a href="#">').text('HOR').on('click', e => {
-        getTileById(map[y][x]).data.reverse();
-        renderJigsaw();
-        return false;
-    })
-    let ver = $('<a href="#">').text('VER').on('click', e => {
-        getTileById(map[y][x]).data.map((line, index) => {
-            getTileById(map[y][x]).data[index] = reverseString(line);
-        })
-        renderJigsaw();
-        return false;
-    })
-    div.append( rot, '<br>', hor, '<br>', ver )
-    return div;
+    } else if (mode == 'top') {
+        // compare refTile's bottom line with tile's top line
+        for (let i = 0; i < 10; i++) {
+            if (refTile[9][i] != tile[0][i]) {
+                fits = false;
+                break;
+            }
+        }
+    }
+    return fits;
 }
 
-const renderJigsaw = () => {
-    root.empty();
-
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            root.append(renderTile(map[y][x]));
-            root.append(renderActions(x,y));
-        }
-        root.append($('<div class="break">').html(''));
+const alignTile = (tileId, referenceTileId, mode = 'left') => {
+    for (let i = 0; i < 3; i++) {
+        if (!tilesFit(tileId, referenceTileId, mode)) rotateTile(tileId);
+    }
+    if (!tilesFit(tileId, referenceTileId, mode)) flipTileHorizontal(tileId);
+    for (let i = 0; i < 3; i++) {
+        if (!tilesFit(tileId, referenceTileId, mode)) rotateTile(tileId);
+    }
+    if (!tilesFit(tileId, referenceTileId, mode)) flipTileVertical(tileId);
+    for (let i = 0; i < 3; i++) {
+        if (!tilesFit(tileId, referenceTileId, mode)) rotateTile(tileId);
     }
 }
 
-renderJigsaw();
-
-// assembled jigsaw on screen, exported it via exportJigsaw().. and let's go on
-
-let monster = [
-'00000000000000000010',
-'10000110000110000111', // .match(/1\d{4}11\d{4}11\d{4}111/g);
-'01001001001001001000' // .match(/\d1\d\d1\d\d1\d\d1\d\d1\d\d1\d{3}/g)
-]
-
-let monsterDeduce = 0;
-monster.map(line => monsterDeduce += line.match(/1/g).length);
+const alignTiles = () => {
+    for (let i = 1; i < size; i++) alignTile(map[0][i], map[0][i-1], 'left');
+    for (let y = 1; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            alignTile(map[y][x], map[y-1][x], 'top');
+        }
+    }
+}
 
 const rotateImageData = () => {
     let data = imageData;
@@ -288,10 +272,8 @@ const flipVerticalImageData = () => {
     })
 }
 
-let monsterLines = [[], [], []];
-
 // the monster search is buggy, will debug later
-// solution was hacked by checking just middle line of monster + head
+// solution was hacked by checking just exact loc of middle line of monster + head + mere existence of bottom line
 const matchMonsterLine = (line, mId) => {
     let re;
     if (mId == 0) re = /\d{18}1\d/g;
@@ -313,7 +295,7 @@ const searchForMonster = () => {
             if (line1matches.length > 0) {
                 line1matches.map(line1Id => {
                     if (imageData[i-2][line1Id+18] == '1') {
-                        console.log('monster found on line', i, 'index', line1Id);
+                        //console.log('monster found on line', i, 'index', line1Id);
                         totalMonstersFound++;
                     }
                 })
@@ -333,10 +315,36 @@ const countImageData = (ch) => {
     return count;
 }
 
-// this was estimated by trial/error
-rotateImageData();
-flipVerticalImageData();
-imageData.reverse();
+const alignImageData = () => {
+    for (let i = 0; i < 3; i++) {
+        if (searchForMonster() == 0) rotateImageData();
+    }
+    if (searchForMonster() == 0) flipVerticalImageData();
+    for (let i = 0; i < 3; i++) {
+        if (searchForMonster() == 0) rotateImageData();
+    }
+    if (searchForMonster() == 0) imageData.reverse();
+    for (let i = 0; i < 3; i++) {
+        if (searchForMonster() == 0) rotateImageData();
+    }
+}
+
+readInput();
+assignTiles();
+alignTiles();
+
+let imageData = exportJigsaw();
+
+let monster = [
+'00000000000000000010',
+'10000110000110000111', // .match(/1\d{4}11\d{4}11\d{4}111/g);
+'01001001001001001000' // .match(/\d1\d\d1\d\d1\d\d1\d\d1\d\d1\d{3}/g)
+]
+
+let monsterDeduce = 0;
+monster.map(line => monsterDeduce += line.match(/1/g).length);
+
+alignImageData();
 
 let monsters = searchForMonster();
 
