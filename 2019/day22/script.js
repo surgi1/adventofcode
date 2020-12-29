@@ -1,5 +1,4 @@
 // part 2 felt math heavier than any other AOC puzzle, likely just me being a dummy in modular algebra
-// resulting equation has to be solved with wolframalpha.com for now
 
 const readInput = (input) => {
     let moves = [];
@@ -113,8 +112,6 @@ const shufflePart2 = (pos, moves) => {
 
 const part2 = (size, input, endingPos) => {
     let moves = readInput(input);
-    //119315717514047 deck size
-    //101741582076661 nr of times to shuffle
 
     deckSize = size;
 
