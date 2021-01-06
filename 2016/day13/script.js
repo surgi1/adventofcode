@@ -37,7 +37,7 @@ const spread = (map, distanceMap, x, y, dist) => {
 
 const generateDistanceMap = map => {
     let dm = [];
-    spread(map, dm, start.x, start.x, 0);
+    spread(map, dm, start.x, start.y, 0);
     return dm;
 }
 

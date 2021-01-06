@@ -1,7 +1,9 @@
 const input = '88,88,211,106,141,1,78,254,2,111,77,255,90,0,54,205';
+//const input = 'stpzcrnm-'; // aoc day 14
 let list = [], size = 256, currentId = 0, rightFromStart = 0, skip = 0;
 
 const initList = () => {
+    list = [];currentId = 0; rightFromStart = 0; skip = 0;
     for (let i = 0; i < size; i++) {
         let id = list.length;
         list.push({
@@ -71,7 +73,7 @@ const part1 = () => {
     console.log('part 1 answer', listStartNodeId*list[listStartNodeId].right);
 }
 
-const part2 = () => {
+const part2 = (input) => {
     let part2Input = [];
     input.split('').map(ch => part2Input.push(ch.charCodeAt(0)));
     part2Input.push(17, 31, 73, 47, 23);
@@ -87,11 +89,20 @@ const part2 = () => {
             partial = partial ^ list[nodeId].id;
             nodeId = list[nodeId].right;
         }
-        result += partial.toString(16);
+        let s = partial.toString(16);
+        if (s.length < 2) s = '0'+s;
+        result += s;
     }
-    console.log('part 2 answer', result);
+    console.log(result);
 }
 
 initList();
 //part1();
-part2();
+part2(input);
+
+
+//aoc day 14
+/*for (let i = 0; i < 128; i++) {
+    initList();
+    part2(input+i);
+}*/
