@@ -1,6 +1,8 @@
 # Advent of Code 2017
 
-Puzzles of AoC 2017 were a bit harder than 2016's set, still not reaching the later years' levels in terms of difficulty. Few of them required some out-of-the-box thinking. This is a great set, had a lot of fun solving it. The AoC 2017 calendar visualization however, once the puzzles are completed, is pure gold.
+Puzzles of AoC 2017 are a bit harder than 2016's, still not reaching the difficulty of the later years'. Few of them required some out-of-the-box thinking, making it a very enjoyable set altogether.
+
+The AoC 2017 calendar visualization, however, is pure gold.
 
 https://adventofcode.com/2017
 
