@@ -9,7 +9,7 @@ Hence comes this repo, documenting my path to gathering those 300 stars.
 - While in trouble, go back to the puzzle description. Chances are that you've missed or misread a **key** information. Many hours were wasted because of this.
 - Brute-force is often a working solution, if not a desired approach. In those times where the crucial observation that would reduce the computation complexity by orders of magnitude just did not occur to you yet, maybe it is possible to optimize your code, maybe run it in parallel, and have a solution in couple of (tens of) minutes. Not pretty nor elegant, thats for sure. Working? May be.
 - There are times where brute-force just doesn't work, as the projected run time is in days even with all the easily available optimalizations. In those times go to point 1; chances are you've missed something in the puzzle description. If not, a good nights rest should do it. Solutions sometimes lie outside the box.
-- If a part 1 of the puzzle smells of a linked list, it will 100% require a linked list approach for part 2. Granted.
+- If part 1 of the puzzle smells of a linked list, it will 100% require a linked list approach for part 2. Granted.
 - A number of puzzles are alike. Abstracting meaningful parts of your solution might be worth it. Talking Distance maps, Graph traversing algorithms or ASCII-art rendering here.
 - This one is even mentioned in one of the puzzle descriptions: Do not always aim to solve all the imaginable puzzle configurations. Look for simplifications, boundaries, try to cut the corners.
 
