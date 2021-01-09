@@ -1,4 +1,4 @@
-let people = {};
+let people = {}, paths = [], minFound = false, maxFound = false;
 
 input.map(line => {
     let arr = line.split(' ');
@@ -14,11 +14,7 @@ names.map(n => {
     people[n]['Myself'] = 0;
     people['Myself'][n] = 0;
 })
-names = Object.keys(people);
-
-console.log(people, names);
-
-let paths = [];
+names = Object.keys(people); // comment out for part 1 result
 
 const progressPath = (path, missingPoints) => {
     if (missingPoints.length == 1) {
@@ -35,7 +31,7 @@ const progressPath = (path, missingPoints) => {
     }
 }
 
-const scorePath = (path) => {
+const scorePath = path => {
     let score = 0;
     for (let i=0;i<path.length;i++) {
         let leftIndex = i-1, rightIndex = i+1;
@@ -47,12 +43,7 @@ const scorePath = (path) => {
     return score;
 }
 
-names.map((p,i) => {
-    progressPath([p], names.filter((pp,ii) => ii!=i) );
-})
-
-
-let minFound = false, maxFound = false;
+names.map((p,i) => progressPath([p], names.filter((pp,ii) => ii!=i)))
 
 paths.map(path => {
     let length = scorePath(path);

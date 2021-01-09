@@ -1,3 +1,4 @@
+// just part 2 here
 // this "solution" ignores other groups, likely work only because of easy input data
 // furthermore, p1 was just guessed as 79*103*107*109*113 = 10723906903
 let input = [1,2,3,5,7,13,17,19,23,29,31,37,41,43,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113];
@@ -23,5 +24,3 @@ for (let i4 = input.length-1;i4 >= 0; i4--) {
         }
     }
 }
-
-// 74850409

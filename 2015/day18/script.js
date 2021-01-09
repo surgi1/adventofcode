@@ -1,18 +1,14 @@
-let map = [], mapSize = input.length;
-let steps = 100;
+let map = [], mapSize = input.length, steps = 100;
 
-const readInput = () => {
-    for (let y = 0; y < input.length; y++) {
-        let line = input[y];
+const init = input => {
+    input.map((line, y) => {
         map[y] = [];
-        for (let x = 0; x < line.length; x++) {
-            map[y][x] = line[x];
-        }
-    }
+        line.split('').map((ch, x) => map[y][x] = ch);
+    })
 }
 
 const getAdjacent = (map, xx, yy) => {
-    let adj = [];
+    let count = 0;
     for (let i = -1; i <= 1; i++) {
         let y = yy+i;
         if (y < 0 || y >= mapSize) continue;
@@ -20,13 +16,13 @@ const getAdjacent = (map, xx, yy) => {
             let x = xx+j;
             if (x < 0 || x >= mapSize) continue;
             if ((i == 0) && (j == 0)) continue;
-            adj.push(map[y][x]);
+            if (map[y][x] == '#') count++;
         }
     }
-    return adj;
+    return count;
 }
 
-const adjustState = (state) => {
+const adjustState = state => {
     state[0][0] = '#';
     state[0][mapSize-1] = '#';
     state[mapSize-1][0] = '#';
@@ -34,51 +30,37 @@ const adjustState = (state) => {
     return state;
 }
 
-const nextState = (lastState) => {
-    adjustState(lastState);
+const nextState = (lastState, fixedCorners) => {
     let newState = $.extend(true, [], lastState);
-
     for (let y = 0; y < mapSize; y++) {
         for (let x = 0; x < mapSize; x++) {
-            let adj = getAdjacent(lastState, x, y);
-            let lights = 0, alen = adj.length;
-            for (let i = 0; i < alen; i++) {
-                if (adj[i] == '#') lights++;
-            }
-
-            // rule 1: #
+            let lights = getAdjacent(lastState, x, y);
             if (lastState[y][x] == '#') {
                 if (lights != 3 && lights != 2) newState[y][x] = '.';
-            } else 
-            // rule 2: .
-            if (lastState[y][x] == '.') {
+            } else if (lastState[y][x] == '.') {
                 if (lights == 3) newState[y][x] = '#';
             }
 
         }
     }
-    adjustState(newState);
-
+    if (fixedCorners) adjustState(newState);
     return newState;
 };
 
 const getCount = (map, what) => {
     let count = 0;
     for (let y = 0; y < mapSize; y++) {
-        for (let x = 0; x < mapSize; x++) {
-            if (map[y][x] == what) count++;
-        }
+        for (let x = 0; x < mapSize; x++) if (map[y][x] == what) count++;
     }
-
     return count;
 };
 
-readInput();
-
-let newState = $.extend(true, [], map);
-
-for (let i = 0; i < steps; i++) {
-    newState = nextState(newState);
+const run = (fixedCorners = false) => {
+    init(input);
+    let newState = $.extend(true, [], map);
+    for (let i = 0; i < steps; i++) newState = nextState(newState, fixedCorners);
+    console.log('lights on', getCount(newState, '#'));
 }
 
-console.log('lights on', getCount(newState, '#'));
+run();
+run(true);

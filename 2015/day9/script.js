@@ -1,7 +1,7 @@
 // this is a traveling salesman problem
 // still used brute-force, as was quicker to implement and runs in no time
 
-let points = [];
+let points = [], paths = [], minFound = false, maxFound = false
 
 const dist = (a,b) => {
     return input.filter(line => {
@@ -14,28 +14,20 @@ input.map(line => {
     if (!points.includes(line[1])) points.push(line[1]);
 })
 
-let paths = [];
-
 const progressPath = (path, missingPoints) => {
     if (missingPoints.length == 1) {
         path.push(missingPoints[0]);
         paths.push(path);
-    } else {
-        missingPoints.map((mp, index) => {
-            let newMPs = missingPoints.slice();
-            newMPs.splice(index, 1);
-            let newPath = path.slice();
-            newPath.push(mp);
-            progressPath(newPath, newMPs);
-        })
-    }
+    } else missingPoints.map((mp, index) => {
+        let newMPs = missingPoints.slice();
+        newMPs.splice(index, 1);
+        let newPath = path.slice();
+        newPath.push(mp);
+        progressPath(newPath, newMPs);
+    })
 }
 
-points.map((p,i) => {
-    progressPath([p], points.filter((pp,ii) => ii!=i) );
-})
-
-let minFound = false, maxFound = false;
+points.map((p,i) => progressPath([p], points.filter((pp,ii) => ii!=i)));
 
 paths.map(path => {
     let length = 0;

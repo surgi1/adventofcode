@@ -1,8 +1,6 @@
-let equations = [];
-let operations = ['AND', 'OR', 'RSHIFT', 'LSHIFT', 'NOT'];
-let mem = {};
+let equations = [], operations = ['AND', 'OR', 'RSHIFT', 'LSHIFT', 'NOT'], mem = {};
 
-const parseEqLiteral = (line) => {
+const parseEqLiteral = line => {
     let tmp = {
         dependsOn: [],
         solvable: false
@@ -18,11 +16,9 @@ const parseEqLiteral = (line) => {
     equations.push(tmp);
 }
 
-const equationFor = (letName) => {
-    return equations.filter(eq => eq.right == letName)[0];
-}
+const equationFor = letName => equations.filter(eq => eq.right == letName)[0];
 
-const findSolvables = (iter) => {
+const findSolvables = iter => {
     equations.filter(eq => eq.solvable === false).map(eq => {
         let solvable = true;
         eq.dependsOn.some(dep => {
@@ -35,17 +31,16 @@ const findSolvables = (iter) => {
     })
 }
 
-const value = (v) => {
+const value = v => {
     if (!isNaN(v)) return parseInt(v);
     else return mem[v];
 }
 
-const solveLeftSide = (left) => {
+const solveLeftSide = left => {
     if (left.length == 1) {
         return value(left[0]);
     } else if (left.length == 2) {
-        // just NOT here
-        return ~value(left[1]);
+        return ~value(left[1]); // just NOT here
     } else {
         switch (left[1]) {
             case 'AND': return value(left[0]) & value(left[2]); break;
@@ -56,9 +51,8 @@ const solveLeftSide = (left) => {
     }
 }
 
-const solveEquation = (eq) => {
+const solveEquation = eq => {
     if (!mem[eq.right]) mem[eq.right] = solveLeftSide(eq.left);
-    console.log('solving', eq.right, '=', mem[eq.right]);
 }
 
 input.map(line => parseEqLiteral(line));
@@ -69,15 +63,9 @@ const solve = () => {
     while (equations.filter(eq => eq.solvable === false).length > 0) {
         findSolvables(i);
         i++;
-        if (i % 10000 == 0) { console.log('handbreak'); break }
     }
-
     // solve equations
-    equations.sort((a,b) => {
-        return a.iter - b.iter;
-    }).map(eq => solveEquation(eq))
-
-    console.log('equations', equations);
+    equations.sort((a,b) => a.iter-b.iter).map(eq => solveEquation(eq));
     console.log('memory', mem);
 }
 
@@ -88,8 +76,6 @@ let part1Result = mem['a'];
 
 // reset
 mem = {'b': part1Result};
-equations.map(eq => {
-    if (eq.right != 'b') eq.solvable = false;
-})
+equations.filter(eq => eq.right != 'b').map(eq => eq.solvable = false)
 
 solve();

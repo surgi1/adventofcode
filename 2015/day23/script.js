@@ -1,20 +1,16 @@
-let regs = {a:1,b:0}, pointer = 0, program = [], ticks = 0;
+let regs = {a:0,b:0}, pointer = 0, program = [];
 
 const readInput = () => {
     input.map(line => {
         let arr = line.split(' ');
-        let pars = arr[1].split(',');
-        pars.map((p,i) => {
-            if (!isNaN(p)) pars[i] = parseInt(p);
-        })
         program.push({
             instruction: arr[0],
-            pars: pars
+            pars: arr[1].split(',').map(p => !isNaN(p) ? parseInt(p) : p)
         })
     })
 }
 
-const runInstruction = (line) => {
+const runInstruction = line => {
     switch (line.instruction) {
         case 'hlf': regs[line.pars[0]] = regs[line.pars[0]] >> 1; pointer++; break;
         case 'tpl': regs[line.pars[0]] *= 3; pointer++; break;
@@ -25,13 +21,12 @@ const runInstruction = (line) => {
     }
 }
 
-const run = () => {
-    while(program[pointer]) {
-        runInstruction(program[pointer]);
-        ticks++;
-    }
-    console.log('ticks', ticks, 'regs', regs);
+const run = (regsSet = {}) => {
+    regs = {a: 0, b: 0, ...regsSet}; pointer = 0;
+    while (program[pointer]) runInstruction(program[pointer]);
+    console.log('regs.b', regs.b);
 }
 
 readInput();
 run();
+run({a: 1});

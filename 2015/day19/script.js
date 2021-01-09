@@ -1,4 +1,4 @@
-let variants = [], start = 'e', replacements = [], steps = 0;
+let variants = [], start = 'e', replacements = [], steps = 0, s = input;
 
 const readInput = () => {
     inputReplacements.map(r => {
@@ -35,22 +35,14 @@ const repeatedlyApplyReversed = (s, r) => {
 readInput();
 
 // p1
-//generateAllVariants([input]);
-//console.log(variants, variants.length);
+generateAllVariants([input]);
+console.log('part 1', variants.length);
 
 // p2 - reduce way
 // this could be improved by reseting to longest replacements after each successful replacement
 // somehow this wasn't required for puzzle completion..
 
-replacements.sort((a,b) => {
-    return b.to.length - a.to.length;
-})
+replacements.sort((a,b) => b.to.length - a.to.length);
+while (s != 'e') replacements.map(r => s = repeatedlyApplyReversed(s, r))
 
-let s = input;
-while (s != 'e') {
-    replacements.map(r => {
-        s = repeatedlyApplyReversed(s, r);
-    })
-}
-
-console.log(s, steps);
+console.log('part 2', steps);

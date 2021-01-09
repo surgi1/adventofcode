@@ -2,7 +2,8 @@
 // Despite possible the AOC site not validating solutions correctly - see comments at the bottom of this file.
 
 let stack = []; // begining of turn effects stack, ex. {turn: 123, effect: () => {player.mana += 120;}}
-let verboseBattle = true;
+let verboseBattle = false, lowestManaSpentOnWin = 9001, variant = 0,
+    applyCurse = true; // part 2 setting
 
 let playerBase = {
     mana: 500,
@@ -40,7 +41,7 @@ let playerBase = {
             })
         }}
     ],
-    cast: function(spellIdentifier, turn) {
+    cast: (spellIdentifier, turn) => {
         let spell;
         if (isNaN(spellIdentifier)) {
             spell = player.spells.filter(s => s.name == spellIdentifier)[0];
@@ -83,9 +84,7 @@ const beginTurn = turn => {
     if (verboseBattle) console.log('Turn', turn, 'has began!');
 }
 
-const handleStack = turn => {
-    stack.filter(s => s.turn == turn).map(s => s.effect())
-}
+const handleStack = turn => stack.filter(s => s.turn == turn).map(s => s.effect())
 
 const checkStatus = noStats => {
     if (verboseBattle) {
@@ -103,10 +102,7 @@ const checkStatus = noStats => {
     return true;
 }
 
-let lowestManaSpentOnWin = 9001;
-
 const battle = (playerStrategy, setVerboseTo, applyCurse) => {
-
     verboseBattle = setVerboseTo;
 
     // reset
@@ -126,29 +122,21 @@ const battle = (playerStrategy, setVerboseTo, applyCurse) => {
     while (true) {
         // player turn
         beginTurn(turn);
-        
         if (applyCurse) {
             player.hp -= 1;
             if (verboseBattle) console.log('Curse applied.')
             if (checkStatus(true) === false) break;
         }
-
         handleStack(turn);
-        
         if (player.cast(playerStrategy(turn), turn) === false) break;
         if (checkStatus() === false) break;
-
         turn++;
         
         // boss turn
         beginTurn(turn);
-        
         handleStack(turn);
-        
         boss.attack();
-        
         if (checkStatus() === false) break;
-        
         turn++;
     }
 
@@ -162,31 +150,24 @@ const battle = (playerStrategy, setVerboseTo, applyCurse) => {
 
 }
 
-const playBattle = (chain, applyCurse) => {
-    battle((turn) => {
-        return chain[(turn-1)/2];
-    }, true, applyCurse);
+const playBattle = (chain, applyCurse) => battle(turn => chain[(turn-1)/2], true, applyCurse);
+
+const solve = () => {
+    while (true) {
+        let s = variant.toString(5);
+        while (s.length < 24+1) s = '0'+s;
+
+        battle(turn => parseInt(s[24-(turn-1)/2]), false, applyCurse);
+
+        variant++;
+        if (variant % 100000 == 0) console.log('Checked', variant, 'possible realities. Lowest mana needed to win is so far', lowestManaSpentOnWin, '. Last used spellchain', s);
+        if (variant % 10000000 == 0) break;
+    }
+
+    console.log('Finished cycle. Checked', variant, 'possible realities. Lowest mana needed to win is', lowestManaSpentOnWin);
 }
 
-let variant = 0;
-let stop = false;
-let applyCurse = true; // part 2 setting
-
-while (!stop) {
-
-    let s = variant.toString(5);
-    while (s.length < 24+1) s = '0'+s;
-
-    battle(turn => {
-        return parseInt(s[24-(turn-1)/2]);
-    }, false, applyCurse)
-
-    variant++;
-    if (variant % 100000 == 0) console.log('Checked', variant, 'possible realities. Lowest mana needed to win is so far', lowestManaSpentOnWin, '. Last used spellchain', s);
-    if (variant % 10000000 == 0) break;
-}
-
-console.log('Finished cycle. Checked', variant, 'possible realities. Lowest mana needed to win is', lowestManaSpentOnWin);
+solve(); // comment this out to replay battles using playBattle()
 
 //playBattle(["Recharge", "Poison", "Poison", "Poison", "Magic Missile", "Magic Missile"], false); // part 1 real solution with 854 mana (site wants 900)
 //playBattle(["Recharge", "Poison", "Poison", "Poison", "Drain", "Magic Missile"], true); // part 2 real solution with 874 mana (site wants 1216)
