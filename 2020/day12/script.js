@@ -1,3 +1,4 @@
+// just part 2 here
 let start = {x:0,y:0}
 let ship = {
     x:start.x,y:start.y,r:0
@@ -37,9 +38,7 @@ const advanceShip = (step) => {
     }
 }
 
-const dist = (a,b) => {
-    return Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
-}
+const dist = (a,b) => Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
 
 input.map(step => advanceShip(step));
 

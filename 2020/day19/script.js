@@ -1,3 +1,4 @@
+// just part 2
 // ended up with constructing the regexp approach
 let rules = [];
 
@@ -13,8 +14,7 @@ const parseRules = () => {
 
 parseRules();
 
-// attempt mk 2
-const combine = (s) => {
+const combine = s => {
     let match = s.match(/\d+/g);
     while (match && match.length > 0) {
         s = s.replace(match[0], '(' + rules[match[0]].originalValue + ')');
@@ -24,13 +24,5 @@ const combine = (s) => {
 }
 
 let regexpStr = '^'+combine(rules[0].originalValue)+'$';
-let re = new RegExp(regexpStr);
 
-console.log(regexpStr);
-
-let count = 0;
-input.map(word => {
-    if (word.match(regexpStr)) count++;
-})
-
-console.log(count);
+console.log(input.filter(w => w.match(regexpStr)).length);

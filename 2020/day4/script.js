@@ -1,5 +1,4 @@
-// phase 1
-/*const validateEntry = (e) => {
+const validateEntryPart1 = e => {
     let valid = true;
     if (!e.byr) valid = false;
     if (!e.iyr) valid = false;
@@ -8,12 +7,10 @@
     if (!e.ecl) valid = false;
     if (!e.hcl) valid = false;
     if (!e.pid) valid = false;
-    //if (!e.cid) valid = false;
     return valid;
-}*/
+}
 
-// phase 2
-const validateEntry = (e) => {
+const validateEntryPart2 = e => {
     let valid = true;
     if (!e.byr) valid = false;
     if (!e.iyr) valid = false;
@@ -22,7 +19,6 @@ const validateEntry = (e) => {
     if (!e.ecl) valid = false;
     if (!e.hcl) valid = false;
     if (!e.pid) valid = false;
-    //if (!e.cid) valid = false;
 
     if (e.byr) {
         if (!e.byr.match(/^\d{4}$/)) valid = false;
@@ -60,10 +56,5 @@ const validateEntry = (e) => {
     return valid;
 }
 
-let valids = 0;
-
-data.forEach(e => {
-    if (validateEntry(e)) valids++;
-})
-
-console.log('valid passowrds', valids);
+console.log('part 1', data.filter(validateEntryPart1).length);
+console.log('part 2', data.filter(validateEntryPart2).length);

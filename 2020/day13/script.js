@@ -2,9 +2,7 @@ let busId = 1002461;
 let departs = [29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0,0,0,521,0,0,0,0,0,0,0,23,0,0,0,0,13,0,0,0,17,0,0,0,0,0,0,0,0,0,0,0,0,0,601,0,0,0,0,0,37,0,0,0,0,0,0,0,0,0,0,0,0,19];
 
 // p1
-/*
-let min = busId*Math.max(...departs);
-let foundDepart = -1;
+let min = busId*Math.max(...departs), foundDepart = -1;
 
 departs.map((d, index) => {
     if (d != 0) {
@@ -15,11 +13,10 @@ departs.map((d, index) => {
         }
     }
 })
+console.log('part 1', min*foundDepart);
 
-console.log('result', min, foundDepart, min*foundDepart);
-*/
-
-let inputDeparts = [], inputMinutes = [];
+// p2
+let inputDeparts = [], inputMinutes = [], tempTimeStamp = 1, multiplicator = 1;
 
 departs.map((d, index) => {
     if (d > 0) {
@@ -28,15 +25,26 @@ departs.map((d, index) => {
     }
 })
 
-let maxDepartId = inputDeparts.indexOf(Math.max(...inputDeparts));
-console.log(maxDepartId);
+for (let i = 0; i < inputMinutes.length; i++) {
+    //console.log('solving bus nr ', i, 'timestamp', tempTimeStamp, 'multiplicator', multiplicator);
+    while (true) {
+        if ((tempTimeStamp + inputMinutes[i]) % inputDeparts[i] == 0) {
+            multiplicator *= inputDeparts[i];
+            break;
+        }
+        tempTimeStamp +=  multiplicator;
+    }
+}
 
-let len = inputMinutes.length;
+console.log('part 2', tempTimeStamp);
+
 /*
 // ugly brute-force part 2
 // completed in finite time and found correct answer, ahem..
 // keeping this in with hopes to never repeat the approach
 
+let maxDepartId = inputDeparts.indexOf(Math.max(...inputDeparts));
+let len = inputMinutes.length;
 let found = false;
 let i = 1;
 let timerHandle;
@@ -75,34 +83,4 @@ const timedTick = () => {
 }
 
 timedTick();
-*/
-
-// a much more elegant part 2 solution
-
-let tempTimeStamp = 1;
-let multiplicator = 1;
-
-for (let i = 0; i < len;i++) {
-    console.log('solving bus nr ', i, 'timestamp', tempTimeStamp, 'multiplicator', multiplicator);
-    let exit = false;
-    while (!exit) {
-        if((tempTimeStamp + inputMinutes[i]) % inputDeparts[i] === 0){
-            exit = true;
-            multiplicator *= inputDeparts[i];
-        } else {
-            tempTimeStamp +=  multiplicator; 
-        }
-    }
-
-}
-
-console.log('resulting timestamp', tempTimeStamp);
-
-console.log('inputDeparts', inputDeparts);
-console.log('inputMinutes', inputMinutes);
-
-/*
-bruteforced p2:
-breaking after 1207 ticks last checked timestamp 725.407 B
-found one! 1207737579535 725850285300475
 */

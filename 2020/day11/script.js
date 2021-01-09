@@ -1,4 +1,5 @@
 let map = [], states = [], mapSizeY = input.length, mapSizeX = input[0].length;
+
 const readInput = () => {
     for (let y = 0; y < input.length; y++) {
         let line = input[y];
@@ -9,9 +10,8 @@ const readInput = () => {
     }
 }
 
-// phase 1
-const getAdjacentP1 = (map, xx, yy) => {
-    let adj = [];
+const getAdjacentPart1 = (map, xx, yy) => {
+    let count = 0;
     for (let i = -1; i <= 1; i++) {
         let y = yy+i;
         if (y < 0 || y >= mapSizeY) continue;
@@ -19,36 +19,31 @@ const getAdjacentP1 = (map, xx, yy) => {
             let x = xx+j;
             if (x < 0 || x >= mapSizeX) continue;
             if ((i == 0) && (j == 0)) continue;
-            adj.push(map[y][x]);
+            if (map[y][x] == '#') count++;
         }
     }
-    return adj;
+    return count;
 }
 
-// phase 2
-const getAdjacent = (map, xx, yy) => {
-    let adj = [];
-
+const getAdjacentPart2 = (map, xx, yy) => {
+    let count = 0;
     for (let vy = -1; vy <= 1; vy++) {
         for (let vx = -1; vx <= 1; vx++) {
             if ((vx == 0) && (vy == 0)) continue;
-            let proceed = true;
-            let dist = 1;
-            while(proceed) {
-                let x = xx+vx*dist;
-                let y = yy+vy*dist;
-
+            let proceed = true, dist = 1;
+            while (proceed) {
+                let x = xx+vx*dist, y = yy+vy*dist;
                 if (y < 0 || y >= mapSizeY || x < 0 || x >= mapSizeX) {
                     proceed = false;
                 } else if (map[y][x] != '.') {
-                    adj.push(map[y][x]);
+                    if (map[y][x] == '#') count++;
                     proceed = false;
                 }
                 dist++;
             }
         }
     }
-    return adj;
+    return count;
 }
 
 const cmpStates = (s1,s2) => {
@@ -64,29 +59,19 @@ const cmpStates = (s1,s2) => {
     return res;
 }
 
-const nextState = (lastState) => {
+const nextState = (lastState, adjFunction, occupiedParam) => {
     let newState = $.extend(true, [], lastState);
-
     for (let y = 0; y < mapSizeY; y++) {
         for (let x = 0; x < mapSizeX; x++) {
-            let adj = getAdjacent(lastState, x, y);
-            let occupied = 0, alen = adj.length;
-            for (let i = 0; i < alen; i++) {
-                if (adj[i] == '#') occupied++;
-            }
-
-            // rule 1
+            let occupied = adjFunction(lastState, x, y);
             if (lastState[y][x] == 'L') {
                 if (occupied == 0) newState[y][x] = '#';
-            } else 
-            // rule 2
-            if (lastState[y][x] == '#') {
-                if (occupied >= 5) newState[y][x] = 'L';
+            } else if (lastState[y][x] == '#') {
+                if (occupied >= occupiedParam) newState[y][x] = 'L';
             }
 
         }
     }
-
     return newState;
 };
 
@@ -98,30 +83,20 @@ const getCount = (map, what) => {
             if (map[y][x] == what) count++;
         }
     }
-
     return count;
 };
 
-readInput();
+const run = (adjFunction, occupiedParam) => {
+    readInput();
+    let oldState = map;
+    let newState = nextState(oldState, adjFunction, occupiedParam);
 
-console.time('Execution time');
-
-let oldState = map;
-let newState = nextState(oldState);
-
-let ticks = 0;
-
-while (!cmpStates(oldState, newState)) {
-    oldState = newState;
-    newState = nextState(oldState);
-    ticks++;
-    if (ticks % 100000 == 99999) {
-        console.log('iterations', ticks, newState);
-        break;
+    while (!cmpStates(oldState, newState)) {
+        oldState = newState;
+        newState = nextState(oldState, adjFunction, occupiedParam);
     }
+    return getCount(newState, '#');
 }
 
-console.log(newState);
-
-console.log('iterations', ticks, ' | occupied seats', getCount(newState, '#'));
-console.timeEnd('Execution time');
+console.log('part 1', run(getAdjacentPart1, 4));
+console.log('part 2', run(getAdjacentPart2, 5));

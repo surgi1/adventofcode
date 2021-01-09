@@ -70,16 +70,15 @@ const parse = (data, parentNode) => {
         let cutAnds = cutString(data, ands);
         let node = addNode(parentNode, '');
         cutAnds.map(s => {
-            if (s.length > 0) parse(s, node); // empoty strings not accepted
+            if (s.length > 0) parse(s, node); // empty strings not accepted
         })
         return;
     }
 
     addNode(parentNode, parseInt(data)); // leaf
-
 }
 
-const evalNode = (node) => {
+const evalNode = node => {
     if (node.subnodes.length == 0) return parseInt(node.value); // leaf
     if (node.subnodes.length == 1) return evalNode(nodes[node.subnodes[0]]); // brackets
     let val0 = evalNode(nodes[node.subnodes[0]]);
@@ -91,7 +90,7 @@ const evalNode = (node) => {
 }
 
 // part 1 was easier to solve like this instead of modifying tree
-const compute = (s) => {
+const compute = s => {
     let i = 0;
     let tempRes = 0;
     let lastOp = '+';
@@ -110,23 +109,26 @@ const compute = (s) => {
             if (lastOp == '+') tempRes += bracketVal; else tempRes *= bracketVal;
             i = ands[1];
         }
-
         i++;
     }
     return tempRes;
 }
 
-let sum = 0;
-input.map(s => {
-    // p1
-    //let v = compute(s);
-    
-    // p2
-    nodes = [];
-    parse(s);
-    let v = evalNode(nodes[0]);
+const part1 = () => {
+    let sum = 0;
+    input.map(s => sum += compute(s));
+    console.log('part 1', sum);
+}
 
-    sum += v;
-})
+const part2 = () => {
+    let sum = 0;
+    input.map(s => {
+        nodes = [];
+        parse(s);
+        sum += evalNode(nodes[0]);
+    })
+    console.log('part 2', sum);
+}
 
-console.log('sum', sum);
+part1();
+part2();

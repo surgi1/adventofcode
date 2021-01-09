@@ -1,21 +1,15 @@
 // just the 4-d version for part 2
-let map = {};
-let steps = 6;
+let map = {}, steps = 6;
 
-const key = (x, y, z, w) => {
-    return x+'_'+y+'_'+z+'_'+w;
-}
+const key = (x, y, z, w) => x+'_'+y+'_'+z+'_'+w;
+const setPoint = (map, x, y, z, w, state) => map[key(x, y, z, w)] = state;
+const getCount = map => Object.values(map).length;
 
 const getPoint = (map, x, y, z, w) => {
     let result = false;
     let k = key(x, y, z, w);
     if (map[k]) return map[k];
     return false;
-}
-
-const setPoint = (map, x, y, z, w, state) => {
-    let k = key(x, y, z, w);
-    map[k] = state;
 }
 
 const readInput = () => {
@@ -83,15 +77,9 @@ const nextState = lastState => {
     return newState;
 };
 
-const getCount = map => {
-    return Object.values(map).length;
-};
-
 readInput();
 
 let newState = map;
-for (let i = 0; i < steps; i++) {
-    newState = nextState(newState);
-}
+for (let i = 0; i < steps; i++) newState = nextState(newState);
 
 console.log('lights on', getCount(newState));

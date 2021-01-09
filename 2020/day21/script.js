@@ -1,8 +1,6 @@
-let foods = [],
-    allergens = {},
-    ingredients = [];
+let foods = [], allergens = {}, ingredients = [], knownAllergenIngredients = [];
 
-const readInput = () => {
+const init = input => {
     input.map(line => {
         let arr = line.split(' contains ');
         foods.push({
@@ -10,18 +8,14 @@ const readInput = () => {
             allergens: arr[1].split(', ')
         })
     })
-}
 
-const initAllergens = () => {
     foods.map((food, foodId) => {
         food.allergens.map(allergen => {
             if (!allergens[allergen]) allergens[allergen] = {foods: [], resolved: false, value: ''};
             allergens[allergen].foods.push(foodId);
         })
     })
-}
 
-const initIngredients = () => {
     foods.map((food, foodId) => {
         food.ingredients.map(ing => {
             if (!ingredients.includes(ing)) ingredients.push(ing);
@@ -29,15 +23,11 @@ const initIngredients = () => {
     })
 }
 
-const getAvailableIngredients = (ings) => {
-    let result = [];
-    ings.map(ing => {
-        if (resolvedAllergens().filter(([name, o]) => o.value == ing).length == 0) result.push(ing);
-    })
-    return result;
-}
+const getAvailableIngredients = ings => ings.filter(ing => {
+    if (resolvedAllergens().filter(([name, o]) => o.value == ing).length == 0) return true;
+})
 
-const findMatchingIngredients = (foodIds) => {
+const findMatchingIngredients = foodIds => {
     let foundIngredients = [];
     foodIds.map(f1id => {
         getAvailableIngredients(foods[f1id].ingredients).map(ing1 => {
@@ -56,19 +46,10 @@ const findMatchingIngredients = (foodIds) => {
     return foundIngredients;
 }
 
-const unresolvedAllergens = () => {
-    return Object.entries(allergens).filter(([name, o]) => o.resolved !== true);
-}
+const unresolvedAllergens = () => Object.entries(allergens).filter(([name, o]) => o.resolved !== true);
+const resolvedAllergens = () => Object.entries(allergens).filter(([name, o]) => o.resolved === true);
 
-const resolvedAllergens = () => {
-    return Object.entries(allergens).filter(([name, o]) => o.resolved === true);
-}
-
-readInput();
-initAllergens();
-initIngredients();
-
-let knownAllergenIngredients = [];
+init(input);
 
 while (unresolvedAllergens().length > 0) {
     unresolvedAllergens().map(([name, o]) => {
@@ -82,12 +63,10 @@ while (unresolvedAllergens().length > 0) {
 }
 
 let part1Count = 0;
-foods.map(food => {
-    part1Count += food.ingredients.filter(ing => !knownAllergenIngredients.includes(ing)).length;
-})
+foods.map(food => part1Count += food.ingredients.filter(ing => !knownAllergenIngredients.includes(ing)).length);
 
 let part2Answer = [];
 Object.keys(allergens).sort().map(k => part2Answer.push(allergens[k].value));
 
-console.log('part 1 answer', part1Count);
-console.log('part 2 answer', part2Answer.join(','));
+console.log('part 1', part1Count);
+console.log('part 2', part2Answer.join(','));

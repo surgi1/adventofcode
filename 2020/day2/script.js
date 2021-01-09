@@ -1,39 +1,24 @@
-let a = [],
-    l = Math.round(arr.length/4);
+let a = [], l = Math.round(arr.length/4), corrects;
 
-for (let i=0; i<l; i++) {
-    let o = {
-        min: arr[i*4+0],
-        max: arr[i*4+1],
-        char: arr[i*4+2],
-        pwd: arr[i*4+3]
-    };
-    a.push(o);
-}
+for (let i = 0; i < l; i++) a.push({
+    min: arr[i*4+0],
+    max: arr[i*4+1],
+    char: arr[i*4+2],
+    pwd: arr[i*4+3]
+});
 
-console.log('a', a);
-
-const countCharInString = (char, s) => {
-    let count = 0;
-    for (let i=0; i< s.length; i++) {
-        if (s[i] == char) count++;
-    }
-    return count;
-}
+const countCharInString = (char, s) => s.split('').reduce((a, e) => a+(e == char), 0);
 
 corrects = 0;
-
-// p1
-/*a.forEach(e => {
+a.map(e => {
     let cnt = countCharInString(e.char, e.pwd);
     if (cnt >= e.min && cnt <= e.max) corrects++;
-})*/
-
-// p2
-a.forEach(e => {
-    let c1 = e.pwd.charAt(e.min-1);
-    let c2 = e.pwd.charAt(e.max-1);
-    if ( (c1 == e.char && c2 != e.char) || (c2 == e.char && c1 != e.char) ) corrects++;
 })
+console.log('part 1', corrects);
 
-console.log('correct passwords count', corrects);
+corrects = 0;
+a.map(e => {
+    let c1 = e.pwd.charAt(e.min-1), c2 = e.pwd.charAt(e.max-1);
+    if ((c1 == e.char && c2 != e.char) || (c2 == e.char && c1 != e.char)) corrects++;
+})
+console.log('part 2', corrects);

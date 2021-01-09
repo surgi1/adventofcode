@@ -1,9 +1,9 @@
 let count = 0;
 
 // part 1
-/*data.forEach(g => {
+data.map(g => {
     let gCount = 0, gMap = {};
-    g.forEach(s => {
+    g.map(s => {
         for (let i=0; i< s.length; i++) {
             let char = s[i];
             if (!gMap[char]) {
@@ -14,13 +14,15 @@ let count = 0;
             }
         }
     })
-    count = count + gCount;
-})*/
+    count += gCount;
+})
+console.log('part 1', count);
 
 // part 2
-data.forEach(g => {
+count = 0;
+data.map(g => {
     let gCount = 0, gMap = {};
-    g.forEach(s => {
+    g.map(s => {
         for (let i=0; i< s.length; i++) {
             let char = s[i];
             if (!gMap[char]) {
@@ -34,8 +36,6 @@ data.forEach(g => {
     Object.entries(gMap).map(([q, cnt]) => {
         if (cnt == gSize) gCount++;
     })
-    count = count + gCount;
+    count += gCount;
 })
-
-
-console.log('total count', count);
+console.log('part 2', count);

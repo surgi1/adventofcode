@@ -1,13 +1,16 @@
 let colors = [];
 const canCarryColor = (c, ref) => {
     let res = false;
-    data[c].forEach(o => {
-        if (o.name == ref) res = true;
+    data[c].some(o => {
+        if (o.name == ref) {
+            res = true;
+            return true;
+        }
     })
     return res;
 }
 
-const traverseUpwards = (col) => {
+const traverseUpwards = col => {
     Object.keys(data).map(k => {
         if (canCarryColor(k, col)) {
             if (!colors.includes(k)) {
@@ -18,16 +21,14 @@ const traverseUpwards = (col) => {
     })
 }
 
-//traverseUpwards('shinygold');
-//console.log('found colors that can contain shinygold', colors, colors.length);
-
-const bagsInColor = (color) => {
+const bagsInColor = color => {
     let cnt = 0;
-    data[color].forEach(o => {
+    data[color].map(o => {
         cnt = cnt+o.amount*(bagsInColor(o.name)+1);
     })
     return cnt;
 }
 
-let bags = bagsInColor('shinygold');
-console.log('bags in shinygold bag', bags);
+traverseUpwards('shinygold');
+console.log('part 1', colors.length);
+console.log('part 2', bagsInColor('shinygold'));

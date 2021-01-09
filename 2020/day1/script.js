@@ -1,22 +1,8 @@
-let haveOne = false,
-    min = 2020;
-
-arr.forEach(e => min = Math.min(min,e));
-
-console.log('minimum', min);
-
-arr.forEach(e1 => {
-    if (haveOne) return;
-    if (e1+min > 2020) return;
-    arr.forEach(e2 => {
-        if (haveOne) return;
-        if (e1+e2+min > 2020) return;
-        arr.forEach(e3 => {
-            if (haveOne) return;
-            if (e1+e2+e3 == 2020) {
-                console.log('have one match', e1, e2, e3, e1+e2+e3, e1*e2*e3);
-                let haveOne = true;
-            }
-        })
-    })
-})
+for (i1 = 0; i1 < arr.length; i1++) {
+    for (i2 = i1+1; i2 < arr.length; i2++) {
+        if (arr[i1]+arr[i2] == 2020) console.log('part 1', arr[i1]*arr[i2]);
+        for (i3 = i2+1; i3 < arr.length; i3++) {
+            if (arr[i1]+arr[i2]+arr[i3] == 2020) console.log('part 2', arr[i1]*arr[i2]*arr[i3]);
+        }
+    }
+}

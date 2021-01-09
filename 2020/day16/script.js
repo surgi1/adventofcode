@@ -1,4 +1,5 @@
-let rules = [];
+let rules = [], allRanges = [], validTickets = [], sumOfInvalidNumbers = 0,
+    identifiedIndexes = [], p2Answer = 1;
 
 const readRulesInput = () => {
     rulesInput.map(r => {
@@ -15,14 +16,10 @@ const readRulesInput = () => {
     })
 }
 
-const checkRange = (num, range) => {
-    return (num >= range.from) && (num <= range.to);
-}
-
 const hasValidRange = (num, ranges) => {
     let result = false;
-    ranges.some(r => {
-        if (checkRange(num, r)) {
+    ranges.some(range => {
+        if ((num >= range.from) && (num <= range.to)) {
             result = true;
             return true;
         }
@@ -31,14 +28,9 @@ const hasValidRange = (num, ranges) => {
 }
 
 readRulesInput();
-
-let allRanges = [];
 rules.map(r => allRanges.push(...r.ranges));
-
-let validTickets = [];
 validTickets.push(myTicket);
 
-let sumOfInvalidNumbers = 0;
 nearbyTickets.map(ticket => {
     let valid = true;
     ticket.map(num => {
@@ -49,13 +41,9 @@ nearbyTickets.map(ticket => {
     })
     if (valid) validTickets.push(ticket);
 })
-//console.log('sum of invalid numbers', sumOfInvalidNumbers); // p1
+console.log('part 1', sumOfInvalidNumbers);
 
-console.log(validTickets);
-
-let identifiedIndexes = [];
-
-while(identifiedIndexes.length < validTickets[0].length) {
+while (identifiedIndexes.length < validTickets[0].length) {
     rules.map(r => {
         r.possibleIndexes = [];
         for (let i = 0; i < validTickets[0].length; i++) {
@@ -79,11 +67,5 @@ while(identifiedIndexes.length < validTickets[0].length) {
     })
 }
 
-console.log(rules);
-
-let p2Answer = 1;
-for (let i = 0; i <= 5; i++) {
-    p2Answer *= myTicket[rules[i].index];
-}
-
-console.log('p2 answer', p2Answer);
+for (let i = 0; i <= 5; i++) p2Answer *= myTicket[rules[i].index];
+console.log('part 2', p2Answer);

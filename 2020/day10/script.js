@@ -22,7 +22,8 @@ const countDifferences = (chain) => {
     return dif;
 }
 
-console.log('resulting chain', chain, countDifferences(chain))
+let diff = countDifferences(chain);
+console.log('part 1', diff[1]*diff[3]);
 
 // p2
 // let's apply some basic combinatorics
@@ -31,32 +32,28 @@ console.log('resulting chain', chain, countDifferences(chain))
 // how many arbitrary pairs can be tossed out = komb(n,2) = n!/((n-2)!*(2!)
 // this builds a multiplier
 
-const fact = (num)=> {
+const fact = num => {
     let rval=1;
-    for (let i = 2; i <= num; i++)
-        rval = rval * i;
+    for (let i = 2; i <= num; i++) rval = rval * i;
     return rval;
 }
 
-const combNr = (top, bottom) => {
-    return fact(top)/(fact(top-bottom)*fact(bottom))
-}
+const combNr = (top, bottom) => fact(top)/(fact(top-bottom)*fact(bottom));
 
-const sublenComb = (num) => {
+const sublenComb = num => {
     let res = num-2;
     if (res > 1) res = res+combNr((num-2),2);
     return res;
 }
 
 let mult = 1, ptr = 1;
-while(ptr < chain.length) {
+while (ptr < chain.length) {
     let subLen = 1;
-    while((chain[ptr]-chain[ptr-1]) == 1) {subLen++;ptr++;}
-    if (subLen>=3) {
-        console.log('found sublen', subLen);
+    while ((chain[ptr]-chain[ptr-1]) == 1) {subLen++;ptr++;}
+    if (subLen >= 3) {
         mult = mult*(1+sublenComb(subLen));
     }
     ptr++;
 }
 
-console.log('found solutions comb', mult);
+console.log('part 2', mult);

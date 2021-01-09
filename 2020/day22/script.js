@@ -1,27 +1,18 @@
 let input = [[28,3,35,27,19,40,14,15,17,22,45,47,26,13,32,38,43,24,29,5,31,48,49,41,25], [34,12,2,50,16,1,44,11,36,6,10,42,20,8,46,9,37,4,7,18,23,39,30,33,21]];
 
-const deckToKey = (deck) => {
-    let s = '';
-    deck.map(n => s += n);
-    return s;
-}
-
-const calcDeckScore = (deck) => {
+const calcDeckScore = deck => {
     let score = 0, len = deck.length;
     deck.map((n, i) => score += n*(len-i));
     return score;
 }
 
-const calcWinnerScore = (decks) => {
-    return calcDeckScore(decks[0].length ? decks[0] : decks[1]);
-}
+const calcWinnerScore = decks => calcDeckScore(decks[0].length ? decks[0] : decks[1]);
 
 const playMatch = (deck1, deck2) => {
     let history = {};
 
     while (deck1.length != 0 && deck2.length != 0) {
-        let key = deckToKey(deck1) + '_' + deckToKey(deck2);
-
+        let key = deck1.join('') + '_' + deck2.join('');
         if (history[key]) return [deck1, []]; else history[key] = 1;
 
         let draw1 = deck1.shift(), draw2 = deck2.shift();
@@ -44,5 +35,5 @@ const playMatchPart1 = (deck1, deck2) => {
     return [deck1, deck2];
 }
 
+console.log(calcWinnerScore(playMatchPart1(input[0].slice(), input[1].slice()))); // part 1
 console.log(calcWinnerScore(playMatch(input[0].slice(), input[1].slice()))); // part 2
-//console.log(calcWinnerScore(playMatchPart1(input[0].slice(), input[1].slice()))); // part 1

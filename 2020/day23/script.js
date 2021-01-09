@@ -1,22 +1,19 @@
-let input = '942387615';
-let list = [], currentId = 0, max, min = 1, labelToId = [],
+let input = '942387615', list, currentId, max, min = 1, labelToId = [],
     movesPart1 = 100, movesPart2 = 10000000, maxPart2 = 1000000;
 
 const addNode = params => {
     let id = list.length;
     list.push({
         id: id,
-        left: params.left,
-        right: params.right,
-        label: params.label,
-        pickedUp: false
+        pickedUp: false,
+        ...params
     })
     labelToId[params.label] = id;
 }
 
-const initList = (s, genMax) => {
+const initList = (s, genMax = s.length) => {
+    list = [], currentId = 0;
     let len = s.length;
-    if (!genMax) genMax = len;
     for (let i = 0; i < genMax; i++) addNode({
         left: i > 0 ? i-1 : genMax-1,
         right: i < genMax-1 ? i+1 : 0,
@@ -25,13 +22,8 @@ const initList = (s, genMax) => {
     max = genMax;
 }
 
-const right = node => {
-    return list[node.right];
-}
-
-const left = node => {
-    return list[node.left];
-}
+const right = node => list[node.right];
+const left = node => list[node.left];
 
 const connect = (node1, node2) => {
     node1.right = node2.id;
@@ -64,12 +56,10 @@ const move = () => {
     currentId = right(list[currentId]).id;
 }
 
-const log = (num, sep) => {
-    let s = '';
-    if (!sep) sep = '';
-    let n = right(list[labelToId[1]]);
+const log = (num, sep = '') => {
+    let s = [], n = right(list[labelToId[1]]);
     for (i = 0; i < num; i++) {
-        s += (s != '' ? sep : '')+n.label;
+        s.push(n.label);
         n = right(n);
     }
     return s;
@@ -78,14 +68,14 @@ const log = (num, sep) => {
 const part1 = () => {
     initList(input);
     for (let i = 0; i < movesPart1; i++) move();
-    console.log(log(list.length-1));
+    console.log(log(list.length-1).join(''));
 }
 
 const part2 = () => {
     initList(input, maxPart2);
     for (let i = 0; i < movesPart2; i++) move();
-    console.log(log(2, '*'));
+    console.log(log(2, '*').reduce((a,b) => a*b, 1));
 }
 
-//part1();
+part1();
 part2();
