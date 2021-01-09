@@ -66,7 +66,5 @@ const progressState = oldGrid => {
 init();
 console.log('part 1', countBlackTiles());
 
-for (let i = 0; i < steps; i++) {
-    grid = progressState(grid);
-}
+for (let i = 0; i < steps; i++) grid = progressState(grid);
 console.log('part 2', countBlackTiles());

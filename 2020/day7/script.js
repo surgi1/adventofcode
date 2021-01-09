@@ -10,24 +10,16 @@ const canCarryColor = (c, ref) => {
     return res;
 }
 
-const traverseUpwards = col => {
-    Object.keys(data).map(k => {
-        if (canCarryColor(k, col)) {
-            if (!colors.includes(k)) {
-                colors.push(k);
-                traverseUpwards(k);
-            }
+const traverseUpwards = col => Object.keys(data).map(k => {
+    if (canCarryColor(k, col)) {
+        if (!colors.includes(k)) {
+            colors.push(k);
+            traverseUpwards(k);
         }
-    })
-}
+    }
+})
 
-const bagsInColor = color => {
-    let cnt = 0;
-    data[color].map(o => {
-        cnt = cnt+o.amount*(bagsInColor(o.name)+1);
-    })
-    return cnt;
-}
+const bagsInColor = color => data[color].reduce((a, o) => a+o.amount*(bagsInColor(o.name)+1), 0);
 
 traverseUpwards('shinygold');
 console.log('part 1', colors.length);
