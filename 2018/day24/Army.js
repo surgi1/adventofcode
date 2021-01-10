@@ -1,44 +1,22 @@
 class Army {
     constructor(name, groupsLiteral, id) {
-        //console.log('adding army', name);
         this.name = name;
         this.id = id;
         this.groups = [];
         groupsLiteral.map(g => this.addGroup(id, g));
     }
 
-    group(index) {
-        return this.groups[index];
-    }
+    group = index => this.groups[index]
 
-    getGroups(status) {
-        var grps = [];
-        this.groups.map(g => {
-            if (g.status == 'ALIVE') grps.push(g)
-        });
-        return grps;
-    }
+    getGroups = status => this.groups.filter(g => g.status == 'ALIVE')
 
-    addGroup(armyId, groupLiteral) {
-        var group = new Group(armyId, this.groups.length, groupLiteral);
-        this.groups.push(group);
-    }
+    addGroup = (armyId, groupLiteral) => this.groups.push(new Group(armyId, this.groups.length, groupLiteral))
 
-    reset() {
-        this.groups.map(g => g.reset());
-    }
+    reset = () => this.groups.map(g => g.reset())
 
-    units() {
-        var totalUnits = 0;
-        this.getGroups('ALIVE').map(g => totalUnits += g.units())
-        return totalUnits;
-    }
+    units = () => this.getGroups('ALIVE').reduce((a, g) => a+g.units(), 0)
 
-    log() {
-        console.log('Army', this.name, 'has', this.units(), 'units left.');
-    }
+    log = () => console.log('Army', this.name, 'has', this.units(), 'units left.')
 
-    boost(num) {
-        this.groups.map(g => g.boost(num));
-    }
+    boost = num => this.groups.map(g => g.boost(num))
 }

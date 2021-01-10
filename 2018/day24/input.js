@@ -20,11 +20,3 @@ var input = {'Immune System':[
 '3471 units each with 18326 hit points (weak to radiation) with an attack that does 8 fire damage at initiative 18',
 '110 units each with 38473 hit points (weak to bludgeoning; immune to fire) with an attack that does 640 slashing damage at initiative 2',
 '713 units each with 42679 hit points (weak to slashing) with an attack that does 102 bludgeoning damage at initiative 17']}
-/*
-var input = {'Immune System':[
-'17 units each with 5390 hit points (weak to radiation, bludgeoning) with an attack that does 4507 fire damage at initiative 2',
-'989 units each with 1274 hit points (immune to fire; weak to bludgeoning, slashing) with an attack that does 25 slashing damage at initiative 3'],
-'Infection':[
-'801 units each with 4706 hit points (weak to radiation) with an attack that does 116 bludgeoning damage at initiative 1',
-'4485 units each with 2961 hit points (immune to radiation; weak to fire, cold) with an attack that does 12 slashing damage at initiative 4']}
-*/

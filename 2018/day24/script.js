@@ -1,10 +1,7 @@
-// automatization of the final step missing as I loved to watch the battles play out
-
-let armies = [];
-let groups = [];
-let timerHandle;
+let armies = [], groups = [], boost = 0;
 
 const init = () => {
+    armies = [];
     Object.entries(input).map(([armyName, unitsLiteral]) => {
         let army = new Army(armyName, unitsLiteral, armies.length);
         armies.push(army);
@@ -12,10 +9,8 @@ const init = () => {
 }
 
 const initRound = () => {
-    groups = []
-    armies.map(army => {
-        groups.push(...army.getGroups('ALIVE'))
-    })
+    groups = [];
+    armies.map(army => groups.push(...army.getGroups('ALIVE')))
 
     groups.sort((a,b) => {
         if (a.effectivePower() == b.effectivePower()) {
@@ -28,39 +23,40 @@ const initRound = () => {
 
 const round = () => {
     initRound();
-
     // targeting
     groups.map(group => group.pickTarget(groups.filter( g => (g.armyId != group.armyId && !g.targeted) ) ));
-
     // attacking, after re-sort
-    groups.sort((a,b) => {
-        return b.initiative() - a.initiative();
-    })
+    groups.sort((a,b) => b.initiative() - a.initiative())
     groups.map(g => g.attack());
-
     // reset
     groups.map(g => g.reset());
 }
 
-init();
+const battle = () => {
+    init();
+    armies[0].boost(boost);
+    let stop = false, defeated, lastUnits = [0, 0], units = [1, 1];
 
-// phase 2, boost immune system
-armies[0].boost(36); // 35 -> inf wins, 36 -> immune wins 5252 => yay
-
-armies.map(a => a.log());
-
-let ticks = 1;
-let stop = false;
-
-const tick = () => {
-    round();
-    console.log('Round', ticks, 'ended.');
-    armies.map(a => {
-        a.log();
-        if (a.units() == 0) stop = true;
-    });
-    if (!stop) timerHandle = setTimeout(() => tick(), 10);
-    ticks++;
+    while (!stop) {
+        if (lastUnits[0] == units[0] && lastUnits[1] == units[1]) {
+            console.log('Battle with Immune System army boost', boost, 'will never be over; terminating.');
+            armies.map(a => a.log());
+            defeated = 'Deuce'; stop = true;
+        } else {
+            lastUnits = units.slice();
+        }
+        round();
+        armies.map((a, i) => {
+            units[i] = a.units();
+            if (units[i] == 0) {
+                defeated = a.name;
+                console.log('Battle with Immune System army boost', boost, 'is over,', defeated, 'lost.')
+                armies.map(a => a.log());
+                stop = true;
+            }
+        });
+    }
+    return defeated;
 }
 
-tick();
+while (['Immune System', 'Deuce'].includes(battle())) boost++;

@@ -8,25 +8,15 @@ class Group {
         this.targeting = false; // group instance otherwise
     }
 
-    initiative() {
-        return this.config.initiative;
-    }
+    initiative = () => this.config.initiative;
+    effectivePower = () => this.config.units*this.config.attack;
+    units = () => this.config.units;
+    attackType = () => this.config.attackType;
+    boost = num => this.config.attack += num;
 
-    effectivePower() {
-        return this.config.units*this.config.attack;
-    }
-
-    units() {
-        return this.config.units;
-    }
-
-    attackType() {
-        return this.config.attackType;
-    }
-
-    wouldReceiveDamage(fromGroup) {
-        var power = fromGroup.effectivePower();
-        var type = fromGroup.attackType();
+    wouldReceiveDamage = fromGroup => {
+        let power = fromGroup.effectivePower();
+        let type = fromGroup.attackType();
         if (this.config.weakTo.includes(type)) {
             return power*2;
         } else if  (this.config.immuneTo.includes(type)) {
@@ -36,16 +26,16 @@ class Group {
         }
     }
 
-    attack() {
+    attack = () => {
         if (!this.targeting) return;
-        var self = this;
+        let self = this;
         //console.log('Group', this.id, 'attacks group', self.targeting.id, 'for a damage of', self.targeting.wouldReceiveDamage(self));
         this.targeting.takeDamage( self.targeting.wouldReceiveDamage(self) );
     }
 
-    pickTarget(targetGroups) {
+    pickTarget = targetGroups => {
         if (targetGroups.length == 0) return;
-        var self = this;
+        let self = this;
         targetGroups.sort((a,b) => {
             if (a.wouldReceiveDamage(self) == b.wouldReceiveDamage(self)) {
                 if (b.effectivePower() == a.effectivePower()) {
@@ -64,8 +54,8 @@ class Group {
         //console.log('Group', this.id, 'is targeting', this.targeting?.id);
     }
 
-    takeDamage(damage) {
-        var killedUnits = Math.floor(damage/this.config.unitHP);
+    takeDamage = damage => {
+        let killedUnits = Math.floor(damage/this.config.unitHP);
         this.config.units -= killedUnits;
         if (this.config.units <= 0) {
             this.config.units = 0;
@@ -74,20 +64,17 @@ class Group {
         //console.log('Group', this.id, 'received', damage, 'damage, lost', killedUnits, 'units. Remaining units', this.config.units, 'unitHP', this.config.unitHP);
     }
 
-    parseLiteral(s) {
-        var config = {};
-        var numbers = s.match(/\d+/g);
-        config.units = parseInt(numbers[0]);
-        config.unitHP = parseInt(numbers[1]);
-        config.attack = parseInt(numbers[2]);
-        config.initiative = parseInt(numbers[3]);
+    parseLiteral = s => {
+        let config = {immuneTo: [], weakTo: []}, numbers = s.match(/\d+/g).map(n => n = parseInt(n));
+        config.units = numbers[0];
+        config.unitHP = numbers[1];
+        config.attack = numbers[2];
+        config.initiative = numbers[3];
         config.attackType = s.match(/([^ ]+)(\s)damage/g)[0].split(' ')[0];
 
-        config.immuneTo = [];
-        config.weakTo = [];
-        var addInfo = s.substring(s.indexOf('(')+1,s.indexOf(')'));
+        let addInfo = s.substring(s.indexOf('(')+1,s.indexOf(')'));
         if (addInfo != '') {
-            var arr = addInfo.split('; ');
+            let arr = addInfo.split('; ');
             arr.map(a => {
                 if (a.indexOf('weak to') > -1) {
                     config.weakTo = a.substr(('weak to ').length).split(', ');
@@ -96,17 +83,11 @@ class Group {
                 }
             })
         }
-        //console.log(config);
-
         this.config = config;
     }
 
-    reset() {
+    reset = () => {
         this.targeted = false;
         this.targeting = false;
-    }
-
-    boost(num) {
-        this.config.attack += num;
     }
 }
