@@ -1,4 +1,4 @@
-# Prologue
+# Introduction
 
 During the Advent of year 2020 I realised that I finally have enough spare time to enjoy the legendary [Advent of Code](https://adventofcode.com/). While coding through the newly released puzzles, I decided to open one of the earlier years' set. Just to check a couple of those puzzles and see if it is any different. Fast-forward few days I found myself admiring the animated ASCII art that gets displayed on the calendar main page after completing the whole set. Solving these little, well-thought tasks became a habit, rendering me overjoyed and satisfied.
 
