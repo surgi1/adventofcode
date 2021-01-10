@@ -1,3 +1,5 @@
+// just part 2
+
 const minFloor = 1, maxFloor = 4;
 let baseState = [];
 
