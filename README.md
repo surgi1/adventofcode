@@ -21,7 +21,7 @@ JavaScript solutions, executed in browser or node.
 
 Code is pretty raw most of the time, with few exceptions.
 
-Contains visualisations or playable games where possible or available.
+Contains [visualisations](https://www.youtube.com/watch?v=nmIWk9k_eaU) or playable games where possible or available.
 
 ## Teasers
 
