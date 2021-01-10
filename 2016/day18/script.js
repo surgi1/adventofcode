@@ -9,11 +9,7 @@ const getRow = lastRow => {
     return row;
 }
 
-const countRow = row => {
-    let count = 0, len = row.length;
-    for (let x = 0; x < len; x++) if (row[x] == '.') count++;
-    return count;
-}
+const countRow = row => row.split('').reduce((a, b) => a+(b == '.'), 0);
 
 const countSafeTiles = rows => {
     let lastRow = init, count = countRow(lastRow);

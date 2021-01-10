@@ -1,6 +1,4 @@
-const directiveParams = directiveLiteral => {
-    return directiveLiteral.match(/\d+/g).map(d => d = parseInt(d));;
-}
+const directiveParams = s => s.match(/\d+/g).map(d => d = parseInt(d));
 
 const part2 = () => {
     let counts = [], len = input.length;
@@ -28,9 +26,7 @@ const part2 = () => {
         for (let i = directiveStart; i <= directiveEnd; i++) counts[i]  = 0;
     }
 
-    let sum = 0;
-    for (var i = 0; i < len; i++) sum += counts[i];
-    console.log('part 2', sum);
+    console.log('part 2', counts.reduce((a, b) => a+b, 0));
 }
 
 const part1 = () => {

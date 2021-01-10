@@ -1,14 +1,6 @@
 const init = '01111001100111011', size1 = 272, size2 = 35651584;
 
-const reverseDragonString = s => {
-    let res = '';
-    for (let i = 0; i < s.length; i++) res = (s[i] == '0' ? '1' : '0')+res;
-    return res;
-}
-
-const dragonCurve = data => {
-    return data + '0' + reverseDragonString(data);
-}
+const reverseDragonString = s => s.split('').reduce((a, b) => ['1','0'][b]+a, '');
 
 const checksum = (data, length) => {
     let len = Math.min(data.length, length) >> 1;
@@ -22,7 +14,7 @@ const checksum = (data, length) => {
 
 const fill = (init, size) => {
     let data = init;
-    while (data.length < size) data = dragonCurve(data);
+    while (data.length < size) data += '0' + reverseDragonString(data);
     console.log('checksum for size', size, ':', checksum(data, size));
 }
 

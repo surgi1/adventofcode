@@ -22,4 +22,5 @@ while (ip <= ipMax) {
     }
 }
 
-console.log(allowedIPs);
+console.log(allowedIPs[0]);
+console.log(allowedIPs.length);

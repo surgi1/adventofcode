@@ -1,5 +1,4 @@
-const init = 'abcdefgh';
-const initPart2 = 'fbgdceah';
+const init = 'abcdefgh', initPart2 = 'fbgdceah';
 
 Array.prototype.rotate = function(direction = 'right', times = 1) {
     for (let i = 0; i < times; i++) {
@@ -57,17 +56,13 @@ const processReverse = (line, arr) => {
 
 const part1 = () => {
     let arr = init.split('');
-    input.map(line => {
-        arr = process(line, arr);
-    })
+    input.map(line => arr = process(line, arr));
     console.log('part 1', arr.join(''));
 }
 
 const part2 = () => {
     let arr = initPart2.split('');
-    input.reverse().map(line => {
-        arr = processReverse(line, arr);
-    })
+    input.reverse().map(line => arr = processReverse(line, arr));
     console.log('part 2', arr.join(''));
 }
 

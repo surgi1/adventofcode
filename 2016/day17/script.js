@@ -1,17 +1,5 @@
-/*
-#########
-#S| | | #
-#-#-#-#-#
-# | | | #
-#-#-#-#-#
-# | | | #
-#-#-#-#-#
-# | | |  
-####### V
-*/
-const prefix = 'udskfozm';
+const prefix = 'udskfozm', start = {x: 0, y: 0}, end = {x: 3, y: 3};
 const directions = {U: {x: 0, y: -1}, D: {x: 0, y: 1}, L: {x: -1, y: 0}, R: {x: 1, y: 0}};
-const start = {x: 0, y: 0}, end = {x: 3, y: 3};
 
 const directionPossible = (dir, p) => {
     if (dir == 'U') return p.y > 0;
@@ -29,21 +17,15 @@ const getOpenDoors = (path, p) => {
     return openDoors;
 }
 
-const move = (trip, dir, checkDir = true) => {
-    if (checkDir) {
-        if (getOpenDoors(trip.path, trip.pos).indexOf(dir) == -1) {
-            console.log('invalid move', trip, dir);
-            return false;
-        }
-    }
+const move = (trip, dir) => {
     trip.pos.x += directions[dir].x;
     trip.pos.y += directions[dir].y;
     trip.path = trip.path+dir;
     trip.steps++;
 }
 
-let trips = [{steps: 0, pos: $.extend(true, {}, start), path: ''}];
-let longestTripLength = 0, shortestTripLength = 1000;
+let trips = [{steps: 0, pos: $.extend(true, {}, start), path: ''}],
+    longestTripLength = 0, shortestTripLength = 1000;
 
 while (trips.filter(t => t.finished !== true).length > 0) {
     let len = trips.length;
@@ -65,7 +47,7 @@ while (trips.filter(t => t.finished !== true).length > 0) {
         }
         getOpenDoors(trip.path, trip.pos).map(dir => {
             let newTrip = $.extend(true, {}, trip);
-            move(newTrip, dir, false);
+            move(newTrip, dir);
             trips.push(newTrip);
         })
         trip.finished = true;

@@ -14,9 +14,7 @@ const part1 = () => {
     console.log('Viable pairs count', count);
 }
 
-const canMoveTo = (map, x, y) => {
-    return map[y] !== undefined && map[y][x] == '.';
-}
+const canMoveTo = (map, x, y) => map[y] !== undefined && map[y][x] == '.';
 
 const spread = (map, distanceMap, x, y, dist) => {
     if ((map[y] == undefined) || (map[y][x] == undefined)) return;

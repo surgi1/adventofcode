@@ -1,6 +1,4 @@
-const fav = 1362, part2Steps = 50;
-const start = {x: 1, y: 1}, end = {x: 31, y: 39};
-const size = 100;
+const fav = 1362, part2Steps = 50, start = {x: 1, y: 1}, end = {x: 31, y: 39}, size = 100;
 
 const cellValue = (x, y) => {
     let num = x*x + 3*x + 2*x*y + y + y*y + fav;
@@ -19,9 +17,7 @@ const generateMap = size => {
     return map;
 }
 
-const canMoveTo = (map, x, y) => {
-    return map[y] !== undefined && map[y][x] === 0;
-}
+const canMoveTo = (map, x, y) => map[y] !== undefined && map[y][x] === 0;
 
 const spread = (map, distanceMap, x, y, dist) => {
     if ((map[y] == undefined) || (map[y][x] == undefined)) return;
@@ -53,5 +49,5 @@ const countReachableLocations = (distanceMap, maxSteps) => {
 let map = generateMap(size);
 let dm = generateDistanceMap(map);
 
-console.log('part 1 answer', dm[end.y][end.x]);
-console.log('part 2 answer', countReachableLocations(dm, part2Steps));
+console.log('part 1', dm[end.y][end.x]);
+console.log('part 2', countReachableLocations(dm, part2Steps));

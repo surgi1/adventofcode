@@ -1,10 +1,8 @@
 const aCode = 'a'.charCodeAt(0);
-const caesarShift = (letter, shift) => {
-    return String.fromCharCode(aCode + ((letter.charCodeAt(0)-aCode + shift) % 26))
-}
+const caesarShift = (letter, shift) => String.fromCharCode(aCode + ((letter.charCodeAt(0)-aCode + shift) % 26))
 
 input.map(room => {
-    var tmp = {}; //{letter: count}
+    var tmp = {};
     room.name.split('').filter(l => l != '-').map(l => {
         if (!tmp[l]) tmp[l] = 0;
         tmp[l]++;
@@ -12,7 +10,7 @@ input.map(room => {
     room.histogram = tmp;
 })
 
-var count = 0;
+let count = 0;
 input.map(room => {
     let arr = [];
     Object.entries(room.histogram).map(([l, c]) => arr.push({l:l, c:c}))

@@ -30,19 +30,5 @@ const perform = line => {
 
 input.map(line => perform(line));
 
-let count = 0, code = '';
-
-for (let y = 0; y < size.y; y++) {
-    for (let x = 0; x < size.x; x++) {
-        let ch = ' ';
-        if (screen[y][x] == 1) {
-            count++;
-            ch = '#';
-        }
-        code += ch;
-    }
-    code += "\n";
-}
-
-console.log('lit pixels', count);
-console.log(code);
+console.log('lit pixels', screen.reduce((a, row) => a+row.reduce((a, c) => a+c, 0), 0));
+console.log(screen.reduce((a, row) => a+row.reduce((a,c) => a+(c ? '#' : ' '), '') +"\n", ''));
