@@ -1,9 +1,8 @@
-const part = 2;
-
 const size = {x: input[0].length, y: input.length};
-let map = [], start, keysTotal = 0;
+let part, map = [], start, keysTotal = 0;
 
 const init = () => {
+    keysTotal = 0;
     for (let y = 0; y < size.y; y++) {
         map[y] = [];
         for (let x = 0; x < size.x; x++) {
@@ -30,9 +29,7 @@ const addKey = (keys, key) => {
     return res;
 }
 
-const canMoveTo = (keys, x, y) => {
-    return map[y] !== undefined && map[y][x] != '#';
-}
+const canMoveTo = (keys, x, y) => map[y] !== undefined && map[y][x] != '#';
 
 const spread = (distanceMap, keys, x, y, dist) => {
     if (!(distanceMap[y][x]) || (distanceMap[y][x] > dist)) {
@@ -150,8 +147,13 @@ const getRoundTrips = () => {
     return paths.filter(p => p.roundTrip);
 }
 
-init();
+const run = setPartTo => {
+    part = setPartTo;
+    init();
+    let roundTrips = getRoundTrips();
+    let shortestPath = findShortest(roundTrips);
+    console.log('part', setPartTo, 'shortest path', shortestPath, 'steps taken', shortestPath.steps[shortestPath.steps.length-1].dist);
+}
 
-let roundTrips = getRoundTrips();
-let shortestPath = findShortest(roundTrips);
-console.log('shortest path', shortestPath, 'steps taken', shortestPath.steps[shortestPath.steps.length-1].dist);
+run(1);
+run(2);

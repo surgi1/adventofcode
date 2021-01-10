@@ -1,14 +1,11 @@
-let regs = {a: 0, b: 0, c: 0, d: 0},
-    ptr = 0, program = [], output = [];
+let regs = {a: 0, b: 0, c: 0, d: 0}, ptr = 0, program = [], output = [];
 
 const value = v => {
     if (regs[v] !== undefined) return regs[v];
     return parseInt(v);
 }
 
-const init = input => {
-    input.map(line => program.push(line.split(' ')));
-}
+const init = input => input.map(line => program.push(line.split(' ')));
 
 const run = params => {
     switch (params[0]) {
