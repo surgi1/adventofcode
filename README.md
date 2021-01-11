@@ -21,13 +21,15 @@ JavaScript solutions, executed in browser or node.
 
 Code is pretty raw most of the time, with few exceptions.
 
-Contains [some](https://www.youtube.com/watch?v=qzYAOrm-Qsw) [visualisations](https://www.youtube.com/watch?v=nmIWk9k_eaU) or playable games where possible or available.
+Contains [more](https://surgi1.github.io/adventofcode/2018/day15/index.html) [than](https://surgi1.github.io/adventofcode/2019/day15/index.html) [healthy](https://surgi1.github.io/adventofcode/2018/day13/index.html) [amount](https://surgi1.github.io/adventofcode/2019/day13/index.html) [of](https://surgi1.github.io/adventofcode/2018/day17/index.html) [visualisations](https://surgi1.github.io/adventofcode/2019/day12/index.html) (captured on [YouTube](https://www.youtube.com/watch?v=qzYAOrm-Qsw) [too](https://www.youtube.com/watch?v=nmIWk9k_eaU)) or playable games where [possible or available](https://surgi1.github.io/adventofcode/2019/day25/index.html).
+
+Whole repo is hosted on Github Pages, links to individual puzzle solutions are in their respective readmes. Run only at your own risk of course.
 
 ## Teasers
 
-### [AoC 2019](https://github.com/surgi1/adventofcode/tree/main/2019) - [Day 13](https://github.com/surgi1/adventofcode/tree/main/2019/day13): Intcode Arkanoid
+### [AoC 2019](https://github.com/surgi1/adventofcode/tree/main/2019) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2019/day15): Intcode Maze
 
-![Intcode Arkanoid](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_13.png)
+![Intcode Maze](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_15.png)
 
 ### [AoC 2018](https://github.com/surgi1/adventofcode/tree/main/2018) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2018/day15): Battle between elves and goblins in full swing
 
