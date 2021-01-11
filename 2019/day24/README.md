@@ -1,6 +1,6 @@
+# Advent of Code 2019 - Day 24
 
 Check it live at https://surgi1.github.io/adventofcode/2019/day24/index.html
-# Advent of Code 2019
 
 https://adventofcode.com/2019/day/24
 
