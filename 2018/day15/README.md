@@ -1,8 +1,10 @@
-# adventofcode 2018 - Day 15
+# Advent of Code 2018 - Day 15
 
 https://adventofcode.com/2018/day/15
 
 JavaScript implementation
+
+Check it live at https://surgi1.github.io/adventofcode/2018/day15/index.html
 
 [Video of the solution](https://www.youtube.com/watch?v=nmIWk9k_eaU)
 

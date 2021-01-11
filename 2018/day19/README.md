@@ -1,5 +1,7 @@
-# adventofcode 2018 - Day 19
+# Advent of Code 2018 - Day 19
 
 https://adventofcode.com/2018/day/19
 
 JavaScript implementation
+
+Check it live at https://surgi1.github.io/adventofcode/2018/day19/index.html

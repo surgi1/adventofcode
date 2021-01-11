@@ -1,8 +1,10 @@
-# adventofcode 2015 - Day 22
+# Advent of Code 2015 - Day 22
 
 https://adventofcode.com/2015/day/22
 
 JavaScript implementation
+
+Check it live at https://surgi1.github.io/adventofcode/2015/day22/index.html
 
 # Output of the battle
 

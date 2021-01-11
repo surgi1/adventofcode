@@ -3,3 +3,5 @@
 https://adventofcode.com/2016/day/25
 
 JavaScript implementation
+
+Check it live at https://surgi1.github.io/adventofcode/2016/day25/index.html
