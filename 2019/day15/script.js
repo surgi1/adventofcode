@@ -1,9 +1,9 @@
-// Contains visuals and playable game of maze.
+// Contains visuals and a playable game of maze (set autoplay to false)
 
-let screen = [], root, timerHandle;
-let comp = new Computer();
-let size = 42, bot = {x:size/2,y:size/2};
-let colors = ['#fff', '#444', '#eee', '#99f']
+const frameDelay = 50, reverseMoves = [0, 2, 1, 4, 3], size = 42;
+let screen = [], root, actionLog = [], unresolvedPoints = [], autoplay = true,
+    comp = new Computer(), bot = {x:size/2,y:size/2}, botStart = {x:size/2,y:size/2},
+    ox = false, oxDm = false, oxTicks = 1;
 
 const prepareScreen = () => {
     root.empty();
@@ -15,7 +15,6 @@ const prepareScreen = () => {
             let div = $('<div>', {
                 id: 'tile_'+y*42+x,
                 css: {
-                    backgroundColor: colors[tileId],
                     left: x*16+'px',
                     top: y*16+'px',
                 }
@@ -27,32 +26,14 @@ const prepareScreen = () => {
     }
 }
 
-const exportScreen = () => {
-    let s = '';
-    let chars = ['#', '#', '.', 'O']
-    for (let y = 0; y < size; y++) {
-        let line = '';
-        for (let x = 0; x <= size; x++) {
-            let tileId = screen[y][x] || 0;
-            let char = chars[tileId];
-            if (x == bot.x && y == bot.y) {
-                char = '@';
-            }
-            line += char;
-        }
-        s += '"'+line + "\",\n";
-    }
-    console.log('['+s+']');
-}
+const getTileDivId = (x, y) => '#tile_'+y*42+x;
 
 const renderScreen = () => {
-    $('.tile').removeClass('bot');
     for (let y = 0; y < size; y++) {
-        let line = '';
         for (let x = 0; x <= size; x++) {
             let tileId = screen[y][x] || 0;
-            let div = $('#tile_'+y*42+x);
-            div.css('background-color', colors[tileId]);
+            let div = $(getTileDivId(x, y));
+            div.addClass('type_'+tileId);
             if (x == bot.x && y == bot.y) {
                 div.addClass('bot');
             }
@@ -68,48 +49,157 @@ const getPos = tileId => {
     }
 }
 
-const advanceWithCallback = (actionId, callback) => {
-    let result = comp.run([actionId]);
-
-    let x = bot.x, y = bot.y;
+const advanceByActionId = (p, actionId) => {
+    let x = p.x, y = p.y;
     if (actionId == 1) y--;
     if (actionId == 2) y++;
     if (actionId == 3) x--;
     if (actionId == 4) x++;
+    return {x: x, y: y};
+}
+
+const solvePart1 = () => {
+    let dm = generateDistanceMap(ox);
+    console.log('Steps from start to oxygen station', dm[botStart.y][botStart.x]);
+}
+
+const advanceWithCallback = (actionId, callback, markEmpty = true) => {
+    let result = comp.run([actionId]);
+    let p = advanceByActionId(bot, actionId);
 
     if (result.output[0] == 0) {
-        screen[y][x] = 1; // wall
+        screen[p.y][p.x] = 1; // wall
     }
     if (result.output[0] == 1) {
-        screen[y][x] = 2; // empty space
+        if (markEmpty) screen[p.y][p.x] = 2; // empty space
     }
     if (result.output[0] == 2) {
-        screen[y][x] = 3; // oxygen station
-        console.log('Found Oxygen Station!');
+        if (!ox) {
+            screen[p.y][p.x] = 3; // oxygen station
+            ox = p;
+            solvePart1();
+        }
     }
-    callback(result.output, x, y);
+    callback(result.output[0], p.x, p.y);
 }
 
 const thereAndBack = (actionId, backActionId) => {
+    let res;
     advanceWithCallback(actionId, (out, x, y) => {
-        if (out != 0) {
-            comp.run([backActionId]);
+        if (out != 0) comp.run([backActionId]);
+        res = out;
+    }, false)
+    return res;
+}
+
+const delayedGameTick = actionId => setTimeout(() => gameTick(actionId), frameDelay);
+const getScreenPoint = p => screen[p.y][p.x] || 0;
+
+const reduceUnresolvedPoints = (x, y) => {
+    let found = false;
+    unresolvedPoints.some((p, i) => {
+        if (unresolvedPoints[i].x == x && unresolvedPoints[i].y == y) {
+            found = i;
+            return true;
         }
     })
+    if (found) unresolvedPoints.splice(found, 1);
+}
+
+const canMoveTo = p => getScreenPoint(p) != 1;
+
+const spread = (distanceMap, x, y, dist) => {
+    if (!distanceMap[y]) distanceMap[y] = [];
+    if (!(distanceMap[y][x]) || (distanceMap[y][x] > dist)) {
+        distanceMap[y][x] = dist;
+        if (getScreenPoint({x:x, y:y}) == 0 && dist > 0) return;
+        if (canMoveTo({x: x-1, y: y})) spread(distanceMap, x-1,y,dist+1);
+        if (canMoveTo({x: x+1, y: y})) spread(distanceMap, x+1,y,dist+1);
+        if (canMoveTo({x: x, y: y-1})) spread(distanceMap, x,y-1,dist+1);
+        if (canMoveTo({x: x, y: y+1})) spread(distanceMap, x,y+1,dist+1);
+    }
+}
+
+const generateDistanceMap = start => {
+    let dm = [];
+    spread(dm, start.x, start.y, 0);
+    return dm;
+}
+
+const scan = () => {
+    let movePossible = [];
+    for (let move = 1; move < reverseMoves.length; move++) movePossible[move] = thereAndBack(move, reverseMoves[move]);
+    return movePossible;
 }
 
 const gameTick = actionId => {
+    scan();
+
+    $(getTileDivId(bot.x, bot.y)).removeClass('bot');
     advanceWithCallback(actionId, (out, x, y) => {
         if (out != 0) {
-            bot.x = x;bot.y = y;
+            bot.x = x; bot.y = y;
+            actionLog.push(actionId);
+            reduceUnresolvedPoints(x, y);
         }
     })
 
-    // scan around a bit
-    thereAndBack(1, 2); thereAndBack(2, 1);
-    thereAndBack(3, 4); thereAndBack(4, 3);
+    let movePossible = scan(), nextMoves = [], advance = false;
+    for (let move = 1; move < reverseMoves.length; move++) if (movePossible[move] && reverseMoves[move] != actionLog[actionLog.length-1]) nextMoves.push(move);
+
+    if (autoplay) {
+        if (nextMoves.length == 0) {
+            delayedGameTick(reverseMoves[actionLog[actionLog.length-1]]);
+            advance = true;
+        } else if (nextMoves.length == 1) {
+            delayedGameTick(nextMoves[0]);
+            advance = true;
+        } else if (nextMoves.length == 2) {
+            let blanks = nextMoves.filter(move => getScreenPoint(advanceByActionId(bot, move)) == 0);
+            if (blanks.length >= 1) {
+                delayedGameTick(blanks[0]);
+                advance = true;
+                if (blanks.length > 1) unresolvedPoints.push(advanceByActionId(bot, blanks[1]));
+            } else {
+                if (unresolvedPoints.length > 0) {
+                    // generate distanceMap from last unresolved point, pick direction to it
+                    let dm = generateDistanceMap(unresolvedPoints[unresolvedPoints.length-1]);
+                    nextMoves.some(move => {
+                        let p = advanceByActionId(bot, move);
+                        if (dm[p.y][p.x] < dm[bot.y][bot.x]) {
+                            delayedGameTick(move);
+                            advance = true;
+                            return true;
+                        }
+                    })
+                }
+            }
+        }
+
+        if (!advance && !oxDm) {
+            oxDm = generateDistanceMap(ox), distances = [];
+            for (let y=0;y<size;y++) {
+                for (let x=0;x<size;x++) if (oxDm[y] && oxDm[y][x]) distances.push(oxDm[y][x]);
+            }
+            oxMaxDistance = Math.max(...distances);
+            console.log('Minutes needed for oxygen to fully spread', Math.max(...distances));
+            oxTick();
+        }
+    }
 
     renderScreen();
+}
+
+const oxTick = () => {
+    for (let y=0;y<size;y++) {
+        for (let x=0;x<size;x++) {
+            if (x == ox.x && y == ox.y) continue;
+            if (oxDm[y] && oxDm[y][x] && oxDm[y][x] === oxTicks) screen[y][x] = 4;
+        }
+    }
+    renderScreen();
+    if (oxTicks < oxMaxDistance) setTimeout(oxTick, frameDelay);
+    oxTicks++;
 }
 
 const initGame = () => {
@@ -129,102 +219,20 @@ const initGame = () => {
 
     let lastTick = 0;
 
-    $(document).keydown(function(e) {
-        if (new Date().getTime() - lastTick < 20) return;
-        if (keyMap[e.key] !== undefined) {
-            lastTick = new Date().getTime();
-            gameTick(keyMap[e.key]);
-        }
-    });
-
     prepareScreen();
     renderScreen();
-}
 
-initGame(); // play game, export via exportScreen() once completed
-
-let mapInput = [
-'#########################################',
-'#...#...#.....#...#...#...........#.....#',
-'#.###.#.#.#.#.#.###.#.#.#########.#.#####',
-'#.#...#...#.#...#...#.......#.....#.....#',
-'#.#.#######.###.#.###########.#####.###.#',
-'#...#...#O#.#.#.#.#...#.......#.....#...#',
-'#.###.#.#.#.#.#.#.#.###.#######.#####.#.#',
-'#.#...#..@#.#...#.#.#...#.........#...#.#',
-'#.###.#.###.#####.#.#.###.#########.###.#',
-'#.....#.#...#.......#.#.#.#...#...#.#...#',
-'#######.#.###.#######.#.#.#.###.#.#.#.###',
-'#...#...#...#.#.....#.#...#.#...#.#.#.#.#',
-'#.#.#######.#.#.###.#.#.###.#.###.#.#.#.#',
-'#.#.....#...#.#...#...#.....#...#.#.#...#',
-'#.#####.#.###.###.#############.#.#.#####',
-'#.#...#...#...#...#.............#.#.....#',
-'#.#.#.###.#.###.###.#############.#.###.#',
-'#...#.#...#.#.#...#.........#.....#.#...#',
-'#####.#.###.#.###.###.#######.#######.#.#',
-'#.....#...#...#...#...#...#...#.#.....#.#',
-'#.###########.#.###.###.#.#.###.#.#.###.#',
-'#.............#.#...#S..#.#...#...#.#...#',
-'#.#############.#.#######.###.#.###.#####',
-'#.....#.#.....#...#.....#.....#...#.....#',
-'#####.#.#.#.#########.###########.#####.#',
-'#.....#.#.#.......#...#.........#.....#.#',
-'#.#####.#.###.###.#.###.#.#####.#######.#',
-'#.#.........#.#...#.....#...#...........#',
-'#.#.#########.#.###########.###########.#',
-'#.#...#.......#.#.........#...#...#.....#',
-'#.#####.#######.#.#######.#.#.#.#.#.#####',
-'#.......#...#...#.#.......#.#...#.#.#...#',
-'#########.#.#.###.###.###########.#.###.#',
-'#...#.....#.#.#.....#...........#.#.....#',
-'#.#.#.#####.#.#.###.###########.#.#####.#',
-'#.#.#.#.#...#.#...#.#...#.......#.#...#.#',
-'#.#.#.#.#.###.#####.#.#.#.#######.#.#.#.#',
-'#.#...#.#.....#...#.#.#...#...#...#.#.#.#',
-'#.#####.#######.#.#.#.#####.#.###.#.#.#.#',
-'#...............#...#.......#.....#.#...#',
-'#########################################']
-
-let mapSize = mapInput.length, distanceMap = [], map = [], startX = 9, startY = 5;
-
-const part2 = () => {
-    for (let y = 0; y < mapSize; y++) {
-        distanceMap[y] = [];
-        map[y] = [];
-    }
-    mapInput.map((line, y) => {
-        for (let x = 0; x < line.length; x++) {
-            map[y][x] = line[x];
-        }
-    })
-    generateDistanceMap();
-}
-
-
-const spread = (x,y,dist) => {
-    if (!(distanceMap[y][x]) || (distanceMap[y][x] > dist)) {
-        distanceMap[y][x] = dist;
-        if (map[y][x-1] != '#') spread(x-1,y,dist+1);
-        if (map[y][x+1] != '#') spread(x+1,y,dist+1);
-        if (map[y-1][x] != '#') spread(x,y-1,dist+1);
-        if (map[y+1][x] != '#') spread(x,y+1,dist+1);
-    }
-}
-
-const generateDistanceMap = () => {
-    spread(startX, startY, 0);
-
-    let distances = [];
-
-    for (let y=0;y<mapSize;y++) {
-        for (let x=0;x<mapSize;x++) {
-            if (distanceMap[y][x]) {
-                distances.push(distanceMap[y][x]);
+    if (!autoplay) {
+        $(document).keydown(function(e) {
+            if (new Date().getTime() - lastTick < frameDelay) return;
+            if (keyMap[e.key] !== undefined) {
+                lastTick = new Date().getTime();
+                gameTick(keyMap[e.key]);
             }
-        }
+        });
     }
 
-    console.log('max distance', Math.max(...distances), distances);
+    gameTick(1);
 }
-part2();
+
+initGame();
