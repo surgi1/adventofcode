@@ -172,6 +172,6 @@ let interval = setInterval(() => {
         clearInterval(interval);
     }
     drawScene();
-}, 5)
+}, 25)
 
 console.log('carts', carts);
