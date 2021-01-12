@@ -2,8 +2,6 @@
 // intended to add some sublevel sampling, but wasn't necessary (easy input)
 // part 2 is pretty slow, as it samples 100^3 cubes in each step, could be sped up by adaptive sampling
 
-input.map((b, i) => b.id = i);
-
 const botWithLargestR = () => input.sort((a, b) => b.r-a.r)[0];
 const dist = (b1, b2) => [0,1,2].reduce((a, i) => a+Math.abs(b1.pos[i]-b2.pos[i]), 0)
 const botsWithinBot = bot => input.filter(b => dist(bot, b) <= bot.r).length
