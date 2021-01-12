@@ -1,202 +1,81 @@
 // this is 50% zooming approach
-// intended to add some sublevel sampling, but wasn't necessary (read: got lucky with input data)
-// code is sketchy, taken directly from the first successful manually-assisted attempt
+// intended to add some sublevel sampling, but wasn't necessary (easy input)
+// part 2 is pretty slow, as it samples 100^3 cubes in each step, could be sped up by adaptive sampling
 
-const botWithLargestR = () => {
-    let id = -1;
-    let rMax = 0;
-    input.map((bot,index) => {
-        if (bot.r > rMax) {
-            id = index;
-            rMax = bot.r;
+input.map((b, i) => b.id = i);
+
+const botWithLargestR = () => input.sort((a, b) => b.r-a.r)[0];
+const dist = (b1, b2) => [0,1,2].reduce((a, i) => a+Math.abs(b1.pos[i]-b2.pos[i]), 0)
+const botsWithinBot = bot => input.filter(b => dist(bot, b) <= bot.r).length
+const dist2point = (bot, pos) => [0,1,2].reduce((a, i) => a+Math.abs(bot.pos[i]-pos[i]), 0)
+const distP2P = (pos1, pos2) => [0,1,2].reduce((a, i) => a+Math.abs(pos1[i]-pos2[i]), 0)
+const maxDim = dim => input.reduce((a, b) => a = Math.max(a, b.pos[dim]), 0)
+const minDim = dim => input.reduce((a, b) => a = Math.min(a, b.pos[dim]), 0)
+const botsReachingPoint = p => input.filter(b => dist2point(b,p) <= b.r).length
+const part1 = () => console.log('Nr of bots within its range of bot with largest radius (part 1 answer)', botsWithinBot(botWithLargestR()));
+
+const part2 = () => {
+    let cubes = 100;
+    let foundMaxBots = 0; // nr of nanobots in best segment
+
+    // init zoom 0
+    let minPos = [minDim(0), minDim(1), minDim(2)];
+    let maxPos = [maxDim(0), maxDim(1), maxDim(2)];
+    let absSize = [Math.abs(maxPos[0]-minPos[0]), Math.abs(maxPos[1]-minPos[1]), Math.abs(maxPos[2]-minPos[2])];
+    let divPos = [Math.round(absSize[0]/cubes), Math.round(absSize[1]/cubes), Math.round(absSize[2]/cubes)];
+
+    const zoom = segment => {
+        let start = minPos.slice();
+        minPos = [start[0]+Math.round([segment[0]-25]*divPos[0]), start[1]+Math.round([segment[1]-25]*divPos[1]), start[2]+Math.round([segment[2]-25]*divPos[2])];
+        maxPos = [start[0]+Math.round([segment[0]+25]*divPos[0]), start[1]+Math.round([segment[1]+25]*divPos[1]), start[2]+Math.round([segment[2]+25]*divPos[2])];
+        absSize = [Math.abs(maxPos[0]-minPos[0]), Math.abs(maxPos[1]-minPos[1]), Math.abs(maxPos[2]-minPos[2])];
+        divPos = [Math.round(absSize[0]/cubes), Math.round(absSize[1]/cubes), Math.round(absSize[2]/cubes)];
+    }
+
+    const sample = () => {
+        foundMaxBots = 0;
+        let segment = [];
+        for (let x = 0; x < cubes; x++) {
+            let pos = [];
+            pos[0] = minPos[0] + x*divPos[0] + Math.round(divPos[0]/2);
+            for (let y = 0; y < cubes; y++) {
+                pos[1] = minPos[1] + y*divPos[1] + Math.round(divPos[1]/2);
+                for (let z = 0; z < cubes; z++) {
+                    pos[2] = minPos[2] + z*divPos[2] + Math.round(divPos[2]/2);
+                    let nr = botsReachingPoint(pos);
+                    if (nr > foundMaxBots) {
+                        foundMaxBots = nr;
+                        segment = [x,y,z];
+                    }
+                }
+            }    
         }
-    })
-    return id;
-}
-
-const botWithSmallestR = () => {
-    let id = -1;
-    let rMin = 83044472;
-    input.map((bot,index) => {
-        if (bot.r < rMin) {
-            id = index;
-            rMin = bot.r;
-        }
-    })
-    return id;
-}
-
-const dist = (id1, id2) => {
-    let dist = 0;
-    for (let i = 0; i < 3; i++) {
-        dist += Math.abs(input[id1].pos[i]-input[id2].pos[i]);
+        console.log('Zooming 50% down with center in subsegment', segment, 'with', foundMaxBots, 'nanobots in range.');
+        return segment;
     }
-    return dist;
-}
 
-const dist2point = (id, pos) => {
-    let dist = 0;
-    for (let i = 0; i < 3; i++) {
-        dist += Math.abs(input[id].pos[i]-pos[i]);
-    }
-    return dist;
-}
+    const segmentFullScan = () => {
+        console.log('Performing full scan of segment of size', absSize);
+        let minDistanceToZero = false;
+        for (let x = minPos[0]; x <= maxPos[0]; x++) {
+            for (let y = minPos[1]; y <= maxPos[1]; y++) {
+                for (let z = minPos[2]; z <= maxPos[2]; z++) {
+                    let pos = [x,y,z], nr = botsReachingPoint(pos);
+                    if (nr > foundMaxBots) console.log('Maximum found nanobots value from sampling does not hold', foundMaxBots, 'vs', nr, '. The result will be flawed.');
+                    if (nr == foundMaxBots) {
+                        let d2zero = distP2P([0,0,0], pos);
+                        if ((minDistanceToZero === false) || (d2zero < minDistanceToZero)) minDistanceToZero = d2zero;
+                    }
 
-const distP2P = (pos1, pos2) => {
-    let dist = 0;
-    for (let i = 0; i < 3; i++) {
-        dist += Math.abs(pos1[i]-pos2[i]);
-    }
-    return dist;
-}
-
-const botsWithinBot = (botId) => {
-    let bots = 0;
-    let r = input[botId].r;
-    for (let i = 0; i < input.length; i++) {
-        if (dist(botId, i) <= r) bots++;
-    }
-    return bots;
-}
-
-const botsReachingBot = (botId) => {
-    let bots = 0;
-    for (let i = 0; i < input.length; i++) {
-        if (dist(botId, i) <= input[i].r) bots++;
-    }
-    return bots;
-}
-
-const botsReachingPoint = (p) => {
-    let bots = 0;
-    for (let i = 0; i < input.length; i++) {
-        if (dist2point(i,p) <= input[i].r) bots++;
-    }
-    return bots;
-}
-
-
-// p1
-let botId = botWithLargestR();
-console.log('largest radius', input[botId].r, 'nr of bots within its range', botsWithinBot(botId));
-
-const maxDim = (dim) => {
-    let maxDim = 0;
-    for (let i = 0; i < input.length; i++) {
-        maxDim = Math.max(maxDim, input[i].pos[dim]);
-    }
-    return maxDim;
-}
-
-const minDim = (dim) => {
-    let minDim = 0;
-    for (let i = 0; i < input.length; i++) {
-        minDim = Math.min(minDim, input[i].pos[dim]);
-    }
-    return minDim;
-}
-
-
-// zoom level 1
-
-let cubes = 100; // seemingly regions [48, 42, 39] are interesting
-
-// zoom 0
-let minPos = [minDim(0), minDim(1), minDim(2)];
-let maxPos = [maxDim(0), maxDim(1), maxDim(2)];
-let absSize = [Math.abs(maxPos[0]-minPos[0]), Math.abs(maxPos[1]-minPos[1]), Math.abs(maxPos[2]-minPos[2])];
-let divPos = [Math.round(absSize[0]/cubes), Math.round(absSize[1]/cubes), Math.round(absSize[2]/cubes)];
-
-console.log('abs size', absSize, 'min', minPos, 'max', maxPos, 'div', divPos);
-
-let zooms = [
-[48, 42, 39],
-[51, 49, 51],
-[50, 50, 50],
-[51, 49, 49],
-[50, 48, 63],
-[64, 52, 16],
-[22, 63, 66],
-[50, 49, 53],
-[38, 54, 68],
-[84, 8, 40],
-[39, 67, 52],
-[39, 97, 19],
-[3, 81, 98],
-[8, 85, 85],
-[4, 85, 92],
-[1, 86, 96],
-[0, 95, 87],
-[0, 95, 86],
-[4, 74, 99],
-[1, 81, 99],
-[0, 52, 99]
-]
-
-// zoom
-for (let i = 0;i<zooms.length; i++) {
-    let start = minPos.slice();
-    minPos = [start[0]+Math.round([zooms[i][0]-25]*divPos[0]), start[1]+Math.round([zooms[i][1]-25]*divPos[1]), start[2]+Math.round([zooms[i][2]-25]*divPos[2])];
-    maxPos = [start[0]+Math.round([zooms[i][0]+25]*divPos[0]), start[1]+Math.round([zooms[i][1]+25]*divPos[1]), start[2]+Math.round([zooms[i][2]+25]*divPos[2])];
-    absSize = [Math.abs(maxPos[0]-minPos[0]), Math.abs(maxPos[1]-minPos[1]), Math.abs(maxPos[2]-minPos[2])];
-    divPos = [Math.round(absSize[0]/cubes), Math.round(absSize[1]/cubes), Math.round(absSize[2]/cubes)];
-
-    console.log('abs size', absSize, 'min', minPos, 'max', maxPos, 'div', divPos);
-}
-
-let pFound = [];
-let foundMax = 0;
-/*
-// sampling
-for (let x = 0; x < cubes; x++) {
-    console.log('going for x', x);
-    let pos = [];
-    pos[0] = minPos[0] + x*divPos[0] + Math.round(divPos[0]/2);
-    for (let y = 0; y < cubes; y++) {
-        pos[1] = minPos[1] + y*divPos[1] + Math.round(divPos[1]/2);
-        for (let z = 0; z < cubes; z++) {
-            pos[2] = minPos[2] + z*divPos[2] + Math.round(divPos[2]/2);
-            let nr = botsReachingPoint(pos);
-            if (nr > foundMax) {
-                foundMax = nr;
-                pFound = [x,y,z];
-                console.log('new max', foundMax, ' close to', pos, pFound);
-            }
-            //if (z == 50 && y == 50) console.log('nr', nr, ' close to', pos, [x,y,z], 'dist to our bot id 67', dist2point(67, pos));
-        }
-    }    
-}
-*/
-
-// final check
-
-foundMax = 910;
-let minDistanceToZero = false;
-let zero = [0,0,0];
-
-for (let x = minPos[0]; x <= maxPos[0]; x++) {
-    console.log('going for x', x);
-    for (let y = minPos[1]; y <= maxPos[1]; y++) {
-        for (let z = minPos[2]; z <= maxPos[2]; z++) {
-
-            let pos = [x,y,z];
-            let nr = botsReachingPoint(pos);
-            if (nr > foundMax) {
-                console.log('ALERT ALERT', nr);
-            }
-            if (nr == foundMax) {
-                let d2zero = distP2P(zero, pos);
-                if ((minDistanceToZero === false) || (d2zero < minDistanceToZero)) {
-                    minDistanceToZero = d2zero;
-                    pFound = [x,y,z];
-                    //console.log('new max', foundMax, ' close to', pos, pFound, 'dist to our bot id 67', dist2point(67, pos));
-                    console.log('shortest dist to zero found', minDistanceToZero, pFound);
                 }
             }
-
         }
+        return minDistanceToZero;
     }
+
+    while (absSize[0]*absSize[1]*absSize[2] > 10000000) zoom(sample());
+    console.log('part 2 answer', segmentFullScan());
 }
 
-// 96145480 too high
-// 95541011  OH YEAH
+part1();
+part2();
