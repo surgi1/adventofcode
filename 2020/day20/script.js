@@ -42,9 +42,8 @@ const assignTile = (x, y, tileId) => {
 
 const assignTiles = () => {
     tiles.map(tile => {
-        let fits = checkTileFootprintFit(tile);
-        tile.positionInImage = fits.length; // 2 = corner, 3 = side, 4 = inner
-        tile.adjacentTilesIds = fits;
+        tile.adjacentTilesIds = checkTileFootprintFit(tile);
+        tile.positionInImage = tile.adjacentTilesIds.length; // 2 = corner, 3 = side, 4 = inner
     })
 
     let cornerTiles = tiles.filter(t => t.positionInImage == 2);
@@ -100,9 +99,8 @@ const alignTile = (tileId, refTileId, mode) => {
 
 const alignTiles = () => {
     for (let i = 1; i < size; i++) alignTile(map[0][i], map[0][i-1], 'left');
-    for (let y = 1; y < size; y++) {
+    for (let y = 1; y < size; y++)
         for (let x = 0; x < size; x++) alignTile(map[y][x], map[y-1][x], 'top');
-    }
 }
 
 const matchMonsterLine = (line, mId) => {
