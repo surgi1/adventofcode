@@ -80,7 +80,7 @@ const exportJigsaw = () => {
     return result;
 }
 
-const tilesFit = (tileId, refTileId, mode = 'left') => {
+const tilesFit = (tileId, refTileId, mode) => {
     let fits = true, tile = tileById(tileId).data, refTile = tileById(refTileId).data;
     if (mode == 'left') {
         // compare refTile's right col with tile's left col
@@ -92,7 +92,7 @@ const tilesFit = (tileId, refTileId, mode = 'left') => {
     return fits;
 }
 
-const alignTile = (tileId, refTileId, mode = 'left') => {
+const alignTile = (tileId, refTileId, mode) => {
     for (let i = 0; i < 3; i++) if (!tilesFit(tileId, refTileId, mode)) rotateTile(tileId);
     if (!tilesFit(tileId, refTileId, mode)) tileById(tileId).data.reverse(); // flip
     for (let i = 0; i < 3; i++) if (!tilesFit(tileId, refTileId, mode)) rotateTile(tileId);
