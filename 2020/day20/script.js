@@ -6,7 +6,7 @@ const rotateImage = data => {
     return newData.map(line => line.join(''));
 }
 
-const matchArray = (arr1, arr2) => arr1.every(e => arr2.includes(e)) // arr1 is contained in arr2
+const matchArray = (arr1, arr2) => arr1.every(e => arr2.includes(e)) // arr1 is subset of arr2
 const countCharsInArray = (arr, ch = '1') => arr.join('').split('').filter(c => c == ch).length
 const tileById = id => tiles.filter(t => t.id == id)[0]
 
@@ -20,85 +20,86 @@ const assignTiles = () => {
         return [data[0], data[9].split('').reverse().join(''), left, right].map(s => parseInt(s, 2))
     }
 
-    const checkTileFootprintFit = tile => tiles
+    const getAdjacentIds = tile => tiles
             .filter(t => t.id != tile.id)
             .filter(t => tile.footprints.some(fp => t.footprints.includes(fp)))
             .map(t => t.id)
-    const unplacedTileByAdjacent = (tilesIds, positions = [2,3,4]) => tiles
-            .filter(t => !t.placed && positions.includes(t.positionInImage) && matchArray(tilesIds, t.adjacentTilesIds))
+    const unplacedByAdjacent = (tilesIds, positions = [2,3,4]) => tiles
+            .filter(t => !t.placed && positions.includes(t.adjacentIds.length) && matchArray(tilesIds, t.adjacentIds))
 
-    const assignTile = (x, y, tileId) => {
+    const assign = (x, y, tileId) => {
+        if (!map[y]) map[y] = [];
         map[y][x] = tileId;
         tileById(tileId).placed = true;
     }
 
     tiles.map(t => t.footprints = [].concat(getFootprints(t.data), getFootprints(t.data.reverse()))) // add footprints for both sides
-    tiles.map(t => {
-        t.adjacentTilesIds = checkTileFootprintFit(t);
-        t.positionInImage = t.adjacentTilesIds.length; // 2 = corner, 3 = side, 4 = inner
-    })
+    tiles.map(t => t.adjacentIds = getAdjacentIds(t)) // t.adjacentIds.length: 2 = corner, 3 = side, 4 = inner
 
-    let cornerTiles = tiles.filter(t => t.positionInImage == 2);
+    let map = [], cornerTiles = tiles.filter(t => t.adjacentIds.length == 2);
     console.log('corner tiles ids product', cornerTiles.reduce((a, t) => a*t.id, 1)); // p1
 
-    // corner[0] will be top left
-    assignTile(0, 0, cornerTiles[0].id); // 1st corner
+    assign(0, 0, cornerTiles[0].id); // 1st corner, defined as top left
 
     for (let i = 1; i < 12; i++) {
-        assignTile(0, i, unplacedTileByAdjacent([map[i-1][0]], [2,3])[0].id);    
-        assignTile(i, 0, unplacedTileByAdjacent([map[0][i-1]], [2,3])[0].id);    
+        assign(0, i, unplacedByAdjacent([map[i-1][0]], [2,3])[0].id);    
+        assign(i, 0, unplacedByAdjacent([map[0][i-1]], [2,3])[0].id);    
     }
 
     for (let i = 1; i < 11; i++) {
-        assignTile(11, i, unplacedTileByAdjacent([map[i-1][11]], [2,3])[0].id);    
-        assignTile(i, 11, unplacedTileByAdjacent([map[11][i-1]], [2,3])[0].id);    
+        assign(11, i, unplacedByAdjacent([map[i-1][11]], [2,3])[0].id);    
+        assign(i, 11, unplacedByAdjacent([map[11][i-1]], [2,3])[0].id);    
     }
 
-    assignTile(11, 11, cornerTiles.filter(t => !t.placed)[0].id); // 4th corner, frame is done
+    assign(11, 11, cornerTiles.filter(t => !t.placed)[0].id); // 4th corner, frame is done
 
     for (let y = 1; y < 11; y++)
         for (let x = 1; x < 11; x++)
-            assignTile(x, y, unplacedTileByAdjacent([map[y-1][x], map[y][x-1]])[0].id)
+            assign(x, y, unplacedByAdjacent([map[y-1][x], map[y][x-1]])[0].id)
+   
+    return map;
 }
 
-const alignTiles = () => {
-    const rotateTile = tileId => tileById(tileId).data = rotateImage(tileById(tileId).data);
-    const tilesFit = (tileId, refTileId, mode) => {
+const alignTiles = map => {
+    const rotate = tileId => tileById(tileId).data = rotateImage(tileById(tileId).data);
+    const checkFit = (tileId, refTileId, mode) => {
         let tile = tileById(tileId).data, refTile = tileById(refTileId).data;
         // left: compare refTile's right col with tile's left col, top: compare refTile's bottom line with tile's top line
         return mode == 'left' ? refTile.every((l, i) => refTile[i][9] == tile[i][0]) : refTile[9] == tile[0];
     }
 
-    const alignTile = (tileId, refTileId, mode) => {
-        for (let i = 0; i < 3; i++) if (!tilesFit(tileId, refTileId, mode)) rotateTile(tileId);
-        if (!tilesFit(tileId, refTileId, mode)) tileById(tileId).data.reverse(); // flip
-        for (let i = 0; i < 3; i++) if (!tilesFit(tileId, refTileId, mode)) rotateTile(tileId);
-        return tilesFit(tileId, refTileId, mode);
+    const align = (tileId, refTileId, mode) => {
+        for (let i = 0; i < 3; i++) if (!checkFit(tileId, refTileId, mode)) rotate(tileId);
+        if (!checkFit(tileId, refTileId, mode)) tileById(tileId).data.reverse(); // flip
+        for (let i = 0; i < 3; i++) if (!checkFit(tileId, refTileId, mode)) rotate(tileId);
+        return checkFit(tileId, refTileId, mode);
     }
 
-    const alignTopLeftTile = () => {
-        for (let i = 0; i < 3; i++) if (!tilesFit(map[0][1], map[0][0], 'left') || !tilesFit(map[1][0], map[0][0], 'top')) rotateTile(map[0][0]);
-        if (!tilesFit(map[0][1], map[0][0], 'left') || !tilesFit(map[1][0], map[0][0], 'top')) tileById(map[0][0]).data.reverse(); // flip
-        for (let i = 0; i < 3; i++) if (!tilesFit(map[0][1], map[0][0], 'left') || !tilesFit(map[1][0], map[0][0], 'top')) rotateTile(map[0][0]);
+    const alignTopLeft = () => {
+        for (let i = 0; i < 3; i++) if (!checkFit(map[0][1], map[0][0], 'left') || !checkFit(map[1][0], map[0][0], 'top')) rotate(map[0][0]);
+        if (!checkFit(map[0][1], map[0][0], 'left') || !checkFit(map[1][0], map[0][0], 'top')) tileById(map[0][0]).data.reverse(); // flip
+        for (let i = 0; i < 3; i++) if (!checkFit(map[0][1], map[0][0], 'left') || !checkFit(map[1][0], map[0][0], 'top')) rotate(map[0][0]);
     }
 
-    if (!alignTile(map[0][1], map[0][0], 'left') || !alignTile(map[1][0], map[0][0], 'top')) alignTopLeftTile();
-    for (let x = 1; x < size; x++) alignTile(map[0][x], map[0][x-1], 'left');
-    for (let y = 1; y < size; y++)
-        for (let x = 0; x < size; x++) alignTile(map[y][x], map[y-1][x], 'top');
+    const compileImageData = () => {
+        let result = [];
+        for (let y = 0; y < map.length; y++)
+            for (let x = 0; x < map.length; x++)
+                tileById(map[y][x]).data
+                    .filter((l, id) => id != 0 && id != 9)
+                    .map((line, id) => result[y*8+id] = (result[y*8+id] || '') + line.substr(1, 8))
+        return result;
+    }
+
+    if (!align(map[0][1], map[0][0], 'left') || !align(map[1][0], map[0][0], 'top')) alignTopLeft();
+    for (let x = 1; x < map.length; x++) align(map[0][x], map[0][x-1], 'left');
+    for (let y = 1; y < map.length; y++)
+        for (let x = 0; x < map.length; x++) align(map[y][x], map[y-1][x], 'top');
+
+    return compileImageData(map);
 }
 
-const exportJigsaw = () => {
-    let result = [];
-    for (let y = 0; y < size; y++)
-        for (let x = 0; x < size; x++)
-            tileById(map[y][x]).data
-                .filter((l, id) => id != 0 && id != 9)
-                .map((line, id) => result[y*8+id] = (result[y*8+id] || '') + line.substr(1, 8))
-    return result;
-}
-
-const alignImageData = imageData => {
+const processImageData = imageData => {
     const monster = ['00000000000000000010', '10000110000110000111', '01001001001001001000'];
     const matchMonsterLine = (line, mId) => {
         let re, result = [];
@@ -123,10 +124,4 @@ const alignImageData = imageData => {
     return countCharsInArray(imageData)-searchForMonster()*countCharsInArray(monster);
 }
 
-let map = [], size = 12;
-for (let y = 0; y < size; y++) map[y] = []; // tileIds
-
-assignTiles();
-alignTiles();
-
-console.log('water roughness', alignImageData(exportJigsaw()));
+console.log('water roughness', processImageData(alignTiles(assignTiles())));
