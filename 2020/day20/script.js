@@ -1,14 +1,11 @@
-// implementation-heavier, would benefit from some better structuring..
-
 let map = [], size = 12;
 for (let y = 0; y < size; y++) map[y] = []; // tileIds
 
 const rotateImage = data => {
     let newData = [], len = data.length;
     for (let i = 0; i < len; i++) newData[i] = [];
-    for (let y = 0; y < len; y++) {
+    for (let y = 0; y < len; y++)
         for (let x = 0; x < len; x++) newData[x][(len-1)-y] = data[y][x];
-    }
     return newData.map(line => line.join(''));
 }
 
@@ -30,8 +27,8 @@ const checkTileFootprintFit = tile => tiles
         .filter(t => matchFootprints(tile.footprints, t.footprints))
         .map(t => t.id)
 const matchFootprints = (footprints1, footprints2) => footprints1.some(fp => footprints2.includes(fp))
-const getUnplacedTileByAdjacent = (tilesIds, positions = [2,3,4]) => tiles
-        .filter(t => t.placed !== true && positions.includes(t.positionInImage) && matchArray(tilesIds, t.adjacentTilesIds))
+const unplacedTileByAdjacent = (tilesIds, positions = [2,3,4]) => tiles
+        .filter(t => !t.placed && positions.includes(t.positionInImage) && matchArray(tilesIds, t.adjacentTilesIds))
 const rotateTile = tileId => tileById(tileId).data = rotateImage(tileById(tileId).data);
 const addFootprints = () => tiles.map(t => t.footprints = [].concat(getFootprints(t.data), getFootprints(t.data.reverse()))) // both sides
 
@@ -47,26 +44,26 @@ const assignTiles = () => {
     })
 
     let cornerTiles = tiles.filter(t => t.positionInImage == 2);
-    console.log('corner tiles', cornerTiles.length, cornerTiles); // p1
+    console.log('corner tiles', cornerTiles, cornerTiles.reduce((a, t) => a*t.id, 1)); // p1
 
     // corner[0] will be top left
     assignTile(0, 0, cornerTiles[0].id); // 1st corner
 
     for (let i = 1; i < 12; i++) {
-        assignTile(0, i, getUnplacedTileByAdjacent([map[i-1][0]], [2,3])[0].id);    
-        assignTile(i, 0, getUnplacedTileByAdjacent([map[0][i-1]], [2,3])[0].id);    
+        assignTile(0, i, unplacedTileByAdjacent([map[i-1][0]], [2,3])[0].id);    
+        assignTile(i, 0, unplacedTileByAdjacent([map[0][i-1]], [2,3])[0].id);    
     }
 
     for (let i = 1; i < 11; i++) {
-        assignTile(11, i, getUnplacedTileByAdjacent([map[i-1][11]], [2,3])[0].id);    
-        assignTile(i, 11, getUnplacedTileByAdjacent([map[11][i-1]], [2,3])[0].id);    
+        assignTile(11, i, unplacedTileByAdjacent([map[i-1][11]], [2,3])[0].id);    
+        assignTile(i, 11, unplacedTileByAdjacent([map[11][i-1]], [2,3])[0].id);    
     }
 
-    assignTile(11, 11, cornerTiles.filter(t => t.placed !== true)[0].id); // 4th corner, frame is done
+    assignTile(11, 11, cornerTiles.filter(t => !t.placed)[0].id); // 4th corner, frame is done
 
     for (let y = 1; y < 11; y++)
         for (let x = 1; x < 11; x++)
-            assignTile(x, y, getUnplacedTileByAdjacent([map[y-1][x], map[y][x-1]])[0].id)
+            assignTile(x, y, unplacedTileByAdjacent([map[y-1][x], map[y][x-1]])[0].id)
 }
 
 const exportJigsaw = () => {
@@ -80,24 +77,26 @@ const exportJigsaw = () => {
 }
 
 const tilesFit = (tileId, refTileId, mode) => {
-    let fits = true, tile = tileById(tileId).data, refTile = tileById(refTileId).data;
-    if (mode == 'left') {
-        // compare refTile's right col with tile's left col
-        fits = refTile.every((l, i) => refTile[i][9] == tile[i][0]);
-    } else if (mode == 'top') {
-        // compare refTile's bottom line with tile's top line, both strings
-        fits = refTile[9] == tile[0];
-    }
-    return fits;
+    let tile = tileById(tileId).data, refTile = tileById(refTileId).data;
+    // left: compare refTile's right col with tile's left col, top: compare refTile's bottom line with tile's top line
+    return mode == 'left' ? refTile.every((l, i) => refTile[i][9] == tile[i][0]) : refTile[9] == tile[0];
 }
 
 const alignTile = (tileId, refTileId, mode) => {
     for (let i = 0; i < 3; i++) if (!tilesFit(tileId, refTileId, mode)) rotateTile(tileId);
     if (!tilesFit(tileId, refTileId, mode)) tileById(tileId).data.reverse(); // flip
     for (let i = 0; i < 3; i++) if (!tilesFit(tileId, refTileId, mode)) rotateTile(tileId);
+    return tilesFit(tileId, refTileId, mode);
+}
+
+const alignTopLeftTile = () => {
+    for (let i = 0; i < 3; i++) if (!tilesFit(map[0][1], map[0][0], 'left') || !tilesFit(map[1][0], map[0][0], 'top')) rotateTile(map[0][0]);
+    if (!tilesFit(map[0][1], map[0][0], 'left') || !tilesFit(map[1][0], map[0][0], 'top')) tileById(map[0][0]).data.reverse(); // flip
+    for (let i = 0; i < 3; i++) if (!tilesFit(map[0][1], map[0][0], 'left') || !tilesFit(map[1][0], map[0][0], 'top')) rotateTile(map[0][0]);
 }
 
 const alignTiles = () => {
+    if (!alignTile(map[0][1], map[0][0], 'left') || !alignTile(map[1][0], map[0][0], 'top')) alignTopLeftTile();
     for (let i = 1; i < size; i++) alignTile(map[0][i], map[0][i-1], 'left');
     for (let y = 1; y < size; y++)
         for (let x = 0; x < size; x++) alignTile(map[y][x], map[y-1][x], 'top');
@@ -113,16 +112,9 @@ const matchMonsterLine = (line, mId) => {
 
 const searchForMonster = () => {
     let totalMonstersFound = 0;
-    for (let i = 2; i < imageData.length; i++) {
-        if (matchMonsterLine(imageData[i], 2).length > 0) {
-            let line1matches = matchMonsterLine(imageData[i-1], 1);
-            if (line1matches.length > 0) {
-                line1matches.map(line1Id => {
-                    if (imageData[i-2][line1Id+18] == '1') totalMonstersFound++;
-                })
-            }
-        }
-    }
+    for (let i = 2; i < imageData.length; i++)
+        if (matchMonsterLine(imageData[i], 2).length > 0)
+            matchMonsterLine(imageData[i-1], 1).map(line1Id => imageData[i-2][line1Id+18] == '1' && totalMonstersFound++)
     return totalMonstersFound;
 }
 
