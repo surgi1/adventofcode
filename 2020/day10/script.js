@@ -10,10 +10,9 @@ const part1 = chain => {
 // how many arbitrary pairs can be tossed out? komb(n,2) = n!/((n-2)!*(2!)
 // this builds a multiplier
 
-const fact = num => {
-    let rval=1;
-    for (let i = 2; i <= num; i++) rval = rval * i;
-    return rval;
+const fact = (n, r = 1) => {
+    while (n > 0) r *= n--;
+    return r;
 }
 
 const combNr = (top, bottom) => fact(top)/(fact(top-bottom)*fact(bottom));
