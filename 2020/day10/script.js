@@ -14,14 +14,8 @@ const fact = (n, r = 1) => {
     while (n > 0) r *= n--;
     return r;
 }
-
-const combNr = (top, bottom) => fact(top)/(fact(top-bottom)*fact(bottom));
-
-const sublenComb = num => {
-    let res = num-2;
-    if (res > 1) res += combNr((num-2),2);
-    return res;
-}
+const combNr = (top, bottom) => fact(top)/(fact(top-bottom)*fact(bottom))
+const sublenComb = (num, res = num-2) => res + (res > 1 ? combNr((num-2),2) : 0)
 
 const part2 = chain => {
     let mult = 1, ptr = 1;
