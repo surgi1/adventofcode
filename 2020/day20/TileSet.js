@@ -1,11 +1,16 @@
 class TileSet {
     constructor(config) {
         this.tiles = config;
+        this.prepareTiles();
     }
 
     byId = id => this.tiles.filter(t => t.id == id)[0];
 
-    assignTiles = () => {
+    prepareTiles = () => {
+        const getAdjacentIds = tile => this.tiles
+                .filter(t => t.id != tile.id)
+                .filter(t => tile.footprints.some(fp => t.footprints.includes(fp)))
+                .map(t => t.id)
         const getFootprints = data => {
             let res = [], left = '', right = '';
             for (let i = 0; i < 10; i++) {
@@ -14,22 +19,18 @@ class TileSet {
             }
             return [data[0], data[9].split('').reverse().join(''), left, right].map(s => parseInt(s, 2))
         }
+        this.tiles.map(t => t.footprints = [].concat(getFootprints(t.data), getFootprints(t.data.reverse()))) // add footprints for both sides
+        this.tiles.map(t => t.adjacentIds = getAdjacentIds(t)) // t.adjacentIds.length: 2 = corner, 3 = side, 4 = inner
+    }
 
-        const getAdjacentIds = tile => this.tiles
-                .filter(t => t.id != tile.id)
-                .filter(t => tile.footprints.some(fp => t.footprints.includes(fp)))
-                .map(t => t.id)
+    assignTiles = () => {
         const unplacedByAdjacent = (tilesIds, positions = [2,3,4]) => this.tiles
                 .filter(t => !t.placed && positions.includes(t.adjacentIds.length) && tilesIds.every(id => t.adjacentIds.includes(id)))
-
         const assign = (x, y, tileId) => {
             if (!map[y]) map[y] = [];
             map[y][x] = tileId;
             this.byId(tileId).placed = true;
         }
-
-        this.tiles.map(t => t.footprints = [].concat(getFootprints(t.data), getFootprints(t.data.reverse()))) // add footprints for both sides
-        this.tiles.map(t => t.adjacentIds = getAdjacentIds(t)) // t.adjacentIds.length: 2 = corner, 3 = side, 4 = inner
 
         let map = [], cornerTiles = this.tiles.filter(t => t.adjacentIds.length == 2);
         console.log('corner tiles ids product', cornerTiles.reduce((a, t) => a*t.id, 1)); // p1
