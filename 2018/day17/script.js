@@ -1,4 +1,4 @@
-let data = [], map = [], mapInitialized = false, water = [], maxY = 0, minY = 1000;
+let data = [], map = [], drawn = [], mapInitialized = false, water = [], maxY = 0, minY = 1000;
 
 const readInput = () => {
     input.map(s => {
@@ -26,8 +26,8 @@ const addMapPoint = (x,y,type) => {
 }
 
 const drawScene = () => {
-    let root = $('#root').empty();
-    data.map(d => {
+    let root = $('#root');
+    if (!mapInitialized) data.map(d => {
         let x = 0, y = 0, w = 0, h = 0;
         if (Array.isArray(d.x)) {
             y = d.y;h = 1;
@@ -47,45 +47,38 @@ const drawScene = () => {
 
         root.append(div);
 
-        if (!mapInitialized) {
-            if (Array.isArray(d.x)) {
-                for (let i = d.x[0];i<=d.x[1]; i++) addMapPoint(i,y,'R');
-            } else if (Array.isArray(d.y)) {
-                for (let i = d.y[0];i<=d.y[1]; i++) addMapPoint(x,i,'R');
-            }
+        if (Array.isArray(d.x)) {
+            for (let i = d.x[0];i<=d.x[1]; i++) addMapPoint(i,y,'R');
+        } else if (Array.isArray(d.y)) {
+            for (let i = d.y[0];i<=d.y[1]; i++) addMapPoint(x,i,'R');
         }
+        let springDiv = $('<div />', {css: {
+            left: 500*2+'px',
+            top: 0*2+'px',
+            width: 1*2+'px',
+            height: 1*2+'px',
+        }}).addClass('material spring');
+        root.append(springDiv);
+
+        mapInitialized = true;
     })
-    mapInitialized = true;
-    let springDiv = $('<div />', {css: {
-        left: 500*2+'px',
-        top: 0*2+'px',
-        width: 1*2+'px',
-        height: 1*2+'px',
-    }}).addClass('material spring');
-    root.append(springDiv);
 
     // draw water
     for (let y = minY; y < maxY; y++) {
         if (!map[y]) map[y] = [];
+        if (!drawn[y]) drawn[y] = [];
         for (let x = 0; x < map[y].length; x++) {
-            if (map[y][x] == 'W') {
-                let div = $('<div />', {css: {
-                    left: x*2+'px',
-                    top: y*2+'px',
-                    width: '2px',
-                    height: '2px',
-                }}).addClass('material water');
-                root.append(div);
-            }
-            if (map[y][x] == 'S') {
-                let div = $('<div />', {css: {
-                    left: x*2+'px',
-                    top: y*2+'px',
-                    width: '2px',
-                    height: '2px',
-                }}).addClass('material sand');
-                root.append(div);
-            }
+            if (drawn[y][x] == map[y][x]) continue;
+            let div = $('<div />', {css: {
+                left: x*2+'px',
+                top: y*2+'px',
+                width: '2px',
+                height: '2px',
+            }})
+            if (map[y][x] == 'W') div.addClass('material water');
+            if (map[y][x] == 'S') div.addClass('material sand');
+            root.append(div);
+            drawn[y][x] = map[y][x];
         }
     }
 }
@@ -96,24 +89,21 @@ drawScene();
 const advanceWater = (p) => {
     let arr = [p], ptr = 0;
     while (ptr < arr.length) {
-        for (let i = ptr; i < arr.length; i++) {
-            let point = arr[i];
-            if (point.y > maxY+2) break;
-            if (!map[point.y]) map[point.y] = [];
-            if (!map[point.y+1]) map[point.y+1] = [];
+        let point = arr[ptr];
+        if (point.y > maxY+2) break;
+        if (!map[point.y]) map[point.y] = [];
+        if (!map[point.y+1]) map[point.y+1] = [];
 
-            if (!['R','W', 'w'].includes(map[point.y][point.x])) {
-                map[point.y][point.x] = 'w';
-                if (['R','W'].includes(map[point.y+1][point.x])) {
-                    if (point.dir != 1) arr.push({x:point.x-1, y:point.y, dir:-1});
-                    if (point.dir != -1) arr.push({x:point.x+1, y:point.y, dir:1});
-                } else {
-                    arr.push({x:point.x, y:point.y+1});
-                }
+        if (!['R','W', 'w'].includes(map[point.y][point.x])) {
+            map[point.y][point.x] = 'w';
+            if (['R','W'].includes(map[point.y+1][point.x])) {
+                if (point.dir != 1) arr.push({x:point.x-1, y:point.y, dir:-1});
+                if (point.dir != -1) arr.push({x:point.x+1, y:point.y, dir:1});
+            } else {
+                arr.push({x:point.x, y:point.y+1});
             }
         }
-
-        ptr = ptr+arr.length;
+        ptr++;
     }
     for (let y = 0; y < maxY; y++) {
         if (!map[y]) map[y] = [];
@@ -134,13 +124,13 @@ const drainWater = () => {
                 } else {
                     // lze utect vpravo?
                     let escX = x;
-                    while (map[y][escX] == 'W') {escX++}
+                    while (['W','S'].includes(map[y][escX])) {escX++}
                     if (!['W','R'].includes(map[y+1][escX])) {
                         map[y][x] = 'S';
                     } else {
                         // lze utect vlevo?
                         let escX = x;
-                        while (map[y][escX] == 'W') {escX--}
+                        while (['W','S'].includes(map[y][escX])) {escX--}
                         if (!['W','R'].includes(map[y+1][escX])) map[y][x] = 'S';
                     }
                 }
@@ -149,20 +139,31 @@ const drainWater = () => {
     }
 }
 
+const countMap = (char, count = 0) => {
+    for (let y = 0; y < maxY; y++) {
+        for (let x = 0; x < map[y].length; x++) if (map[y][x] == char) count++;
+    }
+    return count;
+}
+
 let ticks = 0;
 
 const tick = () => {
     console.log('ticked');
 
-    drainWater();
+    drainWater();drainWater();drainWater();
     advanceWater({x:500,y:1});
 
-    if (ticks % 100 == 0) 
+    //if (ticks % 10 == 0) 
         drawScene();
     ticks++;
-    if (ticks < 1100) setTimeout(() => tick(), 5);
+    if (ticks < 1100) {
+        setTimeout(() => tick(), 20);
+    } else {
+        console.log('part 1', countMap('W')-minY+2);
+        drainWater();
+        console.log('part 2', countMap('W'));
+    }
 }
 
-setTimeout(() => tick(), 1000);
-
-console.log('data', data);
+setTimeout(() => tick(), 500);
