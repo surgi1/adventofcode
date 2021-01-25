@@ -1,5 +1,5 @@
 let data = [], map = [], drawn = [], mapInitialized = false, water = [], maxY = 0, minY = 1000,
-    ticks = 0, lastMap = false, stop = false;
+    ticks = 0, lastMap = false, stop = false, root = $('#root');
 
 const readInput = () => {
     input.map(s => {
@@ -24,59 +24,61 @@ const addMapPoint = (x,y,type) => {
     map[y][x] = type;
 }
 
+const initScene = () => {
+    if (mapInitialized) return;
+    data.map(d => {
+        let x = 0, y = 0, w = 0, h = 0;
+        if (Array.isArray(d.x)) {
+            y = d.y;h = 1;
+            x = d.x[0];w = d.x[1]-d.x[0]+1;
+            for (let i = d.x[0];i<=d.x[1]; i++) addMapPoint(i,y,'R');
+        } else if (Array.isArray(d.y)) {
+            x = d.x;w = 1;
+            y = d.y[0];h = d.y[1]-d.y[0]+1;
+            for (let i = d.y[0];i<=d.y[1]; i++) addMapPoint(x,i,'R');
+        }
+        let div = $('<div />', {css: {
+            left: x*2+'px',
+            top: y*2+'px',
+            width: w*2+'px',
+            height: h*2+'px',
+        }}).addClass('material rock');
+
+        root.append(div);
+
+        let springDiv = $('<div />', {css: {
+            left: 499*2+'px',
+            top: 0*2+'px',
+            width: 3*2+'px',
+            height: 3*2+'px',
+        }}).addClass('material spring');
+        root.append(springDiv);
+    })
+    for (let y = 0; y <= maxY+1; y++) if (!map[y]) map[y] = [];
+    mapInitialized = true;
+}
+
 const drawScene = () => {
-    let root = $('#root');
-    if (!mapInitialized) {
-        data.map(d => {
-            let x = 0, y = 0, w = 0, h = 0;
-            if (Array.isArray(d.x)) {
-                y = d.y;h = 1;
-                x = d.x[0];w = d.x[1]-d.x[0]+1;
-                for (let i = d.x[0];i<=d.x[1]; i++) addMapPoint(i,y,'R');
-            } else if (Array.isArray(d.y)) {
-                x = d.x;w = 1;
-                y = d.y[0];h = d.y[1]-d.y[0]+1;
-                for (let i = d.y[0];i<=d.y[1]; i++) addMapPoint(x,i,'R');
-            }
-            let div = $('<div />', {css: {
-                left: x*2+'px',
-                top: y*2+'px',
-                width: w*2+'px',
-                height: h*2+'px',
-            }}).addClass('material rock');
-
-            root.append(div);
-
-            let springDiv = $('<div />', {css: {
-                left: 499*2+'px',
-                top: 0*2+'px',
-                width: 3*2+'px',
-                height: 3*2+'px',
-            }}).addClass('material spring');
-            root.append(springDiv);
-
-            mapInitialized = true;
-        })
-        for (let y = 0; y <= maxY+1; y++) if (!map[y]) map[y] = [];
-    }
-
+    initScene();
     // draw water
     for (let y = 0; y <= maxY; y++) {
-        if (!map[y]) map[y] = [];
+        if (map[y].indexOf('W') == -1) continue;
         if (!drawn[y]) drawn[y] = [];
-        for (let x = 0; x < map[y].length; x++) {
-            if (drawn[y][x] == map[y][x]) continue;
+        if (map[y].filter(e => e == 'W').length == drawn[y].filter(e => e == 'W').length) continue;
+        for (let x = map[y].indexOf('W'); x < map[y].length; x++) {
+            if (map[y][x] != 'W' || drawn[y][x] == map[y][x]) continue;
+            let xStart = x;
+            while (map[y][x+1] == 'W') x++;
             let div = $('<div />', {css: {
-                left: x*2+'px',
+                left: xStart*2+'px',
                 top: y*2+'px',
-                width: '2px',
+                width: (x-xStart+1)*2+'px',
                 height: '2px',
             }})
-            if (map[y][x] == 'W') div.addClass('material water');
-            if (map[y][x] == 'S') div.addClass('material sand');
+            div.addClass('material water');
             root.append(div);
-            drawn[y][x] = map[y][x];
         }
+        drawn[y] = map[y].slice();
     }
 }
 
@@ -85,7 +87,6 @@ const advanceWater = p => {
     while (ptr < arr.length) {
         let point = arr[ptr];
         if (point.y >= maxY+1) break;
-
         if (map[point.y][point.x] == 'S' || map[point.y][point.x] == undefined) {
             map[point.y][point.x] = 'w';
             if (map[point.y+1][point.x] == 'R' || map[point.y+1][point.x] == 'W') {
@@ -139,7 +140,7 @@ const tick = () => {
     drainWater();drainWater();
     advanceWater({x:500,y:1});
 
-    //if (ticks % 100 == 0) 
+    //if (ticks % 100 == 0)
         drawScene();
     ticks++;
     if (!stop) {
