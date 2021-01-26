@@ -1,5 +1,5 @@
 let data = [], map = [], drawn = [], mapInitialized = false, water = [], maxY = 0, minY = 1000,
-    ticks = 0, lastMap = false, stop = false, root = $('#root');
+    ticks = 0, lastMap = false, stop = false, root = $('#root'), lastTime;
 
 const readInput = () => {
     input.map(s => {
@@ -132,6 +132,7 @@ const countMap = char => map.join('').split('').reduce((a, v) => a+(v == char), 
 const cmpStates = (s1, s2) => s1.length == s2.length && s1.every((r1, i) => s2[i] && s2[i].length == r1.length && r1.every((e, j) => s2[i][j] == e))
 
 const tick = () => {
+    lastTime = new Date().getTime();
     if (map[maxY].indexOf('W') > -1) {
         if (lastMap !== false && cmpStates(map, lastMap)) stop = true;
         lastMap = $.extend(true, [], map);
@@ -144,7 +145,7 @@ const tick = () => {
         drawScene();
     ticks++;
     if (!stop) {
-        setTimeout(() => tick(), 0);
+        setTimeout(() => tick(), Math.max(0, (40-(new Date().getTime()-lastTime))));
     } else {
         drawScene();
         console.log('part 1', countMap('W')-minY+1);
@@ -155,4 +156,4 @@ const tick = () => {
 
 readInput();
 drawScene();
-tick();
+setTimeout(() => tick(), 1000);
