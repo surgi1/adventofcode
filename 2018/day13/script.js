@@ -12,9 +12,9 @@ const cartVelocity = chr => {
     return v;
 }
 
-const init = () => {
+const init = input => {
     carts = [];
-    data = input.slice();
+    data = input.split("\n");
     data.map((line, index) => {
         for (let i=0;i<line.length;i++) {
             let chr = line[i];
@@ -127,7 +127,7 @@ const initCanvas = () => {
                     // right-bottom or left-top
                     if (['-', '+'].includes(data[y][x+1])) imgName = 'corner-right-bottom'; else imgName = 'corner-left-top';
                 }
-                if (char == 'I') {
+                if (char == '\\') {
                     // left-bottom or right-top
                     if (['-', '+'].includes(data[y][x+1])) imgName = 'corner-right-top'; else imgName = 'corner-left-bottom';
                 }
@@ -156,7 +156,7 @@ const moveCart = cart => {
     cart.y = cart.y+cart.v.y;
 
     // curves handling
-    if (data[cart.y][cart.x] == 'I') {  // \
+    if (data[cart.y][cart.x] == '\\') {  // \
         if (cart.v.y == 0 && cart.v.x == 1) {
             cart.v.y = 1;
             cart.v.x = 0;
@@ -251,11 +251,18 @@ const solve = () => {
     while (carts.filter(c => c.crashed !== true).length > 1) moveCarts();
     let survivor = carts.filter(c => c.crashed !== true)[0];
     cameraTargets.push(survivor.id);
-    console.log('game ended with 1 survivor', survivor, cameraTargets);
+    console.log('game ended with 1 survivor', survivor);
 }
 
-init();
-solve();
+//fetch('https://mazegame.org/adventofcode/2018/day13/input.txt')
+fetch('./input.txt')
+    .then(response => response.text())
+    .then(text => run(text))
 
-init();
-setTimeout(() => tick(), 0)
+const run = input => {
+    init(input);
+    solve();
+
+    init(input);
+    setTimeout(() => tick(), 0)
+}
