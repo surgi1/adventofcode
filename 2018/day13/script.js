@@ -1,10 +1,5 @@
-// astonishing visuals ;) slow this down on line 175 and enjoy some softcore ASCII-porn
-
-String.prototype.replaceAt = function(index, replacement) {
-    return this.substr(0, index) + replacement + this.substr(index + replacement.length);
-}
-
-let carts = [];
+// astonishing visuals!
+let carts, data, ticks = 0, steps = 4, cameraTargets = [], cameraTargetId = 0;
 
 const cartVelocity = chr => {
     let v = {};
@@ -17,14 +12,18 @@ const cartVelocity = chr => {
     return v;
 }
 
-const initCarts = () => {
+const init = () => {
+    carts = [];
+    data = input.slice();
     data.map((line, index) => {
         for (let i=0;i<line.length;i++) {
             let chr = line[i];
             if (chr.match(/[\^><v]/g)) {
+                let id = carts.length;
                 let cart = {
                     x: i,
                     y: index,
+                    id: id,
                     crossings: 0,
                     v: cartVelocity(chr)
                 }
@@ -33,47 +32,126 @@ const initCarts = () => {
         }
         data[index] = line.replaceAll(">", "-").replaceAll("<", "-").replaceAll("^", "|").replaceAll("v", "|");
     })
-}
 
-initCarts();
-
-const convertForDisplay = layout => {
-    layout.map((line, index) => {
-        layout[index] = line.replaceAll("I", "\\");
+    imagesSrc.map((i, id) => {
+        images[id] = new Image(32, 32);
+        images[id].onload = imageLoaded;
+        images[id].src = './'+i+'.png';
     })
-    return layout;
 }
 
-const cartIcon = cart => {
-    if (cart.v.x == 0 && cart.v.y == -1) return '^';
-    if (cart.v.x == 0 && cart.v.y == 1) return 'v';
-    if (cart.v.x == 1 && cart.v.y == 0) return '>';
-    if (cart.v.x == -1 && cart.v.y == 0) return '<';
+const cartClass = cart => {
+    if (cart.v.x == 0 && cart.v.y == -1) return 'top';
+    if (cart.v.x == 0 && cart.v.y == 1) return 'bottom';
+    if (cart.v.x == 1 && cart.v.y == 0) return 'right';
+    if (cart.v.x == -1 && cart.v.y == 0) return 'left';
 }
 
-const drawCarts = (layout) => {
+const drawCarts = () => {
     carts.map((cart, index) => {
+        let div = $('#cart_'+cart.id);
         if (cart.crashed !== true) {
-            layout[cart.y] = layout[cart.y].replaceAt(cart.x, cartIcon(cart));
+            div.removeClass('top bottom left right');
+            div.addClass(cartClass(cart));
+            let substepPx = (ticks % steps)*32/steps
+            div.css('left', (cart.x*32-12+substepPx*cart.v.x)+'px');
+            div.css('top', (cart.y*32-12-10+substepPx*cart.v.y)+'px');
+        } else {
+            if (!cart.exploded) {
+                cart.exploded = true;
+                // explosion
+                let ex = $('.explosion-wrapper');
+                ex.css('visibility', 'visible');
+                ex.css('left', (cart.x*32-128)+'px');
+                ex.css('top', (cart.y*32-128)+'px');
+                $('.explosion').addClass('hide');
+                setTimeout(() => {
+                    ex.css('visibility', 'hidden');
+                    $('.explosion').removeClass('hide');
+                }, 2000)
+                setTimeout(() => div.addClass('hide'), 1000);
+                setTimeout(() => cameraTargetId++, 3000);
+            }
         }
     })
 }
 
-//console.log(data);
-
-let rootEl = $('#root');
-let preEl = $('<pre>');
-rootEl.empty().append(preEl);
-
-const drawScene = () => {
-    let layout = $.extend(true, [], data);
-
-    drawCarts(layout);    
-
-    preEl.empty().append(convertForDisplay(layout).join("\n"));
+const initCarts = () => {
+    carts.map((cart, index) => {
+        let div = $('<div />', {
+            id: 'cart_'+cart.id,
+            css: {
+                left: cart.x*32+'px',
+                top: cart.y*32+'px'
+            }
+        }).addClass('cart');
+        rootEl.append(div);
+    })
 }
 
-const moveCart = (cart) => {
+let rootEl = $('#root'), initialized = false;
+
+let imagesSrc = [
+    'rail-top-bottom',
+    'rail-left-right',
+    'corner-left-top',
+    'corner-right-top',
+    'corner-right-bottom',
+    'corner-left-bottom',
+    'cross',
+    /*'./cart-left-right.png',
+    './cart-top-bottom.png',
+    './cart-left-right.png',
+    './cart-top-bottom.png'*/
+], images = [], loaded = 0;
+
+const imageLoaded = () => {
+    loaded++;
+    if (loaded == imagesSrc.length) initCanvas();
+}
+
+const initCanvas = () => {
+    const canvas = document.getElementById('canvas');
+    canvas.width = 32*data.length;
+    canvas.height = 32*data[0].length;
+    const ctx = canvas.getContext('2d');
+
+    data.map((line, y) => {
+        line.split('').map((char, x) => {
+            if (char != ' ') {
+                let imgName = '';
+                if (char == '|') imgName = 'rail-top-bottom';
+                if (char == '-') imgName = 'rail-left-right';
+                if (char == '+') imgName = 'cross';
+                if (char == '/') {
+                    // right-bottom or left-top
+                    if (['-', '+'].includes(data[y][x+1])) imgName = 'corner-right-bottom'; else imgName = 'corner-left-top';
+                }
+                if (char == 'I') {
+                    // left-bottom or right-top
+                    if (['-', '+'].includes(data[y][x+1])) imgName = 'corner-right-top'; else imgName = 'corner-left-bottom';
+                }
+                let img = images[imagesSrc.indexOf(imgName)];
+                ctx.drawImage(img, 0, 0, 32, 32, x*32, y*32, 32, 32);
+            }
+        })
+    })
+
+    console.log('background inited');
+}
+
+const initScene = () => {
+    if (initialized) return;
+    initialized = true;
+    initCarts();
+}
+
+const drawScene = () => {
+    initScene();
+    drawCarts();
+}
+
+const moveCart = cart => {
     cart.x = cart.x+cart.v.x;
     cart.y = cart.y+cart.v.y;
 
@@ -141,6 +219,7 @@ const detectCollision = () => {
                     c1.crashed = true;
                     c2.crashed = true;
                     console.log('COLLISION AT', c1.x, c1.y, 'carts', c1, c2);
+                    cameraTargets.push(c1.id, c2.id);
                 }
             }
         })
@@ -160,18 +239,23 @@ const moveCarts = () => {
     })
 }
 
-let interval = setInterval(() => {
-    let nonCrashedCarts = 0;
-    carts.map(c => {
-        if (c.crashed !== true) nonCrashedCarts++;
-    })
-    if (nonCrashedCarts > 1) {
-        moveCarts();
-    } else {
-        console.log('game ended with 1 survivor', carts);
-        clearInterval(interval);
-    }
+const tick = () => {
+    ticks++;
+    requestAnimationFrame(tick);
+    if (ticks % steps == 0) moveCarts();
     drawScene();
-}, 25)
+    document.getElementById('cart_'+cameraTargets[cameraTargetId]).scrollIntoViewIfNeeded({behavior: 'smooth', inline: 'center', block: 'center'});
+}
 
-console.log('carts', carts);
+const solve = () => {
+    while (carts.filter(c => c.crashed !== true).length > 1) moveCarts();
+    let survivor = carts.filter(c => c.crashed !== true)[0];
+    cameraTargets.push(survivor.id);
+    console.log('game ended with 1 survivor', survivor, cameraTargets);
+}
+
+init();
+solve();
+
+init();
+setTimeout(() => tick(), 0)
