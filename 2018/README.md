@@ -23,6 +23,10 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ## Screenshots
 
+### Day 13: Madness?
+
+![Mine cart Sparta](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_13.png)
+
 ### Day 15: Battle between elves and goblins in full swing
 
 ![Battle between elves and goblins in full swing](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_15.png)
