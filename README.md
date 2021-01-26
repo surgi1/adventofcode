@@ -21,7 +21,7 @@ JavaScript solutions, executed in browser or node.
 
 Code is pretty raw most of the time, with few exceptions.
 
-Contains [more](https://surgi1.github.io/adventofcode/2018/day15/index.html) [than](https://surgi1.github.io/adventofcode/2019/day15/index.html) [healthy](https://surgi1.github.io/adventofcode/2018/day13/index.html) [amount](https://surgi1.github.io/adventofcode/2019/day13/index.html) [of](https://surgi1.github.io/adventofcode/2018/day17/index.html) [visualisations](https://surgi1.github.io/adventofcode/2019/day12/index.html) (captured on [YouTube](https://www.youtube.com/watch?v=qzYAOrm-Qsw) [too](https://www.youtube.com/watch?v=nmIWk9k_eaU)) or playable games where [possible or available](https://surgi1.github.io/adventofcode/2019/day25/index.html).
+Contains [more](https://surgi1.github.io/adventofcode/2018/day15/index.html) [than](https://surgi1.github.io/adventofcode/2019/day15/index.html) [healthy](https://surgi1.github.io/adventofcode/2018/day13/index.html) [amount](https://surgi1.github.io/adventofcode/2019/day13/index.html) [of](https://surgi1.github.io/adventofcode/2018/day17/index.html) [visualisations](https://surgi1.github.io/adventofcode/2019/day12/index.html) (captured [on](https://www.youtube.com/watch?v=rqz1g5tkiZw) [YouTube](https://www.youtube.com/watch?v=qzYAOrm-Qsw) [too](https://www.youtube.com/watch?v=nmIWk9k_eaU)) or playable games where [possible or available](https://surgi1.github.io/adventofcode/2019/day25/index.html).
 
 Whole repo is deployed on Github Pages, links to individual puzzle solutions are in their respective readmes. Run only at your own risk of course.
 
