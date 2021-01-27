@@ -9,15 +9,9 @@
             background-color: oldlace;
             margin: 0;
         }
-        #root {
-            position:absolute;
-        }
-        /*#root, #canvas {
-            zoom:0.5;
-        }
-        #canvas {
-            opacity:0.8;
-        }*/
+        #root {position:absolute}
+        /*#root, #canvas {zoom:0.5}
+        #canvas {opacity:0.8}*/
         .cart {
             width:56px;
             height:56px;
@@ -26,21 +20,9 @@
             z-index:10;
             transition:opacity 2s;
         }
-        .cart.left {
-            background-image:url('./cart-left-right.png');
-        }
-        .cart.top {
-            background-image:url('./cart-top-bottom.png');
-        }
-        .cart.right {
-            background-image:url('./cart-left-right.png');
-        }
-        .cart.bottom {
-            background-image:url('./cart-top-bottom.png');
-        }
-        .cart.hide {
-            opacity:0;
-        }
+        .cart.top-bottom {background-image:url('./cart-top-bottom.png')}
+        .cart.left-right {background-image:url('./cart-left-right.png')}
+        .cart.hide {opacity:0}
         .explosion-wrapper {
             width:256px;
             height:256px;

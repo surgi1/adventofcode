@@ -1,19 +1,18 @@
 // astonishing visuals!
-let carts, data, ticks = 0, subSteps = 4, cameraTargets = [], cameraTargetId = 0, cartsInitialized = false, spritesImage;
+const subSteps = 4, spriteSize = 32;
+let carts, data, ticks = 0, cameraTargets = [], cameraTargetId = 0, cartsInitialized = false, spritesImage;
 
 const cartVelocity = chr => {
-    let v = {};
     switch (chr) {
-        case '^': v = {x: 0, y: -1}; break;
-        case 'v': v = {x: 0, y: 1}; break;
-        case '>': v = {x: 1, y: 0}; break;
-        case '<': v = {x: -1, y: 0}; break;
+        case '^': return {x: 0, y: -1};
+        case 'v': return {x: 0, y: 1};
+        case '>': return {x: 1, y: 0};
+        case '<': return {x: -1, y: 0};
     }
-    return v;
 }
 
 const initSprites = () => {
-    spritesImage = new Image(32*7, 32);
+    spritesImage = new Image(spriteSize*7, spriteSize);
     spritesImage.onload = initCanvas;
     spritesImage.src = './rails.png';
 }
@@ -40,34 +39,26 @@ const init = input => {
     })
 }
 
-const cartClass = cart => {
-    if (cart.v.x == 0 && cart.v.y == -1) return 'top';
-    if (cart.v.x == 0 && cart.v.y == 1) return 'bottom';
-    if (cart.v.x == 1 && cart.v.y == 0) return 'right';
-    if (cart.v.x == -1 && cart.v.y == 0) return 'left';
-}
-
 const drawCarts = () => {
     initCarts();
-    carts.map((cart, index) => {
+    carts.filter(c => !(c.crashed && c.exploded)).map(cart => {
         let div = $('#cart_'+cart.id);
         if (cart.crashed !== true) {
-            div.removeClass('top bottom left right');
-            div.addClass(cartClass(cart));
-            let substepPx = (ticks % subSteps)*32/subSteps
-            div.css('left', (cart.x*32-12+substepPx*cart.v.x)+'px');
-            div.css('top', (cart.y*32-12-10+substepPx*cart.v.y)+'px');
+            div.removeClass('top-bottom left-right').addClass(!cart.v.x ? 'top-bottom' : 'left-right');
+            let substepPx = (ticks % subSteps)*spriteSize/subSteps
+            div.css('left', (cart.x*spriteSize-12+substepPx*cart.v.x)+'px');
+            div.css('top', (cart.y*spriteSize-12-10+substepPx*cart.v.y)+'px');
         } else {
-            if (cart.exploded) return;
             cart.exploded = true;
             // explosion
-            let ex = $('.explosion-wrapper');
-            ex.css('visibility', 'visible');
-            ex.css('left', (cart.x*32-128)+'px');
-            ex.css('top', (cart.y*32-128)+'px');
+            $('.explosion-wrapper').css({
+                visibility: 'visible',
+                left: (cart.x*spriteSize-128)+'px',
+                top: (cart.y*spriteSize-128)+'px'
+            });
             $('.explosion').addClass('hide');
             setTimeout(() => {
-                ex.css('visibility', 'hidden');
+                $('.explosion-wrapper').css('visibility', 'hidden');
                 $('.explosion').removeClass('hide');
             }, 2000)
             setTimeout(() => div.addClass('hide'), 1000);
@@ -83,8 +74,8 @@ const initCarts = () => {
         let div = $('<div />', {
             id: 'cart_'+cart.id,
             css: {
-                left: cart.x*32+'px',
-                top: cart.y*32+'px'
+                left: cart.x*spriteSize+'px',
+                top: cart.y*spriteSize+'px'
             }
         }).addClass('cart');
         $('#root').append(div);
@@ -94,16 +85,16 @@ const initCarts = () => {
 const initCanvas = () => {
     const spriteOffsets = {
         'rail-top-bottom': 0,
-        'rail-left-right': 32,
-        'corner-left-top': 64,
-        'corner-right-top': 96,
-        'corner-right-bottom': 128,
-        'corner-left-bottom': 160,
-        'cross': 192
+        'rail-left-right': spriteSize,
+        'corner-left-top': 2*spriteSize,
+        'corner-right-top': 3*spriteSize,
+        'corner-right-bottom': 4*spriteSize,
+        'corner-left-bottom': 5*spriteSize,
+        'cross': 6*spriteSize
     };
     const canvas = document.getElementById('canvas');
-    canvas.width = 32*data.length;
-    canvas.height = 32*data[0].length;
+    canvas.width = spriteSize*data.length;
+    canvas.height = spriteSize*data[0].length;
     const ctx = canvas.getContext('2d');
 
     data.map((line, y) => {
@@ -115,19 +106,16 @@ const initCanvas = () => {
                 if (char == '+') sprite = 'cross';
                 if (char == '/') {
                     // right-bottom or left-top
-                    if (['-', '+'].includes(data[y][x+1])) sprite = 'corner-right-bottom'; else sprite = 'corner-left-top';
+                    sprite = ['-', '+'].includes(data[y][x+1]) ? 'corner-right-bottom' : 'corner-left-top';
                 }
                 if (char == '\\') {
                     // left-bottom or right-top
-                    if (['-', '+'].includes(data[y][x+1])) sprite = 'corner-right-top'; else sprite = 'corner-left-bottom';
+                    sprite = ['-', '+'].includes(data[y][x+1]) ? 'corner-right-top' : 'corner-left-bottom';
                 }
-                let offset = spriteOffsets[sprite];
-                ctx.drawImage(spritesImage, offset, 0, 32, 32, x*32, y*32, 32, 32);
+                ctx.drawImage(spritesImage, spriteOffsets[sprite], 0, spriteSize, spriteSize, x*spriteSize, y*spriteSize, spriteSize, spriteSize);
             }
         })
     })
-
-    console.log('background inited');
 }
 
 const moveCart = cart => {
