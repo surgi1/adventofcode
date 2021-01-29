@@ -1,14 +1,10 @@
 // play the text game, it is lot of fun!
 // find 8 items, navigate to final location, export your journey up to that point into baseCommands, then power up the brute-force
-
-let pre, commands = [];
-const comp = new Computer();
+let root = $('#root'), commands = [], comp = new Computer(), invCount = 0, map = [], pos = {x:20, y:20};
 
 const str2Command = s => {
     let res = [];
-    for (let i = 0; i < s.length; i++) {
-        res.push(s.charCodeAt(i));
-    }
+    s.split('').map(c => res.push(c.charCodeAt(0)))
     res.push(10);
     return res;
 }
@@ -20,6 +16,9 @@ const processOutput = s => {
             locChanged = true;
             line = '<h3>'+line+'</h3>';
         }
+
+        if (line.indexOf('You take the') > -1) invCount++;
+        if (line.indexOf('You drop the') > -1) invCount--;
 
         if (['Doors here lead:', 'Command?'].includes(line));
         else if (line == 'Items here:') items = [];
@@ -35,8 +34,10 @@ const processOutput = s => {
         $('[data-action=direct]').attr('disabled', true);
         enabled.map(id => $('#'+id).removeAttr('disabled'));
     }
-    if (items !== false) items.map(i => arr.push(`<button onclick="command('take `+i+`')">`+i+` (take)</button>`))
-    if (drops !== false) drops.map(i => arr.push(`<button onclick="command('drop `+i+`')">`+i+` (drop)</button>`))
+
+    if (items !== false) items.map(i => arr.push(`<button class="temp" onclick="command('take `+i+`');$(this).attr('disabled',true);">`+i+` (take)</button>`))
+    if (drops !== false) drops.map(i => arr.push(`<button class="temp" onclick="command('drop `+i+`');$(this).attr('disabled',true);">`+i+` (drop)</button>`))
+    $('#inv').html('Inventory (' + invCount + ')')
     return '<div class="output">'+arr.join("<br>")+'</div>';
 }
 
@@ -45,7 +46,7 @@ const tick = pars => {
     let res = comp.run(pars);
     let s = '';
     res.output.map(code => s += String.fromCharCode(code));
-    pre.prepend(processOutput(s));
+    root.prepend(processOutput(s));
 }
 
 const command = com => {
@@ -55,9 +56,6 @@ const command = com => {
 }
 
 const initGUI = () => {
-    let root = $('#root');
-    pre = $('<div>');
-    root.append(pre);
     $('[data-action=direct]').map((b, el) => $(el).on('click', e => command($(el).attr('id'))))
     $('#export').on('click', e => console.log('path so far', commands))
 }
