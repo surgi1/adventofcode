@@ -5,31 +5,54 @@
     <script type="text/javascript" src="https://zeptojs.com/zepto.min.js"></script>
     <title>AOC 2019</title>
     <style type="text/css">
-        html, pre {
+        html {
             font-family: Calibri;
         }
-        code {
-            font-family: courier;
-            background-color:#eee;
+        #root {
+            width: 600px;
+            float: left;
         }
-        input {
+        input, #send {
             float: left;
             margin-right:4px;
             margin-top:0px;
+            display:none;
+        }
+        .output {
+            margin:10px 10px 10px 10px;
+            padding:10px 20px 10px 20px;
+            background-color:#eee;
+            border: 1px solid lightslategray;
+            border-radius:10px;
+        }
+        .output h3 {
+            padding:0;
+            margin:0;
+        }
+        .controls {
+            margin-left:10px;
+        }
+        button {
+            font-size:14px;
+            margin:4px;
+            border: 1px solid lightslategray;
+            border-radius:4px;
+            padding-left:14px;
+            padding-right:14px;
+            padding-top:7px;
+            padding-bottom:7px;
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
-    <input type="text" id="command"></input>
-    <button id="send">SEND</button>
-    <button id="export">EXPORT PATH</button>
-    <ul>
-        <li>Movement via <code>north</code>, <code>south</code>, <code>east</code>, or <code>west</code>.</li>
-        <li>To take an item the droid sees in the environment, use the command take <code>name of item</code>. For example, if the droid reports seeing a red ball, you can pick it up with <code>take red ball</code>.</li>
-        <li>To drop an item the droid is carrying, use the command drop <code>name of item</code>. For example, if the droid is carrying a green ball, you can drop it with <code>drop green ball</code>.</li>
-        <li>To get a list of all of the items the droid is currently carrying, use the command <code>inv</code> (for "inventory").</li>
-    </ul>
+    <div class="controls">
+        <table><tr><td></td><td><button data-action="direct" id="north">N</button></td><td></td></tr><tr><td><button data-action="direct" id="east">E</button></td><td><button data-action="direct" id="south">S</button></td><td><button data-action="direct" id="west">W</button></td></tr></table>
+        <input type="text" id="command"></input>
+        <button id="send">SEND</button>
+        <button data-action="direct" id="inv">Inventory</button>
+        <button id="export">Export path</button>
+    </div>
     <script src="input.js"></script>
     <script src="Computer.js"></script>
     <script src="script.js"></script>

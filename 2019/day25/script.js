@@ -13,48 +13,53 @@ const str2Command = s => {
     return res;
 }
 
+const processOutput = s => {
+    let enabled = ['inv'], arr = [], items = false, drops = false, locChanged = false;
+    s.split("\n").map(line => {
+        if (line.indexOf('==') > -1) {
+            locChanged = true;
+            line = '<h3>'+line+'</h3>';
+        }
+
+        if (['Doors here lead:', 'Command?'].includes(line));
+        else if (line == 'Items here:') items = [];
+        else if (['- north', '- south', '- east', '- west'].includes(line)) enabled.push(line.substr(2));
+        else if (items !== false && line != '') items.push(line.substr(2));
+        else if (drops !== false && line != '') drops.push(line.substr(2));
+        else if (line != '') arr.push(line);
+
+        if (line == 'Items in your inventory:') drops = [];
+    })
+
+    if (locChanged) {
+        $('[data-action=direct]').attr('disabled', true);
+        enabled.map(id => $('#'+id).removeAttr('disabled'));
+    }
+    if (items !== false) items.map(i => arr.push(`<button onclick="command('take `+i+`')">`+i+` (take)</button>`))
+    if (drops !== false) drops.map(i => arr.push(`<button onclick="command('drop `+i+`')">`+i+` (drop)</button>`))
+    return '<div class="output">'+arr.join("<br>")+'</div>';
+}
+
 const tick = pars => {
     if (!pars) pars = [];
     let res = comp.run(pars);
     let s = '';
     res.output.map(code => s += String.fromCharCode(code));
-    pre.append(s);
+    pre.prepend(processOutput(s));
 }
 
 const command = com => {
+    if (!Array.isArray(com)) com = [com];
     commands.push(...com);
-    if (Array.isArray(com)) {
-        com.map(c => {
-            tick(str2Command(c));
-        })
-    } else {
-        tick(str2Command(com));
-    }
-}
-
-const commandValue = () => {
-    return $('#command').val().split(/\n/).filter(l => l.length != 0)
+    com.map(c => tick(str2Command(c)))
 }
 
 const initGUI = () => {
     let root = $('#root');
-    pre = $('<pre>');
+    pre = $('<div>');
     root.append(pre);
-
-    $('#send').on('click', e => {
-        command(commandValue());
-        window.scrollTo(0, document.body.scrollHeight);
-        $('#command').val('').focus();
-    })
-
-    $('#command').keypress(event => {
-        let keycode = (event.keyCode ? event.keyCode : event.which);
-        if (keycode == '13') $('#send').click();
-    });
-
-    $('#export').on('click', e => {
-        console.log('path so far', commands);
-    })
+    $('[data-action=direct]').map((b, el) => $(el).on('click', e => command($(el).attr('id'))))
+    $('#export').on('click', e => console.log('path so far', commands))
 }
 
 const generateVariantsCommands = baseCommands => {
