@@ -1,6 +1,6 @@
 // play the text game, it is lot of fun!
 // find 8 items, navigate to final location, export your journey up to that point into baseCommands, then power up the brute-force
-let root = $('#root'), commands = [], comp = new Computer(), invCount = 0, rooms = [], lastLoc = false, loc = false;
+let root = $('#root'), commands = [], comp = new Computer(), invCount = 0, rooms = [], lastLoc = false, loc = false, lastExecutedCommand;
 const opDir = {north: 'south', south: 'north', west: 'east', east: 'west'};
 
 const drawRooms = rooms => {
@@ -29,7 +29,6 @@ const drawRooms = rooms => {
                     left: x*18+'px',
                     top: y*18+'px'
                 }}).addClass(roomClasses(map[y][x]));
-                //el.html(map[y][x].id);
                 if (map[y][x].name == loc) el.html('*');
                 mapEl.append(el)
             }
@@ -78,6 +77,7 @@ const str2Command = s => {
     let res = [];
     s.split('').map(c => res.push(c.charCodeAt(0)))
     res.push(10);
+    lastExecutedCommand = s;
     return res;
 }
 
@@ -95,6 +95,7 @@ const addLoc = (name, exits) => {
 
 const processOutput = s => {
     let enabled = ['inv'], arr = [], items = false, drops = false;
+    loc = false;
     s.split("\n").map(line => {
         if (line.indexOf('==') > -1) {
             loc = line.substr(3, line.length-6);
@@ -123,17 +124,18 @@ const processOutput = s => {
         // connect lastLoc
         if (lastLoc !== false && loc != lastLoc) {
             let lastLocId = rooms.filter(r => r.name == lastLoc)[0].id;
-            rooms[lastLocId][commands[commands.length-1]] = id;
-            rooms[id][opDir[commands[commands.length-1]]] = lastLocId;
+            rooms[lastLocId][lastExecutedCommand] = id;
+            rooms[id][opDir[lastExecutedCommand]] = lastLocId;
         }
 
         lastLoc = loc;
-        drawRooms(rooms)
+        drawRooms(rooms);
     }
 
     if (items !== false) items.map(i => arr.push(`<button class="temp" onclick="command('take `+i+`');$(this).attr('disabled',true);">`+i+` (take)</button>`))
     if (drops !== false) drops.map(i => arr.push(`<button class="temp" onclick="command('drop `+i+`');$(this).attr('disabled',true);">`+i+` (drop)</button>`))
     $('#inv').html('Inventory (' + invCount + ')');
+    if (arr.length == 0) return '';
     return '<div class="output">'+arr.join("<br>")+'</div>';
 }
 
