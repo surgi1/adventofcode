@@ -1,12 +1,10 @@
 // much graphics, so wow
-let tickDelay = 50, stopRound = false, map = [], mapSize = data[0].length, creatures = [], boost = 0;
+let tickDelay = 50, stopRound = false, map = [], mapSize = data[0].length, creatures = [], boost = 0, root = $('#root');
 
 const addCreature = (type, x, y) => creatures.push({
-    type: type,
-    health: 200,
+    type: type, health: 200,
     attack: (type == 'E' ? 3+boost : 3),
-    x: x,
-    y: y,
+    x: x, y: y,
     status: 'ALIVE' // DEAD
 })
 
@@ -14,10 +12,10 @@ const init = () => {
     map = []; creatures = [];
     data.map((line, y) => {
         if (!map[y]) map[y] = [];
-        for (let x = 0; x < line.length; x++) {
-            map[y][x] = (line[x] == '#' ? 'W' : 'S');
-            if (['G', 'E'].includes(line[x])) addCreature(line[x], x, y);
-        }
+        line.split('').map((ch, x) => {
+            map[y][x] = (ch == '#' ? 'W' : 'S');
+            if (['G', 'E'].includes(ch)) addCreature(ch, x, y);
+        })
     })
 }
 
@@ -30,92 +28,54 @@ const baseDiv = (cls, x, y) => {
     return div;
 }
 
-const drawMap = root => {
-    for (let y = 0; y < mapSize; y++) {
-        for (let x = 0; x < mapSize; x++) {
-            let mDiv = baseDiv(['mappoint', map[y][x]], x, y);
-            root.append(mDiv);
-        }
-    }
+const drawMap = () => {
+    for (let y = 0; y < mapSize; y++)
+        for (let x = 0; x < mapSize; x++) root.append(baseDiv(['mappoint', map[y][x]], x, y));
 }
 
-const drawCreatures = root => creatures.map((creature, index) => {
-    if (creature.status != 'DEAD') {
-        let cDiv = baseDiv(['creature', creature.type], creature.x, creature.y);
-        cDiv.append( $('<div class="health"/>').html(creature.health) );
-        root.append(cDiv);
-    }
+const drawCreatures = () => creatures.filter(c => c.status != 'DEAD').map(creature => {
+    let cDiv = baseDiv(['creature', creature.type], creature.x, creature.y);
+    cDiv.append( $('<div class="health"/>').html(creature.health) );
+    root.append(cDiv);
 })
 
 const drawScene = () => {
-    let root = $('#root');
     root.empty();
-    drawMap(root);
-    drawCreatures(root);
+    drawMap();
+    drawCreatures();
 }
 
 const computeDistanceMap = (spreadX, spreadY) => {
-    let distanceMap = $.extend(true, [], map); // init
+    let distanceMap = $.extend(true, [], map), toSpread = [{x: spreadX, y: spreadY, dist: 0}], i = 0;
     // add creatures
-    creatures.map((creature, index) => {
-        if ((creature.status != 'DEAD') && ( !((spreadX == creature.x) && (spreadY == creature.y)) )) {
-            distanceMap[creature.y][creature.x] = 'W'; // maybe unit type?
-        }
-    })
-    let toSpread = [{x: spreadX, y: spreadY, dist: 0}];
-    let processed = 0;
-    while (processed < toSpread.length) {
-        for (let i = processed; i < toSpread.length; i++) {
-            let point = distanceMap[toSpread[i].y][toSpread[i].x];
-            if (point != 'W') {
-                if ((point == 'S') || (point > toSpread[i].dist)) {
-                    distanceMap[toSpread[i].y][toSpread[i].x] = toSpread[i].dist;
-                    // now spread moar
-                    // spread left
-                    toSpread.push({
-                        x: toSpread[i].x-1,
-                        y: toSpread[i].y,
-                        dist: toSpread[i].dist+1
-                    })
-                    // spread up
-                    toSpread.push({
-                        x: toSpread[i].x,
-                        y: toSpread[i].y-1,
-                        dist: toSpread[i].dist+1
-                    })
-                    // spread right
-                    toSpread.push({
-                        x: toSpread[i].x+1,
-                        y: toSpread[i].y,
-                        dist: toSpread[i].dist+1
-                    })
-                    // spread down
-                    toSpread.push({
-                        x: toSpread[i].x,
-                        y: toSpread[i].y+1,
-                        dist: toSpread[i].dist+1
-                    })
-                }
+    creatures.filter(c => c.status != 'DEAD' && !(spreadX == c.x && spreadY == c.y)).map(c => distanceMap[c.y][c.x] = 'W')
+    while (i < toSpread.length) {
+        let point = distanceMap[toSpread[i].y][toSpread[i].x];
+        if (point != 'W') {
+            if ((point == 'S') || (point > toSpread[i].dist)) {
+                distanceMap[toSpread[i].y][toSpread[i].x] = toSpread[i].dist;
+                toSpread.push({x: toSpread[i].x-1, y: toSpread[i].y, dist: toSpread[i].dist+1})
+                toSpread.push({x: toSpread[i].x, y: toSpread[i].y-1, dist: toSpread[i].dist+1})
+                toSpread.push({x: toSpread[i].x+1, y: toSpread[i].y, dist: toSpread[i].dist+1})
+                toSpread.push({x: toSpread[i].x, y: toSpread[i].y+1, dist: toSpread[i].dist+1})
             }
-            processed++;
         }
+        i++;
     }
     return distanceMap;
 }
 
 const findAdjacentPoints = (targetCreatures, dm) => {
-    let adjMap = $.extend(true, [], map); // init
+    let adjMap = $.extend(true, [], map), adjacentPoints = []; // init
     creatures.filter(c => c.status != 'DEAD').map(c => adjMap[c.y][c.x] = 'W'); // add creatures
-    let adjacentPoints = [];
-    targetCreatures.map(creature => {
-        if (adjMap[creature.y-1][creature.x] == 'S' && dm[creature.y-1][creature.x] != 'S') adjacentPoints.push({x: creature.x, y: creature.y-1});
-        if (adjMap[creature.y+1][creature.x] == 'S' && dm[creature.y+1][creature.x] != 'S') adjacentPoints.push({x: creature.x, y: creature.y+1});
-        if (adjMap[creature.y][creature.x-1] == 'S' && dm[creature.y][creature.x-1] != 'S') adjacentPoints.push({x: creature.x-1, y: creature.y});
-        if (adjMap[creature.y][creature.x+1] == 'S' && dm[creature.y][creature.x+1] != 'S') adjacentPoints.push({x: creature.x+1, y: creature.y});
+    targetCreatures.map(c => {
+        if (adjMap[c.y-1][c.x] == 'S' && dm[c.y-1][c.x] != 'S') adjacentPoints.push({x: c.x, y: c.y-1});
+        if (adjMap[c.y+1][c.x] == 'S' && dm[c.y+1][c.x] != 'S') adjacentPoints.push({x: c.x, y: c.y+1});
+        if (adjMap[c.y][c.x-1] == 'S' && dm[c.y][c.x-1] != 'S') adjacentPoints.push({x: c.x-1, y: c.y});
+        if (adjMap[c.y][c.x+1] == 'S' && dm[c.y][c.x+1] != 'S') adjacentPoints.push({x: c.x+1, y: c.y});
     })
     return adjacentPoints;
 }
-
 
 const performAttack = (from, to) => {
     to.health = Math.max(0, to.health-from.attack);
@@ -185,9 +145,7 @@ const battle = () => {
                         creature.x = possibleMoves[0].x;
                         creature.y = possibleMoves[0].y;
                     }
-
                 }
-
             }
 
             // attacking
@@ -201,7 +159,6 @@ const battle = () => {
                 })
                 performAttack(creature, targetsInRange[0]);
             }
-
         }
 
         drawScene();
