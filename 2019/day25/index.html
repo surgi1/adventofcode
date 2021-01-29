@@ -37,7 +37,7 @@
             margin:0;
             color: #fff;
         }
-        .controls {
+        .controls, .map {
             margin-left:10px;
             float:left;
         }
@@ -61,6 +61,39 @@
         }
         table {
             border-collapse: collapse;
+        }
+        .map {
+            width:320px;
+            height:320px;
+            position:relative;
+        }
+        .mappoint {
+            position:absolute;
+            height:18px;
+            width:18px;
+            background-color:#888;
+            border: 1px solid #ccc;
+            color:#fff;
+            font-size:12px;
+            text-align: center;
+            z-index:5;
+            border-radius:4px;
+        }
+        .mappoint.north {border-top-color: #888}
+        .mappoint.south {border-bottom-color: #888}
+        .mappoint.east {border-right-color: #888}
+        .mappoint.west {border-left-color: #888}
+        polyline {
+            fill: none;
+            stroke-width: 14;
+            stroke-linecap: round;
+            stroke: dimgray;
+        }
+        svg {
+            position:absolute;
+            width:100%;
+            min-height:360px;
+            z-index:1;
         }
 
     </style>
@@ -87,12 +120,13 @@
         </div>
     </div>
     <div class="controls">
-        <table><tr><td></td><td><button data-action="direct" id="north">N</button></td><td></td></tr><tr><td><button data-action="direct" id="east">E</button></td><td><button data-action="direct" id="south">S</button></td><td><button data-action="direct" id="west">W</button></td></tr></table>
+        <table><tr><td></td><td><button data-action="direct" id="north">N</button></td><td></td></tr><tr><td><button data-action="direct" id="west">W</button></td><td><button data-action="direct" id="south">S</button></td><td><button data-action="direct" id="east">E</button></td></tr></table>
         <input type="text" id="command"></input>
         <button id="send">SEND</button>
         <button data-action="direct" id="inv">Inventory</button><br>
         <button id="export">Export path</button>
     </div>
+    <div class="map output"> </div>
     <script src="input.js"></script>
     <script src="Computer.js"></script>
     <script src="script.js"></script>
