@@ -29,7 +29,7 @@ const drawRooms = rooms => {
                     left: x*18+'px',
                     top: y*18+'px'
                 }}).addClass(roomClasses(map[y][x]));
-                if (map[y][x].name == loc) el.html('*');
+                if (map[y][x].name == loc) el.html('@');
                 mapEl.append(el)
             }
         }
@@ -41,7 +41,7 @@ const drawRooms = rooms => {
                 let p1 = roomPos(r.id);
                 if (r[k] > r.id) {
                     let p2 = roomPos(r[k]);
-                    if (p2) mapEl.append('<svg><polyline points="'+ (p1.x*18-11) + ',' + p1.y*18 +' '+ (p2.x*18-11) + ',' + p2.y*18 +'"></polyline></svg>')
+                    if (p2) mapEl.append('<svg><polyline points="'+ (p1.x*18-9) + ',' + (p1.y*18+1) +' '+ (p2.x*18-9) + ',' + (p2.y*18+1) +'"></polyline></svg>')
                 }
             })
         })
@@ -155,6 +155,19 @@ const command = com => {
 const initGUI = () => {
     $('[data-action=direct]').map((b, el) => $(el).on('click', e => command($(el).attr('id'))))
     $('#export').on('click', e => console.log('path so far', commands))
+    let keyMap = {
+        ArrowLeft: 'west',
+        ArrowRight: 'east',
+        ArrowUp: 'north',
+        ArrowDown: 'south'
+    };
+
+    window.addEventListener('keyup', e => {
+        if (keyMap[e.key] !== undefined) $('#'+keyMap[e.key]).click();
+    });
+    window.addEventListener('keydown', e => {
+        if (keyMap[e.key] !== undefined) e.preventDefault();
+    });
 }
 
 const generateVariantsCommands = baseCommands => {

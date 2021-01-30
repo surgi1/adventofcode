@@ -72,7 +72,7 @@
             height:18px;
             width:18px;
             background-color:#888;
-            border: 1px solid #ccc;
+            border: 2px solid #ccc;
             color:#fff;
             font-size:12px;
             text-align: center;
@@ -85,9 +85,9 @@
         .mappoint.west {border-left-color: #888}
         polyline {
             fill: none;
-            stroke-width: 14;
+            stroke-width: 5;
             stroke-linecap: round;
-            stroke: dimgray;
+            stroke: #888;
         }
         svg {
             position:absolute;
@@ -120,7 +120,7 @@
         </div>
     </div>
     <div class="controls">
-        <table><tr><td></td><td><button data-action="direct" id="north">N</button></td><td></td></tr><tr><td><button data-action="direct" id="west">W</button></td><td><button data-action="direct" id="south">S</button></td><td><button data-action="direct" id="east">E</button></td></tr></table>
+        <table><tr><td></td><td><button data-action="direct" id="north">↑</button></td><td></td></tr><tr><td><button data-action="direct" id="west">←</button></td><td><button data-action="direct" id="south">↓</button></td><td><button data-action="direct" id="east">→</button></td></tr></table>
         <input type="text" id="command"></input>
         <button id="send">SEND</button>
         <button data-action="direct" id="inv">Inventory</button><br>
