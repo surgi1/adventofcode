@@ -1,17 +1,10 @@
-// play the text game, it is lot of fun!
-// find 8 items, navigate to final location, export your journey up to that point into baseCommands, then power up the brute-force
-let root = $('#root'), commands = [], comp = new Computer(), invCount = 0, rooms = [], lastLoc = false, loc = false, lastExecutedCommand;
+let root = $('#root'), commands, comp = new Computer(), invCount, rooms, lastLoc, loc, lastExecutedCommand;
 const opDir = {north: 'south', south: 'north', west: 'east', east: 'west'};
+const dirs = {north: {x: 0, y: -1}, south: {x: 0, y: 1}, east: {x: 1, y: 0}, west: {x: -1, y: 0}}
 
 const drawRooms = rooms => {
     let map = [], size = 10, pos = {x:size/2, y:size/2}, mapEl = $('.map');
     rooms.map(r => delete r.drawn);
-    const dirs = {
-        north: {x: 0, y: -1},
-        south: {x: 0, y: 1},
-        east: {x: 1, y: 0},
-        west: {x: -1, y: 0}
-    }
     const col = (map, x, res = []) => map.map(line => line[x])
     const insCol = (map, x) => map.map((line, y) => map[y].splice(x, 0, undefined))
     const roomClasses = room => Object.keys(dirs).filter(k => room[k] != undefined).join(' ')
@@ -94,13 +87,14 @@ const addLoc = (name, exits) => {
 }
 
 const processOutput = s => {
-    let enabled = ['inv'], arr = [], items = false, drops = false;
+    let enabled = ['inv'], arr = [], items = false, drops = false, bruteEnabled = false;
     loc = false;
     s.split("\n").map(line => {
         if (line.indexOf('==') > -1) {
             loc = line.substr(3, line.length-6);
             line = '<h3>'+loc+'</h3>';
             enabled = ['inv'];
+            if (loc == 'Security Checkpoint') bruteEnabled = true;
         }
 
         if (line.indexOf('You take the') > -1) invCount++;
@@ -132,11 +126,13 @@ const processOutput = s => {
         drawRooms(rooms);
     }
 
+    if (bruteEnabled) $('#brute').removeAttr('disabled'); else $('#brute').attr('disabled', true);
+
     if (items !== false) items.map(i => arr.push(`<button class="temp" onclick="command('take `+i+`');$(this).attr('disabled',true);">`+i+` (take)</button>`))
     if (drops !== false) drops.map(i => arr.push(`<button class="temp" onclick="command('drop `+i+`');$(this).attr('disabled',true);">`+i+` (drop)</button>`))
     $('#inv').html('Inventory (' + invCount + ')');
     if (arr.length == 0) return '';
-    return '<div class="output">'+arr.join("<br>")+'</div>';
+    return '<div class="output generated">'+arr.join("<br>")+'</div>';
 }
 
 const tick = pars => {
@@ -155,6 +151,9 @@ const command = com => {
 const initGUI = () => {
     $('[data-action=direct]').map((b, el) => $(el).on('click', e => command($(el).attr('id'))))
     $('#export').on('click', e => console.log('path so far', commands))
+    $('#brute').on('click', useBruteForce)
+    $('#load').on('click', e => run(input))
+
     let keyMap = {
         ArrowLeft: 'west',
         ArrowRight: 'east',
@@ -162,40 +161,50 @@ const initGUI = () => {
         ArrowDown: 'south'
     };
 
-    window.addEventListener('keyup', e => {
-        if (keyMap[e.key] !== undefined) $('#'+keyMap[e.key]).click();
-    });
-    window.addEventListener('keydown', e => {
-        if (keyMap[e.key] !== undefined) e.preventDefault();
-    });
+    window.addEventListener('keyup', e => (keyMap[e.key] !== undefined) && $('#'+keyMap[e.key]).click());
+    window.addEventListener('keydown', e => (keyMap[e.key] !== undefined) && e.preventDefault());
 }
 
-const generateVariantsCommands = baseCommands => {
-    // distill the items
+const useBruteForce = () => {
+    let secRoom = rooms.filter(r => r.name == loc)[0], exit;
+    Object.entries(dirs).map(([k, v]) => {
+        if (secRoom[k] == 999) exit = k;
+    });
+    command(generateVariantsCommands(commands, exit));
+}
+
+const generateVariantsCommands = (baseCommands, exit) => {
     let items = [];
-    baseCommands.filter(com => com.indexOf('take ') > -1).map(com => items.push(com.substr(5)))
+    baseCommands.filter(com => com.indexOf('take ') > -1).map(com => {
+        let item = com.substr(5);
+        if (items.indexOf(item) == -1) items.push(com.substr(5))
+    })
 
     let dropCommands = [];
     items.map(i => dropCommands.push('drop '+i));
 
     let variantCommands = [];
-    for (let variant = 1; variant <= 255; variant++) {
+    for (let variant = 1; variant < Math.pow(2, items.length); variant++) {
         let s = variant.toString(2);
-        while (s.length < 8) s = '0'+s;
+        while (s.length < items.length) s = '0'+s;
         let takeCommands = [];
         for (let i = 0; i < s.length; i++) {
             if (s[i] == 1) takeCommands.push('take '+items[i]);
         }
-        variantCommands.push(...dropCommands, ...takeCommands, 'north');
+        variantCommands.push(...dropCommands, ...takeCommands, exit);
     }
     return variantCommands;
 }
 
+const run = input => {
+    let customInput = $('#intcode').val();
+    if (customInput != '') input = customInput.split(',').map(i => parseInt(i));
+    commands = []; invCount = 0; rooms = []; lastLoc = false; loc = false;
+    $('.generated').remove();
+    comp.load(input);
+    comp.reset();
+    tick();
+}
+
 initGUI();
-
-comp.load(input);
-tick();
-
-let baseCommands = ['west','take mouse','west','west','east','south','take dark matter','north','east','north','east','take klein bottle','west','south','west','east','east','south','take fuel cell','north','north','west','south','take planetoid','west', 'take antenna', 'east','east','take mutex','east','west','south','take whirled peas', 'south', 'east']
-
-//command([...baseCommands, ...generateVariantsCommands(baseCommands)]); // uncomment once you have the base commands ready
+run(input);

@@ -6,7 +6,7 @@
     <title>AOC 2019</title>
     <style type="text/css">
         @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300&display=swap');
-        html, button {
+        html, button, input {
             font-family: 'Source Code Pro', monospace;
             background-color: #0f0f23;
         }
@@ -18,7 +18,7 @@
             color: #009900;
             text-decoration: none;
         }
-        input, #send {
+        input#command, #send {
             float: left;
             margin-right:4px;
             margin-top:0px;
@@ -41,7 +41,7 @@
             margin-left:10px;
             float:left;
         }
-        button {
+        button, input {
             font-size:14pt;
             margin:4px;
             border: 1px solid lightslategray;
@@ -95,6 +95,9 @@
             min-height:360px;
             z-index:1;
         }
+        input {
+            font-size:14px;
+        }
 
     </style>
 </head>
@@ -123,8 +126,11 @@
         <table><tr><td></td><td><button data-action="direct" id="north">↑</button></td><td></td></tr><tr><td><button data-action="direct" id="west">←</button></td><td><button data-action="direct" id="south">↓</button></td><td><button data-action="direct" id="east">→</button></td></tr></table>
         <input type="text" id="command"></input>
         <button id="send">SEND</button>
-        <button data-action="direct" id="inv">Inventory</button><br>
-        <button id="export">Export path</button>
+        <button data-action="direct" id="inv">Inventory</button><br />
+        <button id="brute">Use Brute Force</button><br /><br /><br />
+        <input type="text" placeholder="Paste your IntCode here" id="intcode"></input><br />
+        <button id="load">Load IntCode</button><br />
+        <!--<button id="export">Export path</button>-->
     </div>
     <div class="map output"> </div>
     <script src="input.js"></script>
