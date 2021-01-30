@@ -150,7 +150,6 @@ const command = com => {
 
 const initGUI = () => {
     $('[data-action=direct]').map((b, el) => $(el).on('click', e => command($(el).attr('id'))))
-    $('#export').on('click', e => console.log('path so far', commands))
     $('#brute').on('click', useBruteForce)
     $('#load').on('click', e => run(input))
 
