@@ -16,7 +16,7 @@ Hence comes this repo, documenting my path to gathering those 300 stars.
 
 # Advent of Code
 
-https://adventofcode.com/events
+[https://adventofcode.com/events](https://adventofcode.com/events)
 
 JavaScript solutions, executed in browser or node.
 
@@ -30,7 +30,7 @@ Whole repo is deployed on Github Pages, links to individual puzzle solutions are
 
 ### [AoC 2018](https://github.com/surgi1/adventofcode/tree/main/2018) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2018/day15): Battle between elves and goblins in full swing
 
-![Battle between elves and goblins in full swing](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_15.png)
+![Battle between elves and goblins in full swing](https://mazegame.org/adventofcode/screenshots/2018_15.png)
 
 ### [AoC 2019](https://github.com/surgi1/adventofcode/tree/main/2019) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2019/day15): Intcode Maze
 
