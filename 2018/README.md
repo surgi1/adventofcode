@@ -25,12 +25,12 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ### Day 13: Madness?
 
-![Mine cart Sparta](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_13.png)
+![Mine cart Sparta](https://mazegame.org/adventofcode/screenshots/2018_13.png)
 
 ### Day 15: Battle between elves and goblins in full swing
 
-![Battle between elves and goblins in full swing](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_15.png)
+![Battle between elves and goblins in full swing](https://mazegame.org/adventofcode/screenshots/2018_15.png)
 
 ### Day 17: Reservoirs FTW!
 
-![Reservoirs FTW!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2018_17.png)
+![Reservoirs FTW!](https://mazegame.org/adventofcode/screenshots/2018_17.png)
