@@ -1,8 +1,8 @@
 # Advent of Code 2015
 
-https://adventofcode.com/2015
+[https://adventofcode.com/2015](https://adventofcode.com/2015)
 
-JavaScript implementation
+[JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2015)
 
 Solutions for days 1-6, 8, 11, 12 not archived.
 

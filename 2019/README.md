@@ -8,7 +8,7 @@ As for the whole set, the year of 2019 was very challenging, some advanced math 
 
 After 2018's set, this deserves another standing ovations to the author.
 
-JavaScript implementation
+[JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2019)
 
 ## Highlights
 

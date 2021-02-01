@@ -4,9 +4,9 @@ Puzzles of AoC 2017 are a bit harder than 2016's, still not reaching the difficu
 
 The AoC 2017 calendar visualization, however, is pure gold.
 
-https://adventofcode.com/2017
+[https://adventofcode.com/2017](https://adventofcode.com/2017)
 
-JavaScript implementation
+[JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2017)
 
 Solutions for days 1, 2, 4 and 5 are not archived.
 

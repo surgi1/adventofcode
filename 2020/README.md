@@ -2,9 +2,9 @@
 
 Puzzles of AoC 2020 were a great deal lighter than the ones of 2018 or 2019. With exceptions, of course!
 
-https://adventofcode.com/2020
+[https://adventofcode.com/2020](https://adventofcode.com/2020)
 
-JavaScript implementation
+[JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2020)
 
 ## Highlights
 

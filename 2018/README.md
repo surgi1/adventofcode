@@ -4,7 +4,7 @@
 
 This particular event was full of great and innovative puzzles, which corresponds to high number of highlights. Repeated standing ovations to the author, the AoC 2018 is a masterpiece.
 
-JavaScript implementation
+[JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2018)
 
 Solutions for days 1-8, 10 and 11 are missing; were solved in console and lost after submission.
 

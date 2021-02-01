@@ -2,9 +2,9 @@
 
 Set of 2016 was also a great one, with a number of tasks residing around graph traversing algorithms, where the real question is to figure out the criteria for path reduction.
 
-https://adventofcode.com/2016
+[https://adventofcode.com/2016](https://adventofcode.com/2016)
 
-JavaScript implementation
+[JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2016)
 
 Solutions for days 1-3 and 5-7 not archived.
 
