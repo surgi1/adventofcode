@@ -1,6 +1,6 @@
 # Advent of Code 2018
 
-https://adventofcode.com/2018
+[https://adventofcode.com/2018](https://adventofcode.com/2018)
 
 This particular event was full of great and innovative puzzles, which corresponds to high number of highlights. Repeated standing ovations to the author, the AoC 2018 is a masterpiece.
 
@@ -25,12 +25,12 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ### Day 13: Madness?
 
-![Mine cart Sparta](https://mazegame.org/adventofcode/screenshots/2018_13.png)
+![Mine cart Sparta](https://surgi1.github.io/adventofcode/screenshots/2018_13.png)
 
 ### Day 15: Battle between elves and goblins in full swing
 
-![Battle between elves and goblins in full swing](https://mazegame.org/adventofcode/screenshots/2018_15.png)
+![Battle between elves and goblins in full swing](https://surgi1.github.io/adventofcode/screenshots/2018_15.png)
 
 ### Day 17: Reservoirs FTW!
 
-![Reservoirs FTW!](https://mazegame.org/adventofcode/screenshots/2018_17.png)
+![Reservoirs FTW!](https://surgi1.github.io/adventofcode/screenshots/2018_17.png)
