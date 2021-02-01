@@ -1,6 +1,6 @@
 # Advent of Code 2019
 
-https://adventofcode.com/2019
+[https://adventofcode.com/2019](https://adventofcode.com/2019)
 
 Puzzles of 2019's AoC resided around the Intcode Computer, a software emulation of an actual computer attendees had to create, extend and maintain (a Virtual Machine, if you will). As attendees progressed through the puzzles, the Computer started to communicate in ASCII, organize arrays of itself into a network, play a bunch of games or control a number of peripherals. This, and the way it was presented, resembles the single most memorable AoC experience for me.
 
@@ -30,12 +30,12 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ### Day 13: Intcode Arkanoid
 
-![Intcode Arkanoid](https://mazegame.org/adventofcode/screenshots/2019_13.png)
+![Intcode Arkanoid](https://surgi1.github.io/adventofcode/screenshots/2019_13.png)
 
 ### Day 15: Intcode Maze
 
-![Intcode Maze](https://mazegame.org/adventofcode/screenshots/2019_15.png)
+![Intcode Maze](https://surgi1.github.io/adventofcode/screenshots/2019_15.png)
 
 ### Day 25: Intcode Computer Text-Game
 
-![Intcode Computer Text-Game](https://mazegame.org/adventofcode/screenshots/2019_25.png)
+![Intcode Computer Text-Game](https://surgi1.github.io/adventofcode/screenshots/2019_25.png)
