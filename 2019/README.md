@@ -30,12 +30,12 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ### Day 13: Intcode Arkanoid
 
-![Intcode Arkanoid](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_13.png)
+![Intcode Arkanoid](https://mazegame.org/adventofcode/screenshots/2019_13.png)
 
 ### Day 15: Intcode Maze
 
-![Intcode Maze](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_15.png)
+![Intcode Maze](https://mazegame.org/adventofcode/screenshots/2019_15.png)
 
 ### Day 25: Intcode Computer Text-Game
 
-![Intcode Computer Text-Game](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_25.png)
+![Intcode Computer Text-Game](https://mazegame.org/adventofcode/screenshots/2019_25.png)
