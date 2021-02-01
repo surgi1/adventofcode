@@ -14,16 +14,16 @@ After 2018's set, this deserves another standing ovations to the author.
 
 Puzzles with exceptional entertainment value and/or unconventional thinking necessary fit the highlights for me. Usually the most fun/challenging experience is hidden in Part 2 of the puzzle.
 
-* [Day 10: Monitoring Station](https://adventofcode.com/2019/day/10) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day10)
-* [Day 11: Space Police](https://adventofcode.com/2019/day/11) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day11) - Completed Intcode Computer controls its first device - a painting bot
-* [Day 12: The N-Body Problem](https://adventofcode.com/2019/day/12) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day12)
-* [Day 13: Care Package](https://adventofcode.com/2019/day/13) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day13) - A game of **Arkanoid** *on the Intode Computer*!
-* [Day 15: Oxygen System](https://adventofcode.com/2019/day/15) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day15) - A game of **Maze** *on the Intode Computer*!
-* [Day 18: Many-Worlds Interpretation](https://adventofcode.com/2019/day/18) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day18)
-* [Day 20: Donut Maze](https://adventofcode.com/2019/day/20) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day20) - Sneaky Plutonians and their recursively-folded space!
-* [Day 22: Slam Shuffle](https://adventofcode.com/2019/day/22) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day22) - Where out-of-the-box thinking is not enough and one needs to (re-)visit some modulo arithmetics and Euclid's algorithm. Single most difficult AoC puzzle I've encountered so far.
-* [Day 23: Category Six](https://adventofcode.com/2019/day/23) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day23) - Intcode Computers organized in a network!
-* [Day 25: Cryostasis](https://adventofcode.com/2019/day/25) - [solution](https://github.com/surgi1/adventofcode/tree/main/2019/day25) - A freaking **text game** *on the Intode Computer*!
+* [Day 10: Monitoring Station](https://adventofcode.com/2019/day/10) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day10) - [live](https://surgi1.github.io/adventofcode/2019/day10)
+* [Day 11: Space Police](https://adventofcode.com/2019/day/11) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day11) - [live](https://surgi1.github.io/adventofcode/2019/day11) - Completed Intcode Computer controls its first device - a painting bot
+* [Day 12: The N-Body Problem](https://adventofcode.com/2019/day/12) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day12) - [live](https://surgi1.github.io/adventofcode/2019/day12)
+* [Day 13: Care Package](https://adventofcode.com/2019/day/13) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day13) - [live](https://surgi1.github.io/adventofcode/2019/day13) - A game of **Arkanoid** *on the Intode Computer*!
+* [Day 15: Oxygen System](https://adventofcode.com/2019/day/15) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day15) - [live](https://surgi1.github.io/adventofcode/2019/day15) - A game of **Maze** *on the Intode Computer*!
+* [Day 18: Many-Worlds Interpretation](https://adventofcode.com/2019/day/18) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day18) - [live](https://surgi1.github.io/adventofcode/2019/day18)
+* [Day 20: Donut Maze](https://adventofcode.com/2019/day/20) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day20) - [live](https://surgi1.github.io/adventofcode/2019/day20) - Sneaky Plutonians and their recursively-folded space!
+* [Day 22: Slam Shuffle](https://adventofcode.com/2019/day/22) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day22) - [live](https://surgi1.github.io/adventofcode/2019/day22) - Where out-of-the-box thinking is not enough and one needs to (re-)visit some modulo arithmetics and Euclid's algorithm. Single most difficult AoC puzzle I've encountered so far.
+* [Day 23: Category Six](https://adventofcode.com/2019/day/23) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day23) - [live](https://surgi1.github.io/adventofcode/2019/day23) - Intcode Computers organized in a network!
+* [Day 25: Cryostasis](https://adventofcode.com/2019/day/25) - [code](https://github.com/surgi1/adventofcode/tree/main/2019/day25) - [live](https://surgi1.github.io/adventofcode/2019/day25) - A freaking **text game** *on the Intode Computer*!
 
 
 ## Screenshots
