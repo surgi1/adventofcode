@@ -26,7 +26,7 @@ Contains [more](https://surgi1.github.io/adventofcode/2018/day15/index.html) [th
 
 Whole repo is deployed on Github Pages, links to individual puzzle solutions are in their respective readmes. Run only at your own risk of course.
 
-# Roster
+## Roster
 - [Summary for 2015](https://surgi1.github.io/adventofcode/2015)
 - [Summary for 2016](https://surgi1.github.io/adventofcode/2016)
 - [Summary for 2017](https://surgi1.github.io/adventofcode/2017)
@@ -34,12 +34,12 @@ Whole repo is deployed on Github Pages, links to individual puzzle solutions are
 - [Summary for 2019](https://surgi1.github.io/adventofcode/2019)
 - [Summary for 2020](https://surgi1.github.io/adventofcode/2020)
 
-# Teasers
+## Teasers
 
-## [AoC 2018](https://github.com/surgi1/adventofcode/tree/main/2018) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2018/day15): Battle between elves and goblins in full swing
+### [AoC 2018](https://github.com/surgi1/adventofcode/tree/main/2018) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2018/day15): Battle between elves and goblins in full swing
 
 ![Battle between elves and goblins in full swing](https://surgi1.github.io/adventofcode/screenshots/2018_15.png)
 
-## [AoC 2019](https://github.com/surgi1/adventofcode/tree/main/2019) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2019/day15): Intcode Maze
+### [AoC 2019](https://github.com/surgi1/adventofcode/tree/main/2019) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2019/day15): Intcode Maze
 
 ![Intcode Maze](https://surgi1.github.io/adventofcode/screenshots/2019_15.png)
