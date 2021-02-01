@@ -34,4 +34,4 @@ Whole repo is deployed on Github Pages, links to individual puzzle solutions are
 
 ### [AoC 2019](https://github.com/surgi1/adventofcode/tree/main/2019) - [Day 15](https://github.com/surgi1/adventofcode/tree/main/2019/day15): Intcode Maze
 
-![Intcode Maze](https://github.com/surgi1/adventofcode/blob/main/screenshots/2019_15.png)
+![Intcode Maze](https://mazegame.org/adventofcode/screenshots/2019_15.png)
