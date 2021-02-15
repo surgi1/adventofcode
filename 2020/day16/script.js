@@ -1,10 +1,8 @@
-let rules = [], allRanges = [], validTickets = [], sumOfInvalidNumbers = 0,
-    identifiedIndexes = [], p2Answer = 1;
+let rules = [], allRanges = [], validTickets = [], sumOfInvalidNumbers = 0, identifiedIndexes = [], p2Answer = 1;
 
 const readRulesInput = () => {
     rulesInput.map(r => {
-        let arr = r.split(': ');
-        let nums = arr[1].match(/\d+/g);
+        let arr = r.split(': '), nums = arr[1].match(/\d+/g);
         rules.push({
             name: arr[0],
             possibleIndexes: [],
@@ -33,11 +31,9 @@ validTickets.push(myTicket);
 
 nearbyTickets.map(ticket => {
     let valid = true;
-    ticket.map(num => {
-        if (!hasValidRange(num, allRanges)) {
-            sumOfInvalidNumbers += num;
-            valid = false;
-        }
+    ticket.filter(num => !hasValidRange(num, allRanges)).map(num => {
+        sumOfInvalidNumbers += num;
+        valid = false;
     })
     if (valid) validTickets.push(ticket);
 })
@@ -59,11 +55,9 @@ while (identifiedIndexes.length < validTickets[0].length) {
         }
     })
 
-    rules.map(r => {
-        if (r.possibleIndexes.length == 1) {
-            r.index = r.possibleIndexes[0];
-            identifiedIndexes.push(r.index);
-        }
+    rules.filter(r => r.possibleIndexes.length == 1).map(r => {
+        r.index = r.possibleIndexes[0];
+        identifiedIndexes.push(r.index);
     })
 }
 

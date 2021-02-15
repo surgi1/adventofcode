@@ -1,8 +1,7 @@
 let input = [2,20,0,4,1,17];
 
 const run = stopNr => {
-    let data = input.slice(), len = data.length;
-    let history = Array(stopNr); // initializing the array with fixed size rather history=[] cuts down the execution time dramatically, from minutes to seconds for part 2
+    let data = input.slice(), len = data.length, history = Array(stopNr); // initializing the array with fixed size rather than history=[] cuts down the execution time dramatically, from minutes to seconds for part 2
 
     data.map((d,i) => history[d] = [i]);
 
@@ -10,10 +9,8 @@ const run = stopNr => {
     for (let i = len; i < stopNr; i++) {
         let num = 0;
         if (history[last].length > 1) num = history[last][1]-history[last].shift();
-
         if (!history[num]) history[num] = [];
         history[num].push(i);
-
         last = num;
     }
 
