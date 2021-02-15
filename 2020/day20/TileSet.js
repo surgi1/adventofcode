@@ -11,14 +11,11 @@ class TileSet {
                 .filter(t => t.id != tile.id)
                 .filter(t => tile.footprints.some(fp => t.footprints.includes(fp)))
                 .map(t => t.id)
-        const getFootprints = data => {
-            let res = [], left = '', right = '';
-            for (let i = 0; i < 10; i++) {
-                left += data[9-i][0];
-                right += data[i][9];
-            }
-            return [data[0], data[9].split('').reverse().join(''), left, right].map(s => parseInt(s, 2))
-        }
+        const getFootprints = data => [
+                data[0].join(''), Array.from(data[9]).reverse().join(''), // top, bottom
+                data.reduce((a,e,i) => a+data[9-i][0], ''), data.reduce((a,e,i) => a+e[9], '')] // left, right
+                .map(s => parseInt(s, 2))
+        this.tiles.map(t => t.data = t.data.map(d => d.split('')))
         this.tiles.map(t => t.footprints = [].concat(getFootprints(t.data), getFootprints(t.data.reverse()))) // add footprints for both sides
         this.tiles.map(t => t.adjacentIds = getAdjacentIds(t)) // t.adjacentIds.length: 2 = corner, 3 = side, 4 = inner
     }
@@ -61,7 +58,7 @@ class TileSet {
         const checkFit = (tileId, refTileId, mode) => {
             let tile = this.byId(tileId).data, refTile = this.byId(refTileId).data;
             // left: compare refTile's right col with tile's left col, top: compare refTile's bottom line with tile's top line
-            return mode == 'left' ? refTile.every((l, i) => refTile[i][9] == tile[i][0]) : refTile[9] == tile[0];
+            return mode == 'left' ? refTile.every((l, i) => refTile[i][9] == tile[i][0]) : refTile[9].join('') == tile[0].join('');
         }
 
         const align = (tileId, refTileId, mode) => {
@@ -82,8 +79,8 @@ class TileSet {
                 for (let x = 0; x < map.length; x++)
                     this.byId(map[y][x]).data
                         .filter((l, id) => id != 0 && id != 9)
-                        .map((line, id) => result[y*8+id] = (result[y*8+id] || '') + line.substr(1, 8))
-            return result;
+                        .map((line, id) => result[y*8+id] = (result[y*8+id] || '') + line.join('').substr(1, 8))
+            return result.map(l => l = l.split(''));
         }
 
         if (!align(map[0][1], map[0][0], 'left') || !align(map[1][0], map[0][0], 'top')) alignTopLeft();
