@@ -14,3 +14,9 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 * [Day 13: Shuttle Search](https://adventofcode.com/2020/day/13) - [code](https://github.com/surgi1/adventofcode/tree/main/2020/day13) - [live](https://surgi1.github.io/adventofcode/2020/day13)
 * [Day 17: Conway Cubes](https://adventofcode.com/2020/day/17) - [code](https://github.com/surgi1/adventofcode/tree/main/2020/day17) - [live](https://surgi1.github.io/adventofcode/2020/day17) - 4-D Game of Life, long live Conway.
 * [Day 20: Jurassic Jigsaw](https://adventofcode.com/2020/day/20) - [code](https://github.com/surgi1/adventofcode/tree/main/2020/day20) - [live](https://surgi1.github.io/adventofcode/2020/day20)
+
+## Screenshots
+
+### Day 20: Legendary Monster hunt!
+
+![Nessies all around](https://surgi1.github.io/adventofcode/screenshots/2020_20.png)
