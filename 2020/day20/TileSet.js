@@ -57,7 +57,7 @@ class TileSet {
     }
 
     alignTiles = map => {
-        const rotate = tileId => this.byId(tileId).data = rotateImage(this.byId(tileId).data);
+        const rotTile = tileId => this.byId(tileId).data = rotate(this.byId(tileId).data);
         const checkFit = (tileId, refTileId, mode) => {
             let tile = this.byId(tileId).data, refTile = this.byId(refTileId).data;
             // left: compare refTile's right col with tile's left col, top: compare refTile's bottom line with tile's top line
@@ -65,20 +65,19 @@ class TileSet {
         }
 
         const align = (tileId, refTileId, mode) => {
-            for (let i = 0; i < 3; i++) if (!checkFit(tileId, refTileId, mode)) rotate(tileId);
+            for (let i = 0; i < 3; i++) if (!checkFit(tileId, refTileId, mode)) rotTile(tileId);
             if (!checkFit(tileId, refTileId, mode)) this.byId(tileId).data.reverse(); // flip
-            for (let i = 0; i < 3; i++) if (!checkFit(tileId, refTileId, mode)) rotate(tileId);
+            while (!checkFit(tileId, refTileId, mode)) rotTile(tileId);
             return checkFit(tileId, refTileId, mode);
         }
 
         const alignTopLeft = () => {
-            for (let i = 0; i < 3; i++) if (!checkFit(map[0][1], map[0][0], 'left') || !checkFit(map[1][0], map[0][0], 'top')) rotate(map[0][0]);
+            for (let i = 0; i < 3; i++) if (!checkFit(map[0][1], map[0][0], 'left') || !checkFit(map[1][0], map[0][0], 'top')) rotTile(map[0][0]);
             if (!checkFit(map[0][1], map[0][0], 'left') || !checkFit(map[1][0], map[0][0], 'top')) this.byId(map[0][0]).data.reverse(); // flip
-            for (let i = 0; i < 3; i++) if (!checkFit(map[0][1], map[0][0], 'left') || !checkFit(map[1][0], map[0][0], 'top')) rotate(map[0][0]);
+            while (!checkFit(map[0][1], map[0][0], 'left') || !checkFit(map[1][0], map[0][0], 'top')) rotTile(map[0][0]);
         }
 
-        const exportImage = () => {
-            let result = [];
+        const exportImage = (result = []) => {
             for (let y = 0; y < map.length; y++)
                 for (let x = 0; x < map.length; x++)
                     this.byId(map[y][x]).data
@@ -92,7 +91,7 @@ class TileSet {
         for (let y = 1; y < map.length; y++)
             for (let x = 0; x < map.length; x++) align(map[y][x], map[y-1][x], 'top');
 
-        return exportImage(map);
+        return exportImage();
     }
 
     process = () => this.alignTiles(this.assignTiles())
