@@ -25,9 +25,42 @@
         .t1:after {
             content: '🌊';
         }
-        .t2 {
+        .t2, .t3, .t4, .t5, .t6 {
             background-color: #6B8E23;
-            border-radius: 1px;
+        }
+        .t2 {
+            border-bottom-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .t3 {
+            border-bottom-right-radius: 10px;
+            border-top-left-radius: 10px;
+        }
+        .t4 {
+            border-bottom-left-radius: 5px;
+            border-top-right-radius: 10px;
+        }
+        .t4:after {
+            content: 'o';
+            color: white;
+            margin-left: 3px;
+            font-weight: bold;
+            font-family: cursive;
+        }
+        .t5 {
+            border-bottom-left-radius: 10px;
+            border-top-right-radius: 0px;
+        }
+        .t6 {
+            border-bottom-right-radius: 10px;
+            border-top-right-radius: 5px;
+        }
+        .t6:after {
+            content: 'vvv';
+            color: white;
+            margin-left: -3px;
+            font-family: cursive;
+            font-size: 3px;
         }
     </style>
 </head>
