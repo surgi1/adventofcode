@@ -27,6 +27,9 @@
         }
         .t2, .t3, .t4, .t5, .t6 {
             background-color: #6B8E23;
+            z-index:10;
+            color:white;
+            font-family: cursive;
         }
         .t2 {
             border-bottom-left-radius: 10px;
@@ -42,10 +45,8 @@
         }
         .t4:after {
             content: 'o';
-            color: white;
             margin-left: 3px;
             font-weight: bold;
-            font-family: cursive;
         }
         .t5 {
             border-bottom-left-radius: 10px;
@@ -57,9 +58,17 @@
         }
         .t6:after {
             content: 'vvv';
-            color: white;
             margin-left: -3px;
-            font-family: cursive;
+        }
+        .p.animated {
+            -webkit-animation: ease-in-out infinite alternate;
+            -webkit-animation-name: run;
+            -webkit-animation-duration: 2s;
+        }
+        @-webkit-keyframes run {
+            0% {margin-left: 0}
+            50% {margin-left: 5px}
+            100% {margin-left: 0}
         }
     </style>
 </head>
