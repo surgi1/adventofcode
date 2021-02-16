@@ -21,6 +21,14 @@
         .t1 {    
             color: #70bcda;
             margin-top: -2px;
+            -webkit-transition: opacity 1s ease-in-out;
+            -moz-transition: opacity 1s ease-in-out;
+            -ms-transition: opacity 1s ease-in-out;
+            -o-transition: opacity 1s ease-in-out;
+             opacity: 1;
+        }
+        .t1.hidden {
+            opacity:0.2;
         }
         .t1:after {
             content: '🌊';

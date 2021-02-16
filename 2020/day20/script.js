@@ -5,6 +5,7 @@ const processImage = (img, monsterCount = 0) => {
     const isMonsterAt = (sx, sy) => monster.every((l,y) => l.every((c,x) => c == '0' || c*img[sy+y][sx+x] > 0));
     const markMonsterAt = (sx, sy) => monster.map((l,y) => l.map((c,x) => img[sy+y][sx+x] = c != '0' ? c*1.0+(monsterCount*100) : img[sy+y][sx+x]))
     const monsters = () => img.reduce((a,l,y) => a+l.filter((c,x) => img[y+2] && l[x+20] && isMonsterAt(x,y) && markMonsterAt(x,y) && monsterCount++).length, 0)
+    const animateWaves = (waves = document.querySelectorAll('.t1')) => waves.forEach(w => Math.random() < 0.4 && w.classList.toggle('hidden'))
     const genHtml = () => img.reduce((s,l,y) => s+l.reduce((s2,p,x) => s2 += p == 0 ? '' :
         `<div class="p t${p % 100} m${Math.floor(p/100)}" style="left:${x*6}px;top:${y*6}px"></div>`, ''), '')
     const animateMonster = (m, parts = document.querySelectorAll('.m'+m)) => {
@@ -17,6 +18,7 @@ const processImage = (img, monsterCount = 0) => {
     while (!monsters()) img = rotate(img);
     document.getElementById('root').innerHTML = genHtml();
     animateMonster(1);
+    setInterval(animateWaves, 1000);
     return img.reduce((a,l) => a+l.filter(e => e == '1').length, 0);
 }
 
