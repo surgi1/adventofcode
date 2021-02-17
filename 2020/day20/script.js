@@ -7,7 +7,7 @@ const processImage = (img, monsterCount = 0) => {
     const monsters = () => img.reduce((a,l,y) => a+l.filter((c,x) => img[y+2] && l[x+20] && isMonsterAt(x,y) && markMonsterAt(x,y) && monsterCount++).length, 0)
     const animateWaves = (waves = document.querySelectorAll('.t1')) => waves.forEach(w => Math.random() < 0.4 && w.classList.toggle('hidden'))
     const genHtml = () => img.reduce((s,l,y) => s+l.reduce((s2,p,x) => s2 += p == 0 ? '' :
-        `<div class="p t${p % 100} m${Math.floor(p/100)}" style="left:${x*6}px;top:${y*6}px"></div>`, ''), '')
+        `<div class="p t${p % 100} m${Math.floor(p/100)}" style="left:${x*12}px;top:${y*12}px"></div>`, ''), '')
     const animateMonster = (m, parts = document.querySelectorAll('.m'+m)) => {
         if (parts.length > 0) parts.forEach(p => p.classList.add('animated'));
         if (m < monsterCount) setTimeout(() => animateMonster(m+1), parts.length > 0 ? 200 : 0);
