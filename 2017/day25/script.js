@@ -23,6 +23,6 @@ const readBlueprints = input => {
     return bp;
 }
 
-let machine = new TouringMachine(readBlueprints(input.split("\n")));
+let machine = new TuringMachine(readBlueprints(input.split("\n")));
 
 console.log('checksum', machine.run());

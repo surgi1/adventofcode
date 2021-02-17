@@ -1,4 +1,4 @@
-class TouringMachine {
+class TuringMachine {
     constructor(config) {
         this.states = config.states;
         this.state = config.start;
