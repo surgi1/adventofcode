@@ -8,7 +8,7 @@ The AoC 2017 calendar visualization, however, is pure gold.
 
 [JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2017)
 
-codes for days 1, 2, 4 and 5 are not archived.
+Solutions for days 1, 2, 4 and 5 were not archived.
 
 ## Highlights
 

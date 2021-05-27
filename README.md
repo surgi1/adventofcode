@@ -6,13 +6,13 @@ Hence comes this repo, documenting my path to gathering those 300 stars.
 
 ## Lessons learnt
 
-- While in trouble, go back to the puzzle description. Chances are that you've missed or misread a **key** information. Many hours were wasted because of this.
+- While in trouble, go back to the puzzle description. Chances are that you've missed or misread a **key** information. Many hours were wasted because of not following this rule closely.
 - Brute-force is often a working solution, if not a desired approach. In those times where the crucial observation that would reduce the computation complexity by orders of magnitude just did not occur to you yet, maybe it is possible to optimize your code, maybe run it in parallel, and have a solution in couple of (tens of) minutes. Not pretty nor elegant, thats for sure. Working? May be.
 - There are times where brute-force just doesn't work, as the projected run time is in days even with all the easily available optimalizations. In those times go to point 1; chances are you've missed something in the puzzle description. If not, a good nights rest should do it. Solutions sometimes lie outside the box.
 - If part 1 of the puzzle smells of a linked list, it will require a linked list approach for part 2. Granted.
 - A number of puzzles are alike. Abstracting meaningful parts of your solution might be worth it. Talking Distance maps, Graph traversing algorithms or ASCII-art rendering here.
 - This one is even mentioned in one of the puzzle descriptions: Do not always aim to solve all the imaginable puzzle configurations. Look for simplifications, boundaries, try to cut the corners.
-- And last but not least, remember that you don't have to solve everything by your code. Cumbersome inputs can be converted into more manageable state by a tool of choice rather then by lengthy regexes, difficult math problems can be passed to Wolfram Alpha, complicated logic can be solved manually, often even as a game. Your task is to find the answers to the puzzles, and the means and measures you take to do so are also yours.
+- And last but not least, remember that you don't have to solve everything by your code. Cumbersome inputs can be converted into more manageable state by a tool of choice rather than by lengthy regexes, difficult math problems can be passed to Wolfram Alpha, complicated logic can be solved manually, often even as a game. Your task is to find the answers to the puzzles, and the means and measures you take to do so are also yours.
 
 # Advent of Code
 
