@@ -1,5 +1,4 @@
-const mul = [16807, 48271], mod = [4, 8];
-let last = [277, 349], matches = 0;
+let mul = [16807, 48271], mod = [4, 8], last, matches;
 
 const genValue = gen => last[gen]*mul[gen] % 2147483647;
 
@@ -12,9 +11,11 @@ const next = useMod => {
 }
 
 const run = (iterations, useMod) => {
+    last = [277, 349];
+    matches = 0;
     for (let i = 0; i < iterations; i++) next(useMod);
+    console.log(matches);
 }
 
-//run(40000000, false); // p1
+run(40000000, false); // p1
 run(5000000, true); // p2
-console.log(matches);
