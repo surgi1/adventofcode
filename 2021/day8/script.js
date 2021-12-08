@@ -4,8 +4,8 @@ const byLen = (line, len) => [...line[0], ...line[1]].filter(e => e.length == le
 const strDiff = (s1, s2) => [].concat(s1.split(''), s2.split('')).reduce((diff, l) => diff += (!s1.includes(l) || !s2.includes(l)) ? l : '', '')
 const strContains = (s1, s2) => s2.split('').reduce((diff, l) => diff += (!s1.includes(l)) ? l : '', '') == ''
 const strCommon = (s1, s2) => s2.split('').reduce((common, l) => common += (s1.includes(l)) ? l : '', '')
-const part1 = data => data.reduce((res, d) => res += d[1].filter(e => [2, 3, 4, 7].includes(e.length)).length, 0)
-const part2 = data => data.reduce((res, item) => res + parseInt(item[1].reduce((s, n) => s+seg2Num(n, deduceSeg(item)) , '')), 0)
+const part1 = data => data.reduce((acc, d) => acc + d[1].filter(e => [2, 3, 4, 7].includes(e.length)).length, 0)
+const part2 = data => data.reduce((acc, item) => acc + parseInt(item[1].reduce((s, n) => s+seg2Num(n, deduceSeg(item)) , '')), 0)
 
 const deduceSeg = line => {
     /* 000
