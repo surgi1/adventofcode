@@ -1,6 +1,4 @@
-let map = [], cols = input[0].length, rows = input.length;
-
-input.map((line, i) => map[i] = line.split('').map(n => parseInt(n)));
+let map = input.map(l => l.split('').map(n => parseInt(n))), cols = map[0].length, rows = map.length;
 
 const adjacent = (x, y, res = []) => {
     if (x > 0) res.push({x: x-1, y: y});
@@ -20,16 +18,16 @@ const part1 = (lowPoints = []) => {
 
 const part2 = lowPoints => {
     const spread = (x, y) => {
-        if (map[y][x] < 9) basinSize++; else return;
+        if (map[y][x] < 9) size++; else return;
         map[y][x] = 9;
         adjacent(x, y).map(p => spread(p.x, p.y));
     }
 
-    let basinSizes = [], basinSize = 0;
+    let basinSizes = [], size;
     lowPoints.map(p => {
-        basinSize = 0;
+        size = 0;
         spread(p.x, p.y);
-        basinSizes.push(basinSize);
+        basinSizes.push(size);
     })
 
     return basinSizes.sort((a, b) => b-a).slice(0, 3).reduce((acc, n) => acc*n, 1);
