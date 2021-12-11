@@ -7,11 +7,10 @@ const every = (callback, box = {y:[0, size-1], x:[0, size-1]}) => {
 
 const markNewFlashes = (flashable = false) => {
     every((x,y,d) => {
-        if (!isNaN(d) && d > 9) {
-            flashes++;
-            data[y][x] = 'f';
-            flashable = true;
-        }
+        if (isNaN(d) || d <= 9) return;
+        flashes++;
+        data[y][x] = 'f';
+        flashable = true;
     })
     return flashable;
 }
