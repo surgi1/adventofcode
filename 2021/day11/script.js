@@ -22,7 +22,7 @@ const step = () => {
     while (markNewFlashes()) {
         every((x,y,d) => {
             if (d != 'f') return;
-            every((u,v,q) => (u != x || v != y) && !isNaN(q) && data[v][u]++, {x:[x-1, x+1], y:[y-1, y+1]})
+            every((u,v,q) => !isNaN(q) && data[v][u]++, {x:[x-1, x+1], y:[y-1, y+1]})
             data[y][x] = 'd';
         })
     }
