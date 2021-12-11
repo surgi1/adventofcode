@@ -19,12 +19,11 @@ const megaFlash = () => data.reduce((a, b) => a.concat(b)).every(e => e == 0)
 
 const step = () => {
     every((x,y) => data[y][x]++);
-    while (markNewFlashes())
-        every((x,y,d) => {
-            if (d != 'f') return;
-            every((u,v,q) => !isNaN(q) && data[v][u]++, {x:[x-1, x+1], y:[y-1, y+1]})
-            data[y][x] = 'd';
-        })
+    while (markNewFlashes()) every((x,y,d) => {
+        if (d != 'f') return;
+        every((u,v,q) => !isNaN(q) && data[v][u]++, {x:[x-1, x+1], y:[y-1, y+1]})
+        data[y][x] = 'd';
+    })
     every((x,y,d) => (d == 'd') && (data[y][x] = 0));
 }
 
