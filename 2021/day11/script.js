@@ -25,10 +25,8 @@ const step = () => {
     while (markNewFlashes()) {
         every((x,y,d) => {
             if (d == 'f') {
-                for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
-                    let u = x+j, v = y+i;
+                for (let v = y-1; v <= y+1; v++) for (let u = x-1; u <= x+1; u++)
                     if (u >= 0 && v >= 0 && u < size && v < size && (u != x || v != y) && !isNaN(data[v][u])) data[v][u]++;
-                }
                 data[y][x] = 'd';
             }
         })
