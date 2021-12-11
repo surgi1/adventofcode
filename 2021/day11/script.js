@@ -25,11 +25,9 @@ const step = () => {
         data[y][x] = 'd';
     })
     every((x,y,d) => (d == 'd') && (data[y][x] = 0));
+    if (++steps == 100) console.log(flashes); // p1
 }
 
-while (!megaFlash()) {
-    step();
-    steps++;
-    if (steps == 100) console.log(flashes); // p1
-}
+while (!megaFlash()) step();
+
 console.log(steps); // p2
