@@ -15,7 +15,7 @@ const markNewFlashes = (flashable = false) => {
     return flashable;
 }
 
-const megaFlash = () => data.reduce((a,b) => a.concat(b)).filter(e => e != 0).length == 0
+const megaFlash = () => data.reduce((a, b) => a.concat(b)).every(e => e == 0)
 
 const step = () => {
     every((x,y) => data[y][x]++);
