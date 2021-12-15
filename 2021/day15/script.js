@@ -1,4 +1,4 @@
-// part 2
+// part 2 (pretty slow)
 let rows = input.length, cols = input[0].length, screen = [];
 let smallScreen = input.map(row => row.split('').map(n => parseInt(n))), lowestReach = Array.from({length:rows*5}, v => Array(cols*5).fill(0));
 
