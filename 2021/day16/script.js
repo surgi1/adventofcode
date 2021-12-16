@@ -1,17 +1,26 @@
-let testInput1 = 'D2FE28';
-let testInput2 = '38006F45291200';
-let testInput3 = 'EE00D40C823060';
-let testInput10 = 'A0016C880162017C3686B18A3D4780';
 let versionsAdded = 0;
 
 const toBin = (hex, res = '') => hex.split('').map(h => parseInt(h, 16).toString(2).padStart(4, '0')).join('')
 
+const operation = (id, params, res = 0) => {
+    switch (id) {
+        case 0: res = params.reduce((a, n) => a+n.val, 0); break;
+        case 1: res = params.reduce((a, n) => a*n.val, 1); break;
+        case 2: res = Math.min(...params.map(p => p.val)); break;
+        case 3: res = Math.max(...params.map(p => p.val)); break;
+        case 5: res = params[0].val > params[1].val ? 1 : 0; break;
+        case 6: res = params[0].val < params[1].val ? 1 : 0; break;
+        case 7: res = params[0].val == params[1].val ? 1 : 0; break;
+    }
+    return res;
+}
+
 const decodePacket = packet => {
-    let version = parseInt(packet.substr(0,3), 2);
+    let version = parseInt(packet.substr(0,3), 2),
+        typeId = parseInt(packet.substr(3,3), 2), pos, posInc;
+
     versionsAdded += version;
-    let typeId = parseInt(packet.substr(3,3), 2);
-    console.log(version, typeId, packet);
-    let pos, posInc;
+
     if (typeId == 4) {
         pos = 6, s = '';
         while (packet[pos] == '1') {
@@ -19,27 +28,29 @@ const decodePacket = packet => {
             pos += 5;
         }
         s += packet.substr(pos+1, 4);
-        return parseInt(s, 2);
+        return {val: parseInt(s, 2), len: pos+1+4};
     }
-    let mode = parseInt(packet.substr(6,1), 2), len, subPackets = [];
+
+    let mode = parseInt(packet.substr(6,1), 2), len, subPackets = [], reachedLen = 0;
+
     if (mode == 0) {
         len = parseInt(packet.substr(7,15), 2);
-        subPackets = packet.substr(22,len).match(new RegExp('.{1,'+11+'}', 'g'));
-        if (subPackets[subPackets.length-1].length < 11) {
-            let v2 = subPackets.pop(), v1 = subPackets.pop();
-            subPackets.push(v1+v2);
+        while (reachedLen < len) {
+            let res = decodePacket(packet.substr(22+reachedLen));
+            reachedLen += res.len;
+            subPackets.push(res);
         }
+        return {val: operation(typeId, subPackets), len: 22+reachedLen}
     } else {
         len = parseInt(packet.substr(7,11), 2);
-        for (let i = 0 ; i < len; i++) subPackets.push(packet.substr(18+i*11,11));
+        while (subPackets.length < len) {
+            let res = decodePacket(packet.substr(18+reachedLen));
+            reachedLen += res.len;
+            subPackets.push(res);
+        }
+        return {val: operation(typeId, subPackets), len: 18+reachedLen}
     }
-    console.log(mode, len);
-
-    console.log(subPackets);
-    subPackets.map(p => console.log('sp', p, decodePacket(p)));
-
 }
 
-//decodePacket(toBin(testInput3));
-decodePacket(toBin('A0016C880162017C3686B18A3D4780'));
-console.log('versions added', versionsAdded);
+console.log('part 2', decodePacket(toBin(input)).val);
+console.log('part 1', versionsAdded);
