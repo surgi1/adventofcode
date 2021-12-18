@@ -11,7 +11,7 @@ class FishTree {
 
     fromArray = (params, parentId = false, id = false) => {
         if (Array.isArray(params)) {
-            id = (parentId === false) ? this.addNode({left:false, right:false}) : this.addNode({left:false, right:false, parentId: parentId});
+            id = this.addNode({left:0, right:0, parentId: parentId === false ? undefined : parentId});
             ['left', 'right'].map((dir, i) => this.tree[id][dir] = this.fromArray(params[i], id));
         } else id = this.addNode({val: params, parentId: parentId})
         return id;
@@ -22,25 +22,19 @@ class FishTree {
         this.tree[this.rootId].parentId = newRootId;
         this.tree[newRootId].right = this.fromArray(arr, newRootId);
         this.rootId = newRootId;
+        return this;
     }
 
     reduce = () => {
-        const firstDeep = (n, depth, res = false) => {
-            if (depth == 4 && this.tree[n].val === undefined) return n;
+        const reducible = (n, depth, condition, res = false) => {
+            if (condition == 'DEPTH') {
+                if (depth == 4 && this.tree[n].val === undefined) return n;
+            } else {
+                if (this.tree[n].val != undefined) return this.tree[n].val > 9 ? n : false;
+            }
             ['left', 'right'].some(dir => {
                 if (this.tree[n][dir] !== undefined) {
-                    res = firstDeep(this.tree[n][dir], depth+1);
-                    if (res !== false) return true;
-                }
-            })
-            return res;
-        }
-
-        const firstBig = (n, res = false) => {
-            if (this.tree[n].val != undefined) return this.tree[n].val > 9 ? n : false;
-            ['left', 'right'].some(dir => {
-                if (this.tree[n][dir] !== undefined) {
-                    res = firstBig(this.tree[n][dir]);
+                    res = reducible(this.tree[n][dir], depth+1, condition);
                     if (res !== false) return true;
                 }
             })
@@ -71,21 +65,22 @@ class FishTree {
         }
 
         const splitNode = n => {
-            let val = this.tree[n].val/2, tmp = {...this.tree[n]};
+            let val = this.tree[n].val/2;
             this.tree[n] = {
-                id: tmp.id, parentId: tmp.parentId,
+                id: this.tree[n].id, parentId: this.tree[n].parentId,
                 left: this.addNode({parentId: n, val: Math.floor(val)}),
                 right: this.addNode({parentId: n, val: Math.ceil(val)})
             };
         }
 
         const step = () => {
-            let id = firstDeep(this.rootId, 0);
+            let id = reducible(this.rootId, 0, 'DEPTH');
             if (id !== false) return explodeNode(id);
-            id = firstBig(this.rootId);
+            id = reducible(this.rootId, 0, 'SIZE');
             if (id !== false) return splitNode(id);
             return false;
         }
+
         while (step() !== false) {}
     }
 }
