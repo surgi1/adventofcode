@@ -6,8 +6,8 @@ class FishTree {
     }
 
     addNode = params => this.tree.push({...params, id:this.tree.length})-1;
-    print = (nodeId = this.rootId) => this.tree[nodeId].val !== undefined ? this.tree[nodeId].val : '['+this.print(this.tree[nodeId].left) +','+this.print(this.tree[nodeId].right)+']'
-    magnitude = (nodeId = this.rootId) => this.tree[nodeId].val !== undefined ? this.tree[nodeId].val : this.magnitude(this.tree[nodeId].left)*3 + this.magnitude(this.tree[nodeId].right)*2
+    print = (n = this.rootId) => this.tree[n].val !== undefined ? this.tree[n].val : '['+this.print(this.tree[n].left) +','+this.print(this.tree[n].right)+']'
+    magnitude = (n = this.rootId) => this.tree[n].val !== undefined ? this.tree[n].val : this.magnitude(this.tree[n].left)*3 + this.magnitude(this.tree[n].right)*2
 
     fromArray = (params, parentId = false, id = false) => {
         if (Array.isArray(params)) {
@@ -25,57 +25,57 @@ class FishTree {
     }
 
     reduce = () => {
-        const firstDeep = (nodeId, depth, res = false) => {
-            if (depth == 4 && this.tree[nodeId].val === undefined) return nodeId;
+        const firstDeep = (n, depth, res = false) => {
+            if (depth == 4 && this.tree[n].val === undefined) return n;
             ['left', 'right'].some(dir => {
-                if (this.tree[nodeId][dir] !== undefined) {
-                    res = firstDeep(this.tree[nodeId][dir], depth+1);
+                if (this.tree[n][dir] !== undefined) {
+                    res = firstDeep(this.tree[n][dir], depth+1);
                     if (res !== false) return true;
                 }
             })
             return res;
         }
 
-        const firstBig = (nodeId, res = false) => {
-            if (this.tree[nodeId].val != undefined) return this.tree[nodeId].val > 9 ? nodeId : false;
+        const firstBig = (n, res = false) => {
+            if (this.tree[n].val != undefined) return this.tree[n].val > 9 ? n : false;
             ['left', 'right'].some(dir => {
-                if (this.tree[nodeId][dir] !== undefined) {
-                    res = firstBig(this.tree[nodeId][dir]);
+                if (this.tree[n][dir] !== undefined) {
+                    res = firstBig(this.tree[n][dir]);
                     if (res !== false) return true;
                 }
             })
             return res;
         }
 
-        const explodeNode = nodeId => {
+        const explodeNode = n => {
             // traverse+traverseDown finds left/right target for explosion addition
-            const traverseDown = (nodeId, dir) => {
-                while (this.tree[nodeId][dir]) nodeId = this.tree[nodeId][dir];
-                return nodeId;
+            const traverseDown = (n, dir) => {
+                while (this.tree[n][dir]) n = this.tree[n][dir];
+                return n;
             }
-            const traverse = (nodeId, dir) => {
-                let parentId = this.tree[nodeId].parentId;
-                while (parentId !== undefined && this.tree[parentId][dir] == nodeId) {
-                    nodeId = parentId;
-                    parentId = this.tree[nodeId].parentId;
+            const traverse = (n, dir) => {
+                let parentId = this.tree[n].parentId;
+                while (parentId !== undefined && this.tree[parentId][dir] == n) {
+                    n = parentId;
+                    parentId = this.tree[n].parentId;
                 }
                 if (parentId == undefined) return false;
                 return traverseDown(this.tree[parentId][dir], dir == 'left' ? 'right' : 'left')
             }
 
             ['left', 'right'].map(dir => {
-                let target = traverse(nodeId, dir);
-                if (target !== false) this.tree[target].val += this.tree[this.tree[nodeId][dir]].val;
+                let target = traverse(n, dir);
+                if (target !== false) this.tree[target].val += this.tree[this.tree[n][dir]].val;
             });
-            this.tree[nodeId] = {id: nodeId, parentId: this.tree[nodeId].parentId, val: 0};
+            this.tree[n] = {id: n, parentId: this.tree[n].parentId, val: 0};
         }
 
-        const splitNode = nodeId => {
-            let val = this.tree[nodeId].val/2, tmp = {...this.tree[nodeId]};
-            this.tree[nodeId] = {
+        const splitNode = n => {
+            let val = this.tree[n].val/2, tmp = {...this.tree[n]};
+            this.tree[n] = {
                 id: tmp.id, parentId: tmp.parentId,
-                left: this.addNode({parentId: nodeId, val: Math.floor(val)}),
-                right: this.addNode({parentId: nodeId, val: Math.ceil(val)})
+                left: this.addNode({parentId: n, val: Math.floor(val)}),
+                right: this.addNode({parentId: n, val: Math.ceil(val)})
             };
         }
 
