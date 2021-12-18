@@ -1,13 +1,13 @@
 class FishTree {
     constructor(sourceArray) {
         this.tree = [];
+        this.rootId = 0;
         this.fromArray(sourceArray);
     }
 
     addNode = params => this.tree.push({...params, id:this.tree.length})-1;
-    rootId = () => this.tree.filter(n => n.parentId === undefined)[0].id;
-    print = (nodeId = this.rootId()) => this.tree[nodeId].val !== undefined ? this.tree[nodeId].val : '['+this.print(this.tree[nodeId].left) +','+this.print(this.tree[nodeId].right)+']'
-    magnitude = (nodeId = this.rootId()) => this.tree[nodeId].val !== undefined ? this.tree[nodeId].val : this.magnitude(this.tree[nodeId].left)*3 + this.magnitude(this.tree[nodeId].right)*2
+    print = (nodeId = this.rootId) => this.tree[nodeId].val !== undefined ? this.tree[nodeId].val : '['+this.print(this.tree[nodeId].left) +','+this.print(this.tree[nodeId].right)+']'
+    magnitude = (nodeId = this.rootId) => this.tree[nodeId].val !== undefined ? this.tree[nodeId].val : this.magnitude(this.tree[nodeId].left)*3 + this.magnitude(this.tree[nodeId].right)*2
 
     fromArray = (params, parentId = false, id = false) => {
         if (Array.isArray(params)) {
@@ -18,9 +18,10 @@ class FishTree {
     }
 
     addArray = arr => {
-        let oldRootId = this.rootId(), newRootId = this.addNode({left: oldRootId, right: false});
-        this.tree[oldRootId].parentId = newRootId;
+        let newRootId = this.addNode({left: this.rootId, right: false});
+        this.tree[this.rootId].parentId = newRootId;
         this.tree[newRootId].right = this.fromArray(arr, newRootId);
+        this.rootId = newRootId;
     }
 
     reduce = () => {
@@ -79,9 +80,9 @@ class FishTree {
         }
 
         const step = () => {
-            let id = firstDeep(this.rootId(), 0);
+            let id = firstDeep(this.rootId, 0);
             if (id !== false) return explodeNode(id);
-            id = firstBig(this.rootId());
+            id = firstBig(this.rootId);
             if (id !== false) return splitNode(id);
             return false;
         }
