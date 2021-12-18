@@ -32,35 +32,29 @@ class FishTree {
             } else {
                 if (this.tree[n].val != undefined) return this.tree[n].val > 9 ? n : false;
             }
-            ['left', 'right'].some(dir => {
-                if (this.tree[n][dir] !== undefined) {
-                    res = reducible(this.tree[n][dir], depth+1, condition);
-                    if (res !== false) return true;
-                }
+            ['left', 'right'].filter(dir => this.tree[n][dir] !== undefined).some(dir => {
+                res = reducible(this.tree[n][dir], depth+1, condition);
+                if (res !== false) return true;
             })
             return res;
         }
 
         const explodeNode = n => {
-            // traverse+traverseDown finds left/right target for explosion addition
-            const traverseDown = (n, dir) => {
-                while (this.tree[n][dir]) n = this.tree[n][dir];
-                return n;
-            }
-            const traverse = (n, dir) => {
-                let parentId = this.tree[n].parentId;
+            // finds left/right target for explosion addition
+            const traverse = (n, dir, opDir = dir == 'left' ? 'right' : 'left') => {
+                let parentId = this.tree[n].parentId; // find closest parent that leads to our target
                 while (parentId !== undefined && this.tree[parentId][dir] == n) {
                     n = parentId;
                     parentId = this.tree[n].parentId;
                 }
-                if (parentId == undefined) return false;
-                return traverseDown(this.tree[parentId][dir], dir == 'left' ? 'right' : 'left')
+                if (parentId == undefined) return false; // no valid target
+                n = this.tree[parentId][dir]; // get the node closest to the original in given direction
+                while (this.tree[n][opDir]) n = this.tree[n][opDir];
+                return n;
             }
 
-            ['left', 'right'].map(dir => {
-                let target = traverse(n, dir);
-                if (target !== false) this.tree[target].val += this.tree[this.tree[n][dir]].val;
-            });
+            ['left', 'right'].filter(dir => traverse(n, dir) !== false)
+                             .map(dir => this.tree[traverse(n, dir)].val += this.tree[this.tree[n][dir]].val);
             this.tree[n] = {id: n, parentId: this.tree[n].parentId, val: 0};
         }
 
