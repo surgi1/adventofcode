@@ -6,7 +6,7 @@ const part1 = () => {
         tree.reduce();
     }
     console.log('reduced', tree.print());
-    console.log('magnitude', tree.getMagnitude());
+    console.log('magnitude', tree.magnitude());
 }
 
 const part2 = (maxMag = 0) => {
@@ -16,7 +16,7 @@ const part2 = (maxMag = 0) => {
         tree.reduce();
         tree.addArray(input[i]);
         tree.reduce();
-        maxMag = Math.max(maxMag, tree.getMagnitude());
+        maxMag = Math.max(maxMag, tree.magnitude());
     }
     console.log('largest magnitude', maxMag);
 }
