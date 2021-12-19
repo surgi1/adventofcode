@@ -79,7 +79,7 @@ for (let i = 0; i < input.length; i++) for (let j = 0; j < input.length; j++) {
 
 console.log(Object.values(beacons).filter(distinct).length); // part 1
 
-// unnecessarily greedy part to finish finsing the scanners positions
+// unnecessarily greedy part to finish finding the scanners positions
 while (scanners.filter(s => Array.isArray(s)).length < input.length) {
     for (let i = 0; i < input.length; i++) if (scanners[i] == undefined) {
         for (let j = 0; j < input.length; j++) if (i != j && matchScanners(i, j) >= 12) determineScannerPosition(i, j);
