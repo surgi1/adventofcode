@@ -66,17 +66,12 @@ const determineScannerPosition = (a, b) => {
     }
 }
 
-let scanners = [[0,0,0]], baseTransforms = {}, translations = {}, beacons = {}, uuid = 0;
-input.map((probes, scannerId) => probes.map((coords, beaconNr) => beacons[beaconId(scannerId, beaconNr)] = uuid++))
+let scanners = [[0,0,0]], baseTransforms = {}, translations = {}, beacons = {}, uuid = 0, maxDist = 0;
+let scannerMeasures = input.map((beaconData, scannerId) => input[scannerId].map((p, i) => distFromBeacon(input[scannerId], i)))
 
-let scannerMeasures = input.map((beaconsData, scannerId) => input[scannerId].map((p, i) => distFromBeacon(input[scannerId], i)))
+input.map((beaconData, scannerId) => beaconData.map((d, beaconNr) => beacons[beaconId(scannerId, beaconNr)] = uuid++))
 
-for (let i = 0; i < input.length; i++) for (let j = 0; j < input.length; j++) {
-    if (i==j) continue;
-    markDuplicates(i, j);
-    if (matchScanners(i, j) >= 12) determineScannerPosition(i, j);
-}
-
+for (let i = 0; i < input.length; i++) for (let j = i+1; j < input.length; j++) markDuplicates(i, j);
 console.log(Object.values(beacons).filter(distinct).length); // part 1
 
 // unnecessarily greedy part to finish finding the scanners positions
@@ -86,7 +81,6 @@ while (scanners.filter(s => Array.isArray(s)).length < input.length) {
     }
 }
 
-let maxDist = 0;
 for (let i = 0; i < scanners.length; i++) for (let j = i+1; j < scanners.length; j++) {
     if (i==j) continue;
     maxDist = Math.max(maxDist, manhattanDist(scanners[i], scanners[j]));
