@@ -9,23 +9,6 @@ const vectMatrixProduct = (v, matrix) => v.map((e, i) => v[0]*matrix[0][i]+v[1]*
 const vectSub = (v1, v2) => v2.map((e, i) => e-v1[i]);
 const vectAdd = (v1, v2) => v2.map((e, i) => e+v1[i]);
 
-const matchScanners = (a, b, res = 0) => {
-    for (let i = 0; i < scannerMeasures[a].length; i++) for (let j = 0; j < scannerMeasures[b].length; j++)
-        res = Math.max(res, matchArr(scannerMeasures[a][i], scannerMeasures[b][j]));
-    return res;
-}
-
-const markDuplicates = (a, b) => {
-    for (let i = 0; i < scannerMeasures[a].length; i++) for (let j = 0; j < scannerMeasures[b].length; j++) {
-        if (matchArr(scannerMeasures[a][i], scannerMeasures[b][j]) < 3) continue;
-        // mark all matches from bj
-        scannerMeasures[b][j].map((d, id) => {
-            let index = scannerMeasures[a][i].indexOf(d);
-            if (index > -1) beacons[beaconId(b, id)] = beacons[beaconId(a, index)];
-        })
-    }
-}
-
 const constructTransformMatrix = (u, v) => {
     let res = Array.from({length:3}, e => Array(3).fill(0))
     for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
@@ -35,33 +18,46 @@ const constructTransformMatrix = (u, v) => {
     return res;
 }
 
+const matchScanners = (a, b, res = 0) => {
+    for (let i = 0; i < scannerMeasures[a].length; i++) for (let j = 0; j < scannerMeasures[b].length; j++)
+        res = Math.max(res, matchArr(scannerMeasures[a][i], scannerMeasures[b][j]));
+    return res;
+}
+
+const markDuplicates = (a, b) => scannerMeasures[a].forEach(sma => scannerMeasures[b].forEach(smb => {
+    if (matchArr(sma, smb) < 3) return true;
+    // identify matching nodes
+    smb.map((d, id) => {
+        let index = sma.indexOf(d);
+        if (index > -1) beacons[beaconId(b, id)] = beacons[beaconId(a, index)];
+    })
+}))
+
 const determineScannerPosition = (a, b) => {
     if (scanners[a] === undefined && Array.isArray(scanners[b])) scanners[a] = []; else return;
-    for (let i = 0; i < scannerMeasures[a].length; i++) {
-        for (let j = 0; j < scannerMeasures[b].length; j++) {
-            if (matchArr(scannerMeasures[a][i], scannerMeasures[b][j]) < 12) continue;
-            // mark all matches from bj
-            let pa = [], pb = [];
-            scannerMeasures[b][j].map((d, id) => {
-                let index = scannerMeasures[a][i].indexOf(d);
-                if (index > -1) {
-                    pa.push(input[a][index]);
-                    pb.push(input[b][id]);
-                }
-            })
-            let xform = constructTransformMatrix(vectSub(pa[1], pa[0]), vectSub(pb[1], pb[0]));
-            baseTransforms['_'+a+'_'+b] = xform.slice();
-            scanners[a] = vectSub(vectMatrixProduct(pa[0], xform), pb[0]); // pa[0] in b-base minus pb[0]
-            translations['_'+a+'_'+b] = scanners[a].slice(); // save this translation for later use
-
-            // need to get from b to 0
-            while (b != 0) {
-                let k = nextTransformKey(b), tmp = k.split('_');
-                scanners[a] = vectAdd(vectMatrixProduct(scanners[a], baseTransforms[k]), translations[k]);
-                b = tmp[2];
+    scannerMeasures[a].forEach(sma => scannerMeasures[b].forEach(smb => {
+        if (matchArr(sma, smb) < 12) return true;
+        // identify matching nodes
+        let pa = [], pb = [];
+        smb.map((d, id) => {
+            let index = sma.indexOf(d);
+            if (index > -1) {
+                pa.push(input[a][index]);
+                pb.push(input[b][id]);
             }
+        })
+        let xform = constructTransformMatrix(vectSub(pa[1], pa[0]), vectSub(pb[1], pb[0]));
+        baseTransforms['_'+a+'_'+b] = xform.slice();
+        scanners[a] = vectSub(vectMatrixProduct(pa[0], xform), pb[0]); // pa[0] in b-base minus pb[0]
+        translations['_'+a+'_'+b] = scanners[a].slice(); // save this translation for later use
+
+        // need to get from b to 0
+        while (b != 0) {
+            let k = nextTransformKey(b), tmp = k.split('_');
+            scanners[a] = vectAdd(vectMatrixProduct(scanners[a], baseTransforms[k]), translations[k]);
+            b = tmp[2];
         }
-    }
+    }))
 }
 
 let scanners = [[0,0,0]], baseTransforms = {}, translations = {}, beacons = {}, uuid = 0, maxDist = 0;
