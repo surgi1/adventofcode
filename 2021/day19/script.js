@@ -76,8 +76,6 @@ const determineScannerPosition = (a, b) => {
                 let pa0_in_b = vecXmatrix(pa[0], xform);
 
                 xforms['_'+a+'_'+b] = xform.slice();
-                //console.log('computing', a, 'from', b);
-                //console.log(a, b, pa, pb, va, vb, pa0_in_b, xform);
 
                 scanners[a] = vecMinusVec(pa0_in_b, pb[0]);
                 translate['_'+a+'_'+b] = scanners[a].slice();
@@ -85,7 +83,6 @@ const determineScannerPosition = (a, b) => {
                 // need to get from b to 0
                 while (b != 0) {
                     let k = nextXformKey(b), tmp = k.split('_').map(n => parseInt(n));
-                    //console.log('executing', k, xforms[k], 'coords so far', a, b, scanners[a], scanners[b]);
                     scanners[a] = vecPlusVec(vecXmatrix(scanners[a], xforms[k]), translate[k]);
                     b = tmp[2];
                 }
