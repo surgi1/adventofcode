@@ -1,3 +1,7 @@
+// BEWARE! This solution is fundamentally wrong, it works only by the computation range being expanded so wildly so it covers for the error
+// To correct it, treat the void data (the pixels our of range in prev step, thus never directly computed) not as dark, but as stepNr % 2
+// as they tend to flash due to pattern[0]=1 and pattern[511] = 0
+
 const key = (x,y) => '_'+x+'_'+y;
 const run = steps => {
     const step = () => {
