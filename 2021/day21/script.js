@@ -2,7 +2,7 @@ const start = [5,10];
 
 const part1 = () => {
     const stopping = 1000;
-    let p = [5-1,10-1], s = [0,0], d = 0;
+    let p = [start[0]-1, start[1]-1], s = [0,0], d = 0;
     while (Math.max(...s) < stopping) {
         let pId = Math.floor(d / 3) % 2;
         p[pId] = (p[pId]+d+1) % 10;
@@ -25,18 +25,18 @@ const part2 = () => {
     const stopping = 21;
     let wins = [0,0];
 
-    const turn = (pId, sum, cnt, state) => {
-        let newState = state.slice();
-        newState[pId] = (state[pId]+sum) % 10;
-        newState[pId+2] += newState[pId]+1;
-        if (newState[pId+2] >= stopping) {
+    const turn = (pId, sum, cnt, pos, score) => {
+        let newPos = pos.slice(), newScore = score.slice();
+        newPos[pId] = (pos[pId]+sum) % 10;
+        newScore[pId] += newPos[pId]+1;
+        if (newScore[pId] >= stopping) {
             wins[pId] += cnt;
             return;
         }
-        Object.entries(freq).map(([sum, frq]) => turn(pId == 0 ? 1 : 0, parseInt(sum), frq*cnt, newState))
+        Object.entries(freq).forEach(([sum, frq]) => turn(pId == 0 ? 1 : 0, sum*1, frq*cnt, newPos, newScore))
     }
 
-    Object.entries(freq).map(([sum, frq]) => turn(0, parseInt(sum), frq*1, [start[0]-1, start[1]-1, 0, 0]))
+    Object.entries(freq).forEach(([sum, frq]) => turn(0, sum*1, frq, [start[0]-1, start[1]-1], [0, 0]))
     console.log(wins);
 }
 
