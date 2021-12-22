@@ -27,18 +27,18 @@ const part1 = (steps, sum = 0) => {
     return sum;
 }
 
-const intersectionVolume = (reg, regions) => regions.map((r, i) => {
+const intersectionWithRegionsVolume = (reg, regions) => regions.map((r, i) => {
     if (!regionIntersect(reg, r)) return 0;
     let tmpBounds = [Math.max(reg[0], r[0]), Math.min(reg[1], r[1]),
                      Math.max(reg[2], r[2]), Math.min(reg[3], r[3]),
                      Math.max(reg[4], r[4]), Math.min(reg[5], r[5])];
-    return volume(tmpBounds) - intersectionVolume(tmpBounds, regions.slice(i+1))
+    return volume(tmpBounds) - intersectionWithRegionsVolume(tmpBounds, regions.slice(i+1))
 }).reduce((acc, b) => acc+b, 0)
 
 const part2 = (steps, sum = 0, regions = []) => {
     steps.forEach(step => {
         let tmp = step.bounds.slice();
-        if (step.command == 1) sum += volume(tmp)-intersectionVolume(tmp, regions);
+        if (step.command == 1) sum += volume(tmp)-intersectionWithRegionsVolume(tmp, regions);
         regions.push(tmp);
     })
     return sum;
