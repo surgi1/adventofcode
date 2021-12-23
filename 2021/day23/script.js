@@ -63,13 +63,10 @@ const refinePossibleMoveTargets = (map, dMap, ox, oy) => {
 }
 
 let map = parseInput(input);
+let paths = [{state:map, val: stateVal(map), cost: 0, final: false, processed: false}], best = {}, final = [];
 
-let paths = [{state:map, val: stateVal(map), cost: 0, final: false, processed: false}], i = 0;
-
-while (i < paths.length) {
-    let p = paths[i];
-    if (p.processed || p.final) {i++; continue;}
-    
+while (paths.length > 0) {
+    let p = paths.pop();
     for (let y = 1; y < rows-1; y++) for (let x = 1; x < cols-1; x++) {
         if (!('ABCD'.includes(p.state[y][x]))) continue;
 
@@ -93,19 +90,13 @@ while (i < paths.length) {
             tmp.val = stateVal(tmp.state);
             tmp.final = isFinalState(tmp.state);
             tmp.cost = p.cost+charCost(p.state[y][x])*move.dist;
-            let proceed = true;
-            paths.filter(pt => pt.val == tmp.val).forEach(s => {
-                if (s.cost < tmp.cost) proceed = false;
-                if (s.cost >= tmp.cost) s.processed = true;
-            })
-            if (tmp.final == true) console.log(tmp);
-            if (proceed) paths.push(tmp);
+            if (best[tmp.val] == undefined || best[tmp.val] > tmp.cost) {
+                best[tmp.val] = tmp.cost;
+                paths.push(tmp);
+            }
+            if (tmp.final) final.push(tmp);
         })
     }
-    delete p.state;
-    p.processed = true;
-    i++;
-    if (i % 1000 == 0) console.log(paths.filter(p => p.processed == false).length);
 }
 
-console.log(paths.filter(p => p.final == true))
+console.log(final.sort((a, b) => a.cost - b.cost))
