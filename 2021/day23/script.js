@@ -4,8 +4,7 @@ const charCost = ch => Math.pow(10, charVal(ch));
 const stateVal = map => map.reduce((res, line) => res+line.join('').replace(/#/g, ''), '')
 const cloneMap = source => source.map(row => row.slice())
 
-const distanceMap = (_map, x, y) => {
-    let map = cloneMap(_map);
+const distanceMap = (map, x, y) => {
     const canSpreadTo = (x, y) => map[y][x] == '.';
     const spread = (x, y, dist) => {
         if (canSpreadTo(x,y)) map[y][x] = dist;
@@ -50,38 +49,35 @@ const solve = (finalState, initState) => {
     }
 
     let cols = initState[0].length, rows = initState.length, map = parseInput(initState);
-    let paths = [{state:map, val: stateVal(map), cost: 0, final: false, processed: false}], best = {}, final = [];
+    let paths = [{state:map, val: stateVal(map), cost: 0}], best = {}, final = [];
 
     while (paths.length > 0) {
         let p = paths.pop();
         for (let y = 1; y < rows-1; y++) for (let x = 1; x < cols-1; x++) {
             if (!('ABCD'.includes(p.state[y][x]))) continue;
 
-            let ch = p.state[y][x], letterDone = false;
+            let ch = p.state[y][x], finalPosReached = false;
             if (x == charVal(ch)*2+3) {
-                letterDone = true;
-                for (let j = y+1; j < rows-1; j++) if (p.state[j][x] != ch) letterDone = false;
+                finalPosReached = true;
+                for (let j = y+1; j < rows-1; j++) if (p.state[j][x] != ch) finalPosReached = false;
             }
 
-            if (letterDone) continue;
+            if (finalPosReached) continue;
 
-            let dMap = distanceMap(p.state, x,y);
-            let nextMoves = refinePossibleMoveTargets(p.state, dMap, x,y);
+            let nextMoves = refinePossibleMoveTargets(p.state, distanceMap(cloneMap(p.state), x,y), x,y);
             if (nextMoves.length == 0) continue;
 
             nextMoves.forEach(move => {
-                let tmp = {processed: false};
-                tmp.state = cloneMap(p.state);
+                let tmp = {state: cloneMap(p.state)};
                 tmp.state[y][x] = '.';
                 tmp.state[move.y][move.x] = p.state[y][x];
                 tmp.val = stateVal(tmp.state);
-                tmp.final = isFinalState(tmp.state);
                 tmp.cost = p.cost+charCost(p.state[y][x])*move.dist;
+                let isFinal = isFinalState(tmp.state);
                 if (best[tmp.val] == undefined || best[tmp.val] > tmp.cost) {
                     best[tmp.val] = tmp.cost;
-                    paths.push(tmp);
+                    if (isFinal) final.push(tmp); else paths.push(tmp);
                 }
-                if (tmp.final) final.push(tmp);
             })
         }
     }
