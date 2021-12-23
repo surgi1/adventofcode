@@ -20,7 +20,7 @@ const distanceMap = (map, x, y) => {
 const solve = (finalState, initState) => {
     const isFinalState = map => map.every((line, y) => line.join('') == finalState[y])
 
-    const refineMoveTargets = (map, dMap, origX, origY) => {
+    const nextMoves = (map, origX, origY) => {
         const adjacentToCaves = (x, y) => y == 1 && [3, 5, 7, 9].includes(x);
         const isSubjectsHouse = (x, y) => (y > 1) && (x == charVal(map[origY][origX])*2+3);
 
@@ -32,7 +32,8 @@ const solve = (finalState, initState) => {
             return true;
         }
 
-        let cleanHouse = subjectsHouseIsClean(), targets = [];
+        let cleanHouse = subjectsHouseIsClean(), targets = [],
+            dMap = distanceMap(cloneMap(map), origX, origY);
 
         for (let y = 1; y < rows-1; y++) for (let x = 1; x < cols-1; x++) {
             if (parseInt(dMap[y][x]) != dMap[y][x]) continue;
@@ -64,10 +65,7 @@ const solve = (finalState, initState) => {
 
             if (alreadyDone) continue;
 
-            let nextMoves = refineMoveTargets(p.state, distanceMap(cloneMap(p.state), x,y), x,y);
-            if (nextMoves.length == 0) continue;
-
-            nextMoves.forEach(move => {
+            nextMoves(p.state, x,y).forEach(move => {
                 let tmp = {state: cloneMap(p.state)};
                 tmp.state[y][x] = '.';
                 tmp.state[move.y][move.x] = p.state[y][x];
