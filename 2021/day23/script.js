@@ -32,18 +32,17 @@ const solve = (finalState, initState) => {
             return true;
         }
 
-        let objectOnFirstRow = origY == 1,
-            cleanHouse = subjectsHouseIsClean(), targets = [];
+        let cleanHouse = subjectsHouseIsClean(), targets = [];
 
         for (let y = 1; y < rows-1; y++) for (let x = 1; x < cols-1; x++) {
             if (parseInt(dMap[y][x]) != dMap[y][x]) continue;
-            if (objectOnFirstRow && y == 1) continue;
-            if (objectOnFirstRow && (!isSubjectsHouse(x, y) || !cleanHouse)) continue;
-            if (objectOnFirstRow && isSubjectsHouse(x, y) && cleanHouse) {
-                if (!['#', map[origY][origX]].includes(map[y+1][x])) continue;
+            if (origY == 1 && y == 1) continue;
+            if (origY == 1 && (!isSubjectsHouse(x, y) || !cleanHouse)) continue;
+            if (origY == 1 && isSubjectsHouse(x, y) && cleanHouse) {
+                if (!['#', map[origY][origX]].includes(map[y+1][x])) continue; // a valid move is only to the bottom of the house
             };
-            if (!objectOnFirstRow && y != 1) continue;
-            if (!objectOnFirstRow && adjacentToCaves(x, y)) continue;
+            if (origY != 1 && y != 1) continue;
+            if (origY != 1 && adjacentToCaves(x, y)) continue;
             targets.push({x:x, y:y, dist: dMap[y][x]})
         }
         return targets;
