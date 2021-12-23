@@ -2,11 +2,7 @@ const parseInput = data => data.map((l => l.split('')));
 const charVal = ch => ch.charCodeAt(0)-65;
 const charCost = ch => Math.pow(10, charVal(ch));
 const stateVal = map => map.reduce((res, line) => res+line.join('').replace(/#/g, ''), '')
-
-const cloneMap = (_map, map = []) => {
-    _map.forEach(line => map.push(line.slice()));
-    return map;
-}
+const cloneMap = source => source.map(row => row.slice())
 
 const distanceMap = (_map, x, y) => {
     let map = cloneMap(_map);
