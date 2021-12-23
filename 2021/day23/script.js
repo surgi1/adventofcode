@@ -19,27 +19,28 @@ const distanceMap = (map, x, y) => {
 
 const solve = (finalState, initState) => {
     const isFinalState = map => map.every((line, y) => line.join('') == finalState[y])
-    const refinePossibleMoveTargets = (map, dMap, ox, oy) => {
+
+    const refineMoveTargets = (map, dMap, origX, origY) => {
         const adjacentToCaves = (x, y) => y == 1 && [3, 5, 7, 9].includes(x);
-        const isObjectsHouse = (x, y) => (y > 1) && (x == charVal(map[oy][ox])*2+3);
-        const objectsHouseCanBeEntered = (res = true) => {
-            let x = charVal(map[oy][ox])*2+3;
+        const isSubjectsHouse = (x, y) => (y > 1) && (x == charVal(map[origY][origX])*2+3);
+
+        const subjectsHouseIsClean = () => {
+            let x = charVal(map[origY][origX])*2+3;
             for (let y = 2; y < rows-1; y++) {
-                if (!['.', map[oy][ox]].includes(map[y][x])) {
-                    res = false;
-                    break;
-                }
+                if (!['.', map[origY][origX]].includes(map[y][x])) return false;
             }
-            return res;
+            return true;
         }
-        let objectOnFirstRow = oy == 1, houseAvailable = objectsHouseCanBeEntered(), targets = [];
+
+        let objectOnFirstRow = origY == 1,
+            cleanHouse = subjectsHouseIsClean(), targets = [];
 
         for (let y = 1; y < rows-1; y++) for (let x = 1; x < cols-1; x++) {
             if (parseInt(dMap[y][x]) != dMap[y][x]) continue;
             if (objectOnFirstRow && y == 1) continue;
-            if (objectOnFirstRow && (!isObjectsHouse(x, y) || !houseAvailable)) continue;
-            if (objectOnFirstRow && isObjectsHouse(x, y) && houseAvailable) {
-                if (!['#', map[oy][ox]].includes(map[y+1][x])) continue;
+            if (objectOnFirstRow && (!isSubjectsHouse(x, y) || !cleanHouse)) continue;
+            if (objectOnFirstRow && isSubjectsHouse(x, y) && cleanHouse) {
+                if (!['#', map[origY][origX]].includes(map[y+1][x])) continue;
             };
             if (!objectOnFirstRow && y != 1) continue;
             if (!objectOnFirstRow && adjacentToCaves(x, y)) continue;
@@ -48,23 +49,23 @@ const solve = (finalState, initState) => {
         return targets;
     }
 
-    let cols = initState[0].length, rows = initState.length, map = parseInput(initState);
-    let paths = [{state:map, val: stateVal(map), cost: 0}], best = {}, final = [];
+    let cols = initState[0].length, rows = initState.length,
+        paths = [{state: parseInput(initState), cost: 0}], best = {}, final = [];
 
     while (paths.length > 0) {
         let p = paths.pop();
         for (let y = 1; y < rows-1; y++) for (let x = 1; x < cols-1; x++) {
             if (!('ABCD'.includes(p.state[y][x]))) continue;
 
-            let ch = p.state[y][x], finalPosReached = false;
+            let ch = p.state[y][x], alreadyDone = false;
             if (x == charVal(ch)*2+3) {
-                finalPosReached = true;
-                for (let j = y+1; j < rows-1; j++) if (p.state[j][x] != ch) finalPosReached = false;
+                alreadyDone = true;
+                for (let j = y+1; j < rows-1; j++) if (p.state[j][x] != ch) alreadyDone = false;
             }
 
-            if (finalPosReached) continue;
+            if (alreadyDone) continue;
 
-            let nextMoves = refinePossibleMoveTargets(p.state, distanceMap(cloneMap(p.state), x,y), x,y);
+            let nextMoves = refineMoveTargets(p.state, distanceMap(cloneMap(p.state), x,y), x,y);
             if (nextMoves.length == 0) continue;
 
             nextMoves.forEach(move => {
@@ -73,10 +74,10 @@ const solve = (finalState, initState) => {
                 tmp.state[move.y][move.x] = p.state[y][x];
                 tmp.val = stateVal(tmp.state);
                 tmp.cost = p.cost+charCost(p.state[y][x])*move.dist;
-                let isFinal = isFinalState(tmp.state);
+
                 if (best[tmp.val] == undefined || best[tmp.val] > tmp.cost) {
                     best[tmp.val] = tmp.cost;
-                    if (isFinal) final.push(tmp); else paths.push(tmp);
+                    if (isFinalState(tmp.state)) final.push(tmp); else paths.push(tmp);
                 }
             })
         }
