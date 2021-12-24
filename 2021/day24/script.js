@@ -1,5 +1,6 @@
 // check input.js for some thought process
 
+// these are derived from your pseudo-code (puzzle input)
 let params = [
 [1, 13, 8],
 [1, 12, 13],
