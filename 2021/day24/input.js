@@ -5,9 +5,9 @@ mul x 0
 add x z       
 mod x 26              
 div z 1  // par1 = 1
-add x 13  // par1 = 1
+add x 13  // par2 = 13
 eql x w  
-eql x 0  if ((z % 26 + par2) == input[0]) x = 0; else x = 1;
+eql x 0  if ((z % 26 + par2) == digits[0]) x = 0; else x = 1;
 mul y 0
 add y 25 
 mul y x              
@@ -15,12 +15,11 @@ add y 1
 mul z y  z = z*(25*x+1)
 mul y 0
 add y w
-add y 8  // par3
+add y 8  // par3 = 8
 mul y x 
-add z y  z = z + (input[0]+par3)*x 
+add z y  z = z + (digits[0]+par3)*x 
 
 ...
-
 
 inp w
 mul x 0
@@ -44,13 +43,13 @@ add z y
 
 // pseudo code:
 if (par1 == 1) {
-    /*if ((z % 26) + par2 != input[0]) { // this is always true for par1 = 1 as those have par2 > 9
-        z = z*26+input[0]+par3;
+    /*if ((z % 26) + par2 != digits[0]) { // this is always true for par1 = 1 as those have par2 > 9
+        z = z*26+digits[0]+par3;
     }*/
-    z = z*26+input[i]+par3;
+    z = z*26+digits[i]+par3;
 } else {
     // par1 = 26
-    input[i] = (z % 26) + par1
+    digits[i] = (z % 26) + par1
     z = math.floor(z/26);
 }
 
@@ -70,24 +69,24 @@ if (par1 == 1) {
 [26, -4, 7],
 
 
-inp w   // w = next digit
-mul x 0 //  
-add x z //  
-mod x 26 // x = z % 26
-div z 1  // z = z/v1
-add x 13 // x += v2
-eql x w  //             // x = x == w
-eql x 0  // if (x == w) x = 0; else x = 1            // x = x == 0
-mul y 0  // 
-add y 25 // 
-mul y x  // 
-add y 1  // 
-mul z y  // z *= 25*x + 1
-mul y 0  // 
-add y w  // 
-add y 8  // v3
-mul y x  //      
-add z y  // z += (w+v3) * x
+inp w
+mul x 0
+add x z 
+mod x 26
+div z 1
+add x 13
+eql x w 
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 8
+mul y x
+add z y
 
 [1, 13, 8]
 
