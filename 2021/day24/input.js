@@ -53,6 +53,8 @@ if (par1 == 1) {
     z = math.floor(z/26);
 }
 
+// derived params
+
 [1, 13, 8],
 [1, 12, 13],
 [1, 12, 8],
@@ -68,6 +70,7 @@ if (par1 == 1) {
 [26, -15, 12],
 [26, -4, 7],
 
+// actual input with derived params inline
 
 inp w
 mul x 0
@@ -89,7 +92,6 @@ mul y x
 add z y
 
 [1, 13, 8]
-
 
 inp w
 mul x 0

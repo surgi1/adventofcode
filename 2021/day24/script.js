@@ -2,20 +2,20 @@
 
 // these are derived from your pseudo-code (puzzle input)
 let params = [
-[1, 13, 8],
-[1, 12, 13],
-[1, 12, 8],
-[1, 10, 10],
-[26, -11, 12],
-[26, -13, 1],
-[1, 15, 13],
-[1, 10, 5],
-[26, -2, 10],
-[26, -6, 3],
-[1, 14, 2],
-[26, 0, 2],
-[26, -15, 12],
-[26, -4, 7]];
+    [ 1,  13,  8],
+    [ 1,  12, 13],
+    [ 1,  12,  8],
+    [ 1,  10, 10],
+    [26, -11, 12],
+    [26, -13,  1],
+    [ 1,  15, 13],
+    [ 1,  10,  5],
+    [26,  -2, 10],
+    [26,  -6,  3],
+    [ 1,  14,  2],
+    [26,   0,  2],
+    [26, -15, 12],
+    [26,  -4,  7]];
 
 let solutions = [];
 
@@ -28,35 +28,29 @@ const execute = modelNr => {
         if (params[i][0] == 1) {
             z = advance(z, modelNr[i], params[i][2]);
         } else {
-            let candidate = deadvanceCheck(z, params[i][1])
-            if (candidate < 1 || candidate > 9) return false;
-            modelNr[i] = candidate;
+            modelNr[i] = deadvanceCheck(z, params[i][1])
+            if (modelNr[i] < 1 || modelNr[i] > 9) return false;
             z = Math.floor(z/26);
         }
     }
     if (z == 0) solutions.push(parseInt(modelNr.join('')));
 }
 
-const dec = digits => {
-    let decPos = digits.length-1;
+const dec = (digits, decPos = digits.length-1) => {
     while (digits[decPos] == '*') decPos--;
+    if (decPos < 0) return;
     digits[decPos]--;
-    let i = decPos;
-    while (digits[i] == 0) {
-        digits[i] = 9;
-        i--;
-        while (digits[i] == '*') i--;
-        if (i < 0) break;
-        digits[i]--;
+    if (digits[decPos] == 0) {
+        digits[decPos] = 9;
+        dec(digits, decPos-1);
     }
-    return digits;
 }
 
-let digits = [9,9,9,9,'*','*',9,9, '*', '*', 9, '*', '*', '*'];
+let digits = [9,9,9,9,'*','*',9,9,'*','*', 9,'*','*','*'];
 
 while (digits.join('') != '1111**11**1***') {
-    execute(digits.slice())
-    digits = dec(digits);
+    execute(digits.slice());
+    dec(digits);
 }
 
 console.log(solutions[0]);
