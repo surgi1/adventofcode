@@ -43,9 +43,9 @@ add z y
 
 // pseudo code:
 if (par1 == 1) {
-    /*if ((z % 26) + par2 != digits[0]) { // this is always true for par1 = 1 as those have par2 > 9
-        z = z*26+digits[0]+par3;
-    }*/
+    //if ((z % 26) + par2 != digits[0]) { // this is always true for par1 = 1 as those have par2 > 9
+    //    z = z*26+digits[0]+par3;
+    //}
     z = z*26+digits[i]+par3;
 } else {
     // par1 = 26

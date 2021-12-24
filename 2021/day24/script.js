@@ -46,9 +46,10 @@ const dec = (digits, decPos = digits.length-1) => {
     }
 }
 
-let digits = [9,9,9,9,'*','*',9,9,'*','*', 9,'*','*','*'];
+let digits = params.map(p => p[0] == 1 ? 9 : '*'),
+    finDigits = params.map(p => p[0] == 1 ? 1 : '*').join('');
 
-while (digits.join('') != '1111**11**1***') {
+while (digits.join('') != finDigits) {
     execute(digits.slice());
     dec(digits);
 }
