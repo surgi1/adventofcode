@@ -17,3 +17,7 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 * [Day 23: Amphipod](https://adventofcode.com/2021/day/23) - [code](https://github.com/surgi1/adventofcode/tree/main/2021/day23) - [live](https://surgi1.github.io/adventofcode/2021/day23) - Tower of Hanoi -inspired puzzle, solvable by hand as well!
 
 ## Screenshots
+
+### Day 25: Sea Cucumber en route to their destination!
+
+![Cucumberos](https://surgi1.github.io/adventofcode/screenshots/2021_25.png)
