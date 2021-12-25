@@ -4,21 +4,14 @@ input.map((r, y) => r.split('').map((c, x) => (c != '.') && (map[y+'_'+x] = c)))
 
 const drawInit = (a = [], s = '') => {
     for (let y = 0; y < dim[0]; y++) for (let x = 0; x < dim[1]; x++)
-        s +=  `<div id="${y}_${x}" class="pt" style="left:${x*3}px;top:${y*3}px"></div>`;
+        s +=  `<div id="${y}_${x}" class="pt" style="left:${x*5}px;top:${y*5}px"></div>`;
     root.innerHTML = s;
 }
 
-const draw = (a = []) => {
-    Object.entries(map).map(([k, v]) => {
-        let coords = k.split('_').map(n => n*1);
-        if (!a[coords[0]]) a[coords[0]] = Array(dim[1]).fill(0);
-        a[coords[0]][coords[1]] = v;
-    })
-    for (let y = 0; y < dim[0]; y++) for (let x = 0; x < dim[1]; x++) {
-        let e = document.getElementById(y+'_'+x);
-        e.classList.remove('pt1', 'pt2');
-        if (a[y][x] && a[y][x] != 0) e.classList.add('pt'+(a[y][x] == 'v' ? '1' : '2'));
-    }
+const draw = () => {
+    Array.from(document.getElementsByClassName('pt1')).forEach(e => map[e.id] != 'v' && e.classList.remove('pt1'))
+    Array.from(document.getElementsByClassName('pt2')).forEach(e => map[e.id] != '>' && e.classList.remove('pt2'))
+    Object.entries(map).map(([k, v]) => document.getElementById(k).classList.add('pt'+(v == 'v' ? '1' : '2')))
 }
 
 const step = (moved = 0) => {
