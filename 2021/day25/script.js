@@ -4,7 +4,7 @@ input.map((r, y) => r.split('').map((c, x) => (c != '.') && (map[y+'_'+x] = c)))
 
 const drawInit = (a = [], s = '') => {
     for (let y = 0; y < dim[0]; y++) for (let x = 0; x < dim[1]; x++)
-        s +=  `<div id="${y}_${x}" class="pt" style="left:${x*5}px;top:${y*5}px"></div>`;
+        s +=  `<div id="${y}_${x}" class="pt" style="left:${x*7}px;top:${y*7}px"></div>`;
     root.innerHTML = s;
 }
 
