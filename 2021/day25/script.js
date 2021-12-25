@@ -1,19 +1,16 @@
-let map = {}, rows = input.length, cols = input[0].length;
+let map = {}, dim = [input.length, input[0].length], steps = 0;
 
-input.map((row, y) => row.split('').map((char, x) => (char != '.') && (map[y+'_'+x] = char)))
+input.map((r, y) => r.split('').map((c, x) => (c != '.') && (map[y+'_'+x] = c)))
 
 const step = (moved = 0) => {
-    const moveInDir = (ch, vect, newMap = {}) => {
+    const moveInDir = (c, vect, newMap = {}) => {
+        const move = (n, i) => n*1+vect[i] > dim[i]-1 ? 0 : n*1+vect[i];
         Object.entries(map).map(([k, v]) => {
-            if (v != ch) newMap[k] = v; else {
-                let coords = k.split('_').map((n, i) => parseInt(n)+vect[i]);
-                if (coords[0] > rows-1) coords[0] = 0;
-                if (coords[1] > cols-1) coords[1] = 0;
-                if (map[coords.join('_')] == undefined) {
-                    newMap[coords.join('_')] = v;
-                    moved++;
-                } else newMap[k] = v;
+            if (v == c) {
+                let k2 = k.split('_').map(move).join('_');
+                if (!map[k2]) { k = k2; moved++ }
             }
+            newMap[k] = v;
         })
         map = newMap;
     }
@@ -22,7 +19,6 @@ const step = (moved = 0) => {
     return moved;
 }
 
-let steps = 0;
 while (step() != 0) steps++;
 
 console.log(steps+1);
