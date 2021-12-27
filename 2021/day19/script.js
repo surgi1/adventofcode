@@ -1,3 +1,13 @@
+// For Part 1 we construct scannerMeasures: a relative distance squares of every other beacon for each base beacon (within given scanner data)
+// these are clearly invariants within scanners, so can be easily used to identify overlapping scanners. Next we match uuided beacons and we're done.
+
+// For Part 2, we need to determine the transformation matrixes between scanners that have overlaps. The goal is to have each scanner's position in scanner[0] base.
+// The orientation of 2 scanners that have overlapping beacons is done by constructing rotation matrix between 2 matching nodes seen from each scanner's perspective
+// and translation vector after projecting those 2 beacons into the same space.
+// The last trick here is to realize, that the projections are chained; if there is a scanner[2] overlapping with scanner[1], and scanner[1] overlapping
+// with scanner[0], then in order to transform coordinates from scanner[2] to scanner[0], it is necessary to first project from scanner[2] to scanner[1]
+// base (both rotation and translation), and the result of this into scanner[9] space.
+
 const dist = (a,b, res = 0) => a.reduce((res, val, i) => res += (val-b[i])*(val-b[i]), 0)
 const distFromBeacon = (beacons, id) => beacons.map(p => dist(beacons[id], p))
 const matchArr = (a, b) => a.reduce((res, e) => res+(b.includes(e) ? 1 : 0), 0);
@@ -6,8 +16,8 @@ const distinct = (value, index, self) => self.indexOf(value) === index;
 const nextTransformKey = b => Object.keys(baseTransforms).filter(k => k.indexOf('_'+b+'_') > -1)[0];
 const manhattanDist = (a,b) => a.reduce((acc, v, i) => acc += Math.abs(v-b[i]), 0)
 const vectMatrixProduct = (v, matrix) => v.map((e, i) => v[0]*matrix[0][i]+v[1]*matrix[1][i]+v[2]*matrix[2][i]);
-const vectSub = (v1, v2) => v2.map((e, i) => e-v1[i]);
-const vectAdd = (v1, v2) => v2.map((e, i) => e+v1[i]);
+const vectAdd = (u, v) => v.map((e, i) => e+u[i]);
+const vectSub = (u, v) => vectAdd(u, v.map(n=>-n));
 
 const constructTransformMatrix = (u, v) => {
     let res = Array.from({length:3}, e => Array(3).fill(0))
@@ -53,14 +63,14 @@ const determineScannerPosition = (a, b) => {
 
         // need to get from b to 0
         while (b != 0) {
-            let k = nextTransformKey(b), tmp = k.split('_');
+            let k = nextTransformKey(b);
             scanners[a] = vectAdd(vectMatrixProduct(scanners[a], baseTransforms[k]), translations[k]);
-            b = tmp[2];
+            b = k.split('_').pop();
         }
     }))
 }
 
-let scanners = [[0,0,0]], baseTransforms = {}, translations = {}, beacons = {}, uuid = 0, maxDist = 0;
+let scanners = [[0,0,0]], baseTransforms = {}, translations = {}, beacons = {}, uuid = 0;
 let scannerMeasures = input.map((beaconData, scannerId) => input[scannerId].map((p, i) => distFromBeacon(input[scannerId], i)))
 
 input.map((beaconData, scannerId) => beaconData.map((d, beaconNr) => beacons[beaconId(scannerId, beaconNr)] = uuid++))
@@ -74,5 +84,4 @@ while (scanners.filter(s => Array.isArray(s)).length < input.length) {
         for (let j = 0; j < input.length; j++) if (i != j && matchScanners(i, j) >= 12) determineScannerPosition(i, j);
 }
 
-scanners.forEach(s1 => scanners.forEach(s2 => maxDist = Math.max(maxDist, manhattanDist(s1, s2))))
-console.log(maxDist) // part 2
+console.log(Math.max(...scanners.map(s1 => Math.max(...scanners.map(s2 => manhattanDist(s1, s2)))))); // part2
