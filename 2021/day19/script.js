@@ -1,5 +1,5 @@
-// For Part 1 we construct scannerMeasures: a relative distance squares of every other beacon for each base beacon (within given scanner data)
-// these are clearly invariants within scanners, so can be easily used to identify overlapping scanners. Next we match uuided beacons and we're done.
+// For Part 1 we construct scannerMeasures: a relative distance squares of every other beacon for each base beacon (within given scanner data).
+// These are clearly invariants between scanners, so can be easily used to identify overlapping scanners. Next we match uuided beacons to count them off and we're done.
 
 // For Part 2, we need to determine the transformation matrixes between scanners that have overlaps. The goal is to have each scanner's position in scanner[0] base.
 // The orientation of 2 scanners that have overlapping beacons is done by constructing rotation matrix between 2 matching nodes seen from each scanner's perspective
