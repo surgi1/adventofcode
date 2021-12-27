@@ -1,6 +1,6 @@
 # Advent of Code 2021
 
-Puzzles of 2021 were considerably more difficult than 2020's ones. Lots of hard or innovative tasks, mainly in its second half. Sometimes even a specialised knowledge (such as 3d transformations) was a pre-requisite to solving them. Overall a great and challenging set of puzzles.
+Puzzles of 2021 were considerably more difficult than 2020's ones. Lots of hard and/or innovative tasks, mainly in its second half. Sometimes even a specialised knowledge (such as 3d transformations) was a pre-requisite to solving them. Overall a great and challenging set of puzzles.
 
 [https://adventofcode.com/2021](https://adventofcode.com/2021)
 
