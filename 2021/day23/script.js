@@ -1,7 +1,7 @@
 const parseInput = data => data.map((l => l.split('')));
 const charVal = ch => ch.charCodeAt(0)-65;
 const charCost = ch => Math.pow(10, charVal(ch));
-const stateVal = map => map.reduce((res, line) => res+line.join('').replace(/#/g, ''), '')
+const stateVal = map => map.reduce((res, line) => res+line.join('').replace(/(#|\s)/g, ''), '')
 const cloneMap = source => source.map(row => row.slice())
 
 const distanceMap = (map, x, y) => {
@@ -17,9 +17,7 @@ const distanceMap = (map, x, y) => {
     return map;
 }
 
-const solve = (finalState, initState) => {
-    const isFinalState = map => map.every((line, y) => line.join('') == finalState[y])
-
+const solve = (initState, finalStateVal) => {
     const nextMoves = (map, origX, origY) => {
         const adjacentToCaves = (x, y) => y == 1 && [3, 5, 7, 9].includes(x);
         const isSubjectsHouse = (x, y) => (y > 1) && (x == charVal(map[origY][origX])*2+3);
@@ -36,14 +34,14 @@ const solve = (finalState, initState) => {
             dMap = distanceMap(cloneMap(map), origX, origY);
 
         for (let y = 1; y < rows-1; y++) for (let x = 1; x < cols-1; x++) {
-            if (parseInt(dMap[y][x]) != dMap[y][x]) continue;
-            if (origY == 1 && y == 1) continue;
-            if (origY == 1 && (!isSubjectsHouse(x, y) || !cleanHouse)) continue;
+            if (parseInt(dMap[y][x]) != dMap[y][x]) continue; // only reachable spots are considered
+            if (origY == 1 && y == 1) continue; // once moved out of cave, has to move only to the cave ..
+            if (origY == 1 && (!isSubjectsHouse(x, y) || !cleanHouse)) continue; // .. specifically into its own cave, once it is clean (or occupied by its bros only)
             if (origY == 1 && isSubjectsHouse(x, y) && cleanHouse) {
-                if (!['#', map[origY][origX]].includes(map[y+1][x])) continue; // a valid move is only to the bottom of the house
+                if (!['#', map[origY][origX]].includes(map[y+1][x])) continue; // more to that, a valid move is only to the most bottom spot in the house
             };
-            if (origY != 1 && y != 1) continue;
-            if (origY != 1 && adjacentToCaves(x, y)) continue;
+            if (origY != 1 && y != 1) continue; // to limit possibilities, we allow moving from initial cave only to the top line
+            if (origY != 1 && adjacentToCaves(x, y)) continue; // spots adjacent to caves are banned
             targets.push({x:x, y:y, dist: dMap[y][x]})
         }
         return targets;
@@ -74,7 +72,7 @@ const solve = (finalState, initState) => {
 
                 if (best[tmp.val] == undefined || best[tmp.val] > tmp.cost) {
                     best[tmp.val] = tmp.cost;
-                    if (isFinalState(tmp.state)) final.push(tmp); else paths.push(tmp);
+                    if (tmp.val == finalStateVal) final.push(tmp); else paths.push(tmp);
                 }
             })
         }
@@ -83,5 +81,6 @@ const solve = (finalState, initState) => {
     return final.sort((a, b) => a.cost - b.cost)[0].cost;
 }
 
-console.log(solve(part1Final, part1Input));
-console.log(solve(part2Final, part2Input));
+console.log(solve(input, '.'.repeat(11)+'ABCD'.repeat(2)));
+input.splice(3, 0,'  #D#C#B#A#  ','  #D#B#A#C#  ');
+console.log(solve(input, '.'.repeat(11)+'ABCD'.repeat(4)));
