@@ -6,7 +6,7 @@
 // and translation vector after projecting those 2 beacons into the same space.
 // The last trick here is to realize, that the projections are chained; if there is a scanner[2] overlapping with scanner[1], and scanner[1] overlapping
 // with scanner[0], then in order to transform coordinates from scanner[2] to scanner[0], it is necessary to first project from scanner[2] to scanner[1]
-// base (both rotation and translation), and the result of this into scanner[9] space.
+// base (both rotation and translation), and the result of this into scanner[0] space.
 
 const dist = (a,b, res = 0) => a.reduce((res, val, i) => res += (val-b[i])*(val-b[i]), 0)
 const distFromBeacon = (beacons, id) => beacons.map(p => dist(beacons[id], p))
