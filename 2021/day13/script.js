@@ -19,7 +19,7 @@ const fold = (prev, f, fId) => {
         screen[_y][_x] = 1;
     }))
 
-    if (!fId) console.log(screen.reduce((n, m) => n.concat(m)).reduce((a, p) => a+p));
+    if (!fId) console.log(screen.flat().reduce((a, p) => a+p));
     return screen;
 }
 

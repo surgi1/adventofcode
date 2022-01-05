@@ -6,7 +6,7 @@ const parseInput = input => {
 }
 
 const turn = nr => {
-    const cardValue = cardId => cards[cardId].reduce((a, i) => a.concat(i)).reduce((a, i) => a+i);
+    const cardValue = cardId => cards[cardId].flat().reduce((a, i) => a+i);
     const checkBingo = (cardId, res = false) => {
         for (let y = 0; y < 5; y++) if ((cards[cardId][y].reduce((a, i) => a+i, 0) == 0) || (cards[cardId].reduce((a, i) => a+i[y], 0) == 0)) res = true;
         return res;

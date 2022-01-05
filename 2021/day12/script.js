@@ -18,7 +18,7 @@ const allPaths = (nodes, canVisitNode) => {
                 n: next,
                 finished: false,
                 smallVisited2x: path.smallVisited2x || (nodes[next].type == 'SMALL' && path.way.includes(next)),
-                way: [].concat(path.way, [next])
+                way: [...path.way, next]
             })
         )
         i++;
