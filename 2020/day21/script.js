@@ -1,4 +1,4 @@
-let foods = [], allergens = {}, ingredients = new Map(), knownAllergenIngredients = [];
+let foods = [], allergens = {}, knownAllergenIngredients = [];
 
 const init = input => {
     input.map(line => foods.push({
@@ -10,8 +10,6 @@ const init = input => {
         if (!allergens[allergen]) allergens[allergen] = {foods: [], resolved: false, value: ''};
         allergens[allergen].foods.push(foodId);
     }))
-
-    foods.map(food => food.ingredients.map(i => ingredients.set(i, i)))
 }
 
 const findMatchingIngredients = (foodIds, res = []) => {
@@ -22,13 +20,13 @@ const findMatchingIngredients = (foodIds, res = []) => {
     return res;
 }
 
-const resolvedAllergens = () => Object.entries(allergens).filter(([name, o]) => o.resolved === true);
-const unresolvedAllergens = () => Object.entries(allergens).filter(([name, o]) => o.resolved !== true);
-const getAvailableIngredients = ings => ings.filter(i => resolvedAllergens().filter(([name, o]) => o.value == i).length == 0)
+const resolvedAllergens = () => Object.values(allergens).filter(o => o.resolved === true);
+const unresolvedAllergens = () => Object.values(allergens).filter(o => o.resolved !== true);
+const getAvailableIngredients = ings => ings.filter(i => resolvedAllergens().filter(o => o.value == i).length == 0)
 
 init(input);
 
-while (unresolvedAllergens().length > 0) unresolvedAllergens().forEach(([name, o]) => {
+while (unresolvedAllergens().length > 0) unresolvedAllergens().forEach(o => {
     let found = findMatchingIngredients(o.foods);
     if (found.length != 1) return true;
     o.resolved = true;
