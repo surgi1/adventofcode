@@ -60,7 +60,7 @@ const cmpStates = (s1,s2) => {
 }
 
 const nextState = (lastState, adjFunction, occupiedParam) => {
-    let newState = $.extend(true, [], lastState);
+    let newState = lastState.map(y => y.slice());
     for (let y = 0; y < mapSizeY; y++) {
         for (let x = 0; x < mapSizeX; x++) {
             let occupied = adjFunction(lastState, x, y);

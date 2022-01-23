@@ -51,7 +51,7 @@ const getBlackAround = (g, x, y) => {
 }
 
 const progressState = oldGrid => {
-    let newGrid = $.extend(true, [], oldGrid);
+    let newGrid = oldGrid.map(row => row.slice());
 
     for (let y = 1; y < size-1; y++) {
         for (let x = 2; x < size-2; x++) {

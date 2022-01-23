@@ -15,12 +15,13 @@ const run = dat => {
     return {code: tickCode, acc: acc, ptr: ptr};
 }
 
-const part1 = () => console.log('part 1', run($.extend(true, [], data)).acc);
+const extend = a => a.map(e => Object({...e}));
+const part1 = () => console.log('part 1', run(extend(data)).acc);
 const part2 = () => {
     let switchPtr = 0, res;
     while (true) {
         while (!['jmp', 'nop'].includes(data[switchPtr].i)) switchPtr++;
-        let dataCp = $.extend(true, [], data);
+        let dataCp = extend(data);
         data.map(d => d.executed = false)
         dataCp[switchPtr].i = dataCp[switchPtr].i == 'nop' ? 'jmp' : 'nop';
         res = run(dataCp);
