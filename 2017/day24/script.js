@@ -33,7 +33,7 @@ while (progressed) {
         if (suitableNextComponentIds.length > 0) {
             progressed = true;
             for (let cmpId = 0; cmpId < suitableNextComponentIds.length; cmpId++) {
-                let newPath = $.extend(true, {}, path);
+                let newPath = {...path, usedConnectorIds: path.usedConnectorIds.slice()}
                 let cmp = components[suitableNextComponentIds[cmpId]];
                 newPath.usedConnectorIds.push(suitableNextComponentIds[cmpId]);
                 newPath.openEnd = cmp[0] == newPath.openEnd ? cmp[1] : cmp[0];

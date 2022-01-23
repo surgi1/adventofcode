@@ -40,5 +40,5 @@ const part2 = input => {
     console.log(input.filter(particle => !particle.destroyed).length);
 }
 
-part1($.extend(true, [], input));
-part2($.extend(true, [], input));
+part1(input.map(e => Object({p: e.p.slice(), v: e.v.slice(), a: e.a.slice()})));
+part2(input);
