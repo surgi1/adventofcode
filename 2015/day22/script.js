@@ -76,8 +76,8 @@ let bossBase = {
     }
 }
 
-let player = $.extend(true, {}, playerBase);
-let boss = $.extend(true, {}, bossBase);
+let player = {...playerBase};
+let boss = {...bossBase};
 
 const beginTurn = turn => {
     if (verboseBattle) console.log('****************************************************');
@@ -88,8 +88,8 @@ const handleStack = turn => stack.filter(s => s.turn == turn).map(s => s.effect(
 
 const checkStatus = noStats => {
     if (verboseBattle) {
-        if (noStats !== true) console.log('Stats', 'Player', $.extend(true, {}, player));
-        if (noStats !== true) console.log('Stats', 'Boss', $.extend(true, {}, boss));
+        if (noStats !== true) console.log('Stats', 'Player', {...player});
+        if (noStats !== true) console.log('Stats', 'Boss', {...boss});
     }
     if (boss.hp <= 0) {
         if (verboseBattle) console.log('Boss is dead');
@@ -106,8 +106,8 @@ const battle = (playerStrategy, setVerboseTo, applyCurse) => {
     verboseBattle = setVerboseTo;
 
     // reset
-    player = $.extend(true, {}, playerBase);
-    boss = $.extend(true, {}, bossBase);
+    player = {...playerBase, spellChain: []};
+    boss = {...bossBase};
     stack = [];
     if (verboseBattle) {
         console.log('****************************************************');
@@ -143,8 +143,8 @@ const battle = (playerStrategy, setVerboseTo, applyCurse) => {
     if ((boss.hp <= 0) && (!player.fizzled)) {
         if (lowestManaSpentOnWin > player.manaSpent/* && player.manaSpent > 1200*/) {
             lowestManaSpentOnWin = player.manaSpent;
-            console.log('Stats', 'Player', $.extend(true, {}, player));
-            console.log('Stats', 'Boss', $.extend(true, {}, boss));
+            console.log('Stats', 'Player', {...player});
+            console.log('Stats', 'Boss', {...boss});
         }
     }
 

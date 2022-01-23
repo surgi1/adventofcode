@@ -31,7 +31,7 @@ const adjustState = state => {
 }
 
 const nextState = (lastState, fixedCorners) => {
-    let newState = $.extend(true, [], lastState);
+    let newState = lastState.map(row => row.slice());
     for (let y = 0; y < mapSize; y++) {
         for (let x = 0; x < mapSize; x++) {
             let lights = getAdjacent(lastState, x, y);
@@ -57,7 +57,7 @@ const getCount = (map, what) => {
 
 const run = (fixedCorners = false) => {
     init(input);
-    let newState = $.extend(true, [], map);
+    let newState = map.map(row => row.slice());
     for (let i = 0; i < steps; i++) newState = nextState(newState, fixedCorners);
     console.log('lights on', getCount(newState, '#'));
 }

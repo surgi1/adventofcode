@@ -49,7 +49,7 @@ const battleWon = (avatar) => {
 // applies equipment and returns battler result
 const battle = (equipment) => {
     // add equipment stats to avatar's clone
-    let avatar = $.extend(true, {}, avatarBasic);
+    let avatar = {...avatarBasic};
     equipment.map(item => {
         avatar.dmg += item.dmg;
         avatar.armor += item.armor;
