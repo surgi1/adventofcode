@@ -5,96 +5,29 @@ let input = [
 '.###.',
 '##..#']
 
-const init = input => {
-    let map = [];
-    input.map((line, y) => {
-        map[y] = [];
-        for (let x = 0; x < line.length; x++) {
-            map[y][x] = (line[x] == '#' ? 1 : 0);
-        }
-    })
-    return map;
-}
-
-const getAdjacentBugs = (map, xx, yy) => {
-    let count = 0;
-    for (let i = -1; i <= 1; i++) {
-        let y = yy+i;
-        if (y < 0 || y >= 5) continue;
-        for (let j = -1; j <= 1; j++) {
-            let x = xx+j;
-            if (x < 0 || x >= 5) continue;
-            if ((i == 0) && (j == 0)) continue;
-            if (i != 0 && j != 0) continue;
-            if (map[y][x] == 1) count++;
-        }
-    }
+const init = input => input.map(line => line.split('').map(v => v == '#' ? 1 : 0))
+const bugEvo = (v, bugs) => (v ? (bugs != 1 ? 0 : v) : ([1,2].includes(bugs) ? 1 : v))
+const adjacentBugs = (map, u, v, count = 0) => {
+    [-1,0,1].forEach(i => [-1,0,1].forEach(j => {
+        let y = v+i, x = u+j;
+        if (y < 0 || y > 4 || x < 0 || x > 4 || (i == 0 && j == 0) || i*j != 0) return true;
+        count += map[y][x];
+    }))
     return count;
 }
 
-const part1 = map => {
-    const progressState = oldState => {
-        let newState = $.extend(true, [], oldState);
-        for (let y = 0; y < 5; y++) {
-            for (let x = 0; x < 5; x++) {
-                let bugs = getAdjacentBugs(oldState, x, y);
-                if (oldState[y][x] == 1) {
-                    if (bugs != 1) newState[y][x] = 0;
-                } else {
-                    if (bugs == 1 || bugs == 2) newState[y][x] = 1;
-                }
-            }
-        }
-        return newState;
+const part1 = (state, visited = [], biodiv) => {
+    const progressState = s => s.map((row, y) => row.map((v, x) => bugEvo(v, adjacentBugs(s, x, y))))
+    while (!visited.includes(biodiv)) {
+        visited.push(biodiv);
+        state = progressState(state);
+        biodiv = parseInt(state.flat().reverse().join(''), 2);
     }
-
-    const stateToNum = state => {
-        let s = '';
-        for (let y = 4; y >= 0; y--) {
-            for (let x = 4; x >= 0; x--) {
-                s += state[y][x];
-            }
-        }
-        return parseInt(s, 2);
-    }
-
-    let newState = map, stop = false, visitedStates = [], ticks = 0;
-
-    while (!stop) {
-        newState = progressState(newState);
-        let biodiv = stateToNum(newState);
-        if (visitedStates.includes(biodiv)) {
-            console.log('we have a second visit with biodiversity of', biodiv);
-            stop = true;
-        } else {
-            visitedStates.push(biodiv);
-        }
-        ticks++;
-        if (ticks % 10000 == 0) console.log('done', ticks, 'state transformations');
-    }
+    return biodiv;
 }
 
 const part2 = map => {
-    const emptyLevel = () => {
-        let arr = [];
-        for (let y = 0; y < 5; y++) arr[y] = new Array(5).fill(0);
-        return arr;
-    }
-
-    const addPoint = (state, level, x, y, dir) => {
-        let count = 0;
-        return count;
-    }
-
-    const sumColumn = (arr, col) => {
-        let count = 0;
-        for (let y = 0; y < 5; y++) count += arr[y][col];
-        return count;
-    }
-
-    const getAdjacentBugsRecursive = (state, level, x, y) => {
-        let count = 0;
-
+    const adjacentBugsRec = (state, level, x, y, count = 0) => {
         if (x == 0) count += state[level-1][2][1];
         if (y == 0) count += state[level-1][1][2];
 
@@ -104,64 +37,21 @@ const part2 = map => {
         if (x == 2 && y == 1) count += state[level+1][0].reduce((a, b) => a+b, 0);
         if (x == 2 && y == 3) count += state[level+1][4].reduce((a, b) => a+b, 0);
 
-        if (x == 1 && y == 2) count += sumColumn(state[level+1], 0);
-        if (x == 3 && y == 2) count += sumColumn(state[level+1], 4);
+        if (x == 1 && y == 2) count += state[level+1].reduce((a, v) => a+v[0], 0);
+        if (x == 3 && y == 2) count += state[level+1].reduce((a, v) => a+v[4], 0);
 
-        // plus normal ones per part 1 method
-        count += getAdjacentBugs(state[level], x, y);
-        return count;
+        return count + adjacentBugs(state[level], x, y); // plus normal ones
     }
 
-    const progressState = oldState => {
-        let newState = $.extend(true, [], oldState), levelStart = activeLevelMin-1, levelStop = activeLevelMax+1;
-        for (let level = levelStart; level <= levelStop; level++) {
-            for (let y = 0; y < 5; y++) {
-                for (let x = 0; x < 5; x++) {
-                    if (x == 2 && y == 2) continue;
-                    let bugs = getAdjacentBugsRecursive(oldState, level, x, y);
-                    if (oldState[level][y][x] == 1) {
-                        if (bugs != 1) newState[level][y][x] = 0;
-                    } else {
-                        if (bugs == 1 || bugs == 2) {
-                            newState[level][y][x] = 1;
-                            if (level < activeLevelMin) activeLevelMin = level;
-                            if (level > activeLevelMax) activeLevelMax = level;
-                        }
-                    }
-                }
-            }
-        }
-        return newState;
-    }
+    const progressState = s => s.map((map, level) => map.map((row, y) => row.map((v, x) => 
+        (level == 0 || level > 218 || (x == 2 && y == 2)) ? v : bugEvo(v, adjacentBugsRec(s, level, x, y)))))
 
-    const getCount = state => {
-        let count = 0;
-        for (let level = activeLevelMin-1; level <= activeLevelMax+1; level++) {
-            for (let y = 0; y < 5; y++) {
-                for (let x = 0; x < 5; x++) {
-                    if (x == 2 && y == 2) continue;
-                    if (state[level][y][x] == 1) count++;
-                }
-            }
-        }
-        return count;
-    }
+    let levels = Array.from({length:220}, (v, i) => i == 110 ? map : Array(5).fill(Array(5).fill(0)));
 
-    let levels = [], startingLevel = 110;
+    for (let i = 0; i < 200; i++) levels = progressState(levels);
 
-    for (let level = 0; level < 220; level++) {
-        levels[level] = emptyLevel();
-    }
-    levels[startingLevel] = map;
-
-    let activeLevelMin = startingLevel, activeLevelMax = startingLevel, newState = levels;
-
-    for (let i = 0; i < 200; i++) {
-        newState = progressState(newState);
-    }
-
-    console.log('total bugs', getCount(newState));
+    return levels.flat().flat().reduce((a, v) => a+v, 0);
 }
 
-//part1(init(input));
-part2(init(input));
+console.log('part 1', part1(init(input)));
+console.log('part 2', part2(init(input)));
