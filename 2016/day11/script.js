@@ -22,9 +22,8 @@ baseState.push(
 )
 baseState.map((item, id) => item.id = id);
 
-const getGeneratorFor = (element, state) => {
-    return state.filter(item => item.type == 'generator' && item.element == element)[0];
-}
+const cloneState = state => state.map(e => Object({...e}))
+const getGeneratorFor = (element, state) => state.filter(item => item.type == 'generator' && item.element == element)[0]
 
 const validate = state => {
     let valid = true;
@@ -63,7 +62,7 @@ const getItemCombinations = (availableItemIds, includeDuos = true) => {
 const constructNextStates = (state, floor, movedItemIdsArr) => {
     let nextStates = [];
     movedItemIdsArr.map(idsToMove => {
-        let nextState = $.extend(true, [], state);
+        let nextState = cloneState(state);
         nextState.filter(i => i.type == 'elevator')[0].floor = floor;
         idsToMove.map(idToMove => nextState[idToMove].floor = floor);
         nextStates.push(nextState);
@@ -111,7 +110,7 @@ const significantState = (state, floor, count, mode) => {
 
 let statesReached = [],
     stop = false,
-    paths = [{ticks: 0, state: $.extend(true, [], baseState)}],
+    paths = [{ticks: 0, state: cloneState(baseState)}],
     pathsIterFrom = 0, pathsIterTo = paths.length,
     endingPath = false,
     floorToFill = maxFloor-1,
@@ -132,16 +131,11 @@ while (true) {
             }
             if (significantState(path.state, floorToFill, generatorsToFill, significantStateMode)) {
                 if (significantStateMode != 'all') console.log('Significant state reached', path, 'with', generatorsToFill, 'generators on the floor nr.', floorToFill);
-                endingPath = $.extend(true, {}, path);
+                endingPath = {ticks: path.ticks, state: cloneState(path.state)}
                 stop = true;
                 break;
             }
-            nextStates(path.state, significantStateMode).map(ns => {
-                let newPath = $.extend(true, {}, path);
-                newPath.state = ns;
-                newPath.ticks += 1;
-                paths.push(newPath);
-            })
+            nextStates(path.state, significantStateMode).map(ns => paths.push({ticks: path.ticks+1, state: ns}))
         }
         pathsIterFrom = pathsIterTo;
     }

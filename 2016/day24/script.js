@@ -129,7 +129,9 @@ const getRoundTrips = () => {
                 if (!stepsReached[ind]) stepsReached[ind] = [];
                 stepsReached[ind].push(step);
 
-                if (j > 0) newPath = $.extend(true, {}, path, {id: pathId}); else newPath = path;
+                if (j > 0) newPath = {
+                    id: pathId, finished: path.finished, roundTrip: path.roundTrip, steps: path.steps.map(s => Object({...s}))
+                }; else newPath = path;
                 newPath.steps.push(step);
                 if (step.keys.length >= keysTotal) {
                     newPath.finished = true;
