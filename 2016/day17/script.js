@@ -24,7 +24,7 @@ const move = (trip, dir) => {
     trip.steps++;
 }
 
-let trips = [{steps: 0, pos: $.extend(true, {}, start), path: ''}],
+let trips = [{steps: 0, pos: {...start}, path: ''}],
     longestTripLength = 0, shortestTripLength = 1000;
 
 while (trips.filter(t => t.finished !== true).length > 0) {
@@ -46,7 +46,7 @@ while (trips.filter(t => t.finished !== true).length > 0) {
             continue;
         }
         getOpenDoors(trip.path, trip.pos).map(dir => {
-            let newTrip = $.extend(true, {}, trip);
+            let newTrip = {...trip, pos: {...trip.pos}};
             move(newTrip, dir);
             trips.push(newTrip);
         })
