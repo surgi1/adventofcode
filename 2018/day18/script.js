@@ -15,11 +15,9 @@ const adjacent = (map, u, v, adj = []) => {
 }
 
 const evolve = (val, adj) => {
-    switch (val) {
-        case SPACE: if (count(adj, TREE) >= 3) val = TREE; break;
-        case TREE: if (count(adj, LUMB) >= 3) val = LUMB; break;
-        case LUMB: val = ((count(adj, TREE) >= 1) && (count(adj, LUMB) >= 1)) ? LUMB : SPACE; break;
-    }
+    if (val == SPACE && count(adj, TREE) >= 3) return TREE;
+    if (val == TREE && count(adj, LUMB) >= 3) return LUMB;
+    if (val == LUMB) return ((count(adj, TREE) >= 1) && (count(adj, LUMB) >= 1)) ? LUMB : SPACE;
     return val;
 }
 
