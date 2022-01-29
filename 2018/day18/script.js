@@ -23,22 +23,18 @@ const nextState = lastState => lastState.map((row, y) => row.map((val, x) => {
     return val;
 }));
 
-let map = readInput(input), newState = nextState(map), freq = false;
+let map = readInput(input), newState = map, freq = false;
 
 while (!freq) {
+    states.push(newState);
     newState = nextState(newState);
     states.forEach((s, i) => (cmpStates(s, newState)) && (freq = states.length - i))
-    states.push(newState);
 }
 
 let firstDupe = states.length - freq;
-let index = reps - freq*Math.floor((reps - firstDupe - 2)/freq);
+let index = reps - freq*Math.floor((reps - firstDupe)/freq);
 
-console.log('part 1', getCount(states[10-2].flat(), TREE)*getCount(states[10-2].flat(), LUMB))
-console.log('part 2', getCount(states[index-2].flat(), TREE)*getCount(states[index-2].flat(), LUMB))
+console.log('part 1', getCount(states[10].flat(), TREE)*getCount(states[10].flat(), LUMB))
+console.log('part 2', getCount(states[index].flat(), TREE)*getCount(states[index].flat(), LUMB))
 // trick for the part 2; 1 000 000 000 reps
-// from states[508] the states repeat each 28 states, meaning 536 states is the same
-// states[508] is state after 510 minutes (thus the +2 adjustment above)
-// 1 000 000 000
-//   999 999 986 = 510+28*35714267
-// so I need data for states[508+14] (522) = 197276
+// from states[firstDure] the states repeat each freq states
