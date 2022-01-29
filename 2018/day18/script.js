@@ -15,15 +15,11 @@ const getAdjacent = (map, xx, yy, adj = []) => {
 
 const nextState = lastState => lastState.map((row, y) => row.map((val, x) => {
     let adj = getAdjacent(lastState, x, y);
-    // rule 1: . ->  | if 3 or more adjanced are trees
-    // rule 2: | => #
-    // rule 3: # -> # or .
     switch (val) {
         case SPACE: if (getCount(adj, TREE) >= 3) val = TREE; break;
         case TREE: if (getCount(adj, LUMB) >= 3) val = LUMB; break;
         case LUMB: val = ((getCount(adj, TREE) >= 1) && (getCount(adj, LUMB) >= 1)) ? LUMB : SPACE; break;
     }
-
     return val;
 }));
 
@@ -36,10 +32,11 @@ while (!freq) {
 }
 
 let firstDupe = states.length - freq;
-let index = reps - 2 - freq*Math.floor((reps - firstDupe - 2)/freq);
+let index = reps - freq*Math.floor((reps - firstDupe - 2)/freq);
 
-console.log(getCount(states[index].flat(), TREE)*getCount(states[index].flat(), LUMB))
-// 1 000 000 000 reps
+console.log('part 1', getCount(states[10-2].flat(), TREE)*getCount(states[10-2].flat(), LUMB))
+console.log('part 2', getCount(states[index-2].flat(), TREE)*getCount(states[index-2].flat(), LUMB))
+// trick for the part 2; 1 000 000 000 reps
 // from states[508] the states repeat each 28 states, meaning 536 states is the same
 // states[508] is state after 510 minutes (thus the +2 adjustment above)
 // 1 000 000 000
