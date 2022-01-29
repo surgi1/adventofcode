@@ -1,109 +1,47 @@
-let map = [], states = [], mapSize = input.length;
+let states = [], mapSize = input.length, TREE = '|', LUMB = '#', SPACE = '.', reps = 1000000000;
 
-const readInput = () => {
-    for (let y = 0; y < input.length; y++) {
-        let line = input[y];
-        map[y] = [];
-        for (let x = 0; x < line.length; x++) {
-            map[y][x] = line[x];
-        }
-    }
-}
+const readInput = input => input.map(row => row.split(''))
+const getCount = (map, what) => map.reduce((count, v) => count += (v == what ? 1 : 0), 0)
+const cmpStates = (s1, s2) => s1.every((row, y) => row.every((v, x) => v == s2[y][x]))
 
-const getAdjacent = (map, xx, yy) => {
-    let adj = [];
-    for (let i = -1; i <= 1; i++) {
-        let y = yy+i;
-        if (y < 0 || y >= mapSize) continue;
-        for (let j = -1; j <= 1; j++) {
-            let x = xx+j;
-            if (x < 0 || x >= mapSize) continue;
-            if ((i == 0) && (j == 0)) continue;
-            adj.push(map[y][x]);
-        }
-    }
+const getAdjacent = (map, xx, yy, adj = []) => {
+    [-1, 0, 1].forEach(i => [-1, 0, 1].forEach(j => {
+        let y = yy+i, x = xx+j;
+        if (y < 0 || y >= mapSize || x < 0 || x >= mapSize || ((i == 0) && (j == 0))) return true;
+        adj.push(map[y][x]);
+    }))
     return adj;
 }
 
-const cmpStates = (s1,s2) => {
-    let res = true;
-    for (let y = 0; y < mapSize; y++) {
-        for (let x = 0; x < mapSize; x++) {
-            if (s1[y][x] != s2[y][x]) {
-                res = false;
-                break;
-            }
-        }
+const nextState = lastState => lastState.map((row, y) => row.map((val, x) => {
+    let adj = getAdjacent(lastState, x, y);
+    // rule 1: . ->  | if 3 or more adjanced are trees
+    // rule 2: | => #
+    // rule 3: # -> # or .
+    switch (val) {
+        case SPACE: if (getCount(adj, TREE) >= 3) val = TREE; break;
+        case TREE: if (getCount(adj, LUMB) >= 3) val = LUMB; break;
+        case LUMB: val = ((getCount(adj, TREE) >= 1) && (getCount(adj, LUMB) >= 1)) ? LUMB : SPACE; break;
     }
-    return res;
+
+    return val;
+}));
+
+let map = readInput(input), newState = nextState(map), freq = false;
+
+while (!freq) {
+    newState = nextState(newState);
+    states.forEach((s, i) => (cmpStates(s, newState)) && (freq = states.length - i))
+    states.push(newState);
 }
 
-const nextState = (lastState) => {
-    let newState = $.extend(true, [], lastState);
+let firstDupe = states.length - freq;
+let index = reps - 2 - freq*Math.floor((reps - firstDupe - 2)/freq);
 
-    for (let y = 0; y < mapSize; y++) {
-        for (let x = 0; x < mapSize; x++) {
-            let adj = getAdjacent(lastState, x, y);
-            let trees = 0, lumbs = 0, alen = adj.length;
-            for (let i = 0; i < alen; i++) {
-                if (adj[i] == '|') trees++;
-                if (adj[i] == '#') lumbs++;
-            }
-
-            // rule 1: . ->  | if 3 or more adjanced are trees
-            if (lastState[y][x] == '.') {
-                if (trees >= 3) newState[y][x] = '|';
-            } else 
-            // rule 2: | => #
-            if (lastState[y][x] == '|') {
-                if (lumbs >= 3) newState[y][x] = '#';
-            } else 
-            // rule 3: # -> # or .
-            if (lastState[y][x] == '#') {
-                if ((lumbs >= 1) && (trees >= 1)) newState[y][x] = '#'; else newState[y][x] = '.';
-            }
-
-        }
-    }
-
-    for (let i = 0; i < states.length;i++) {
-        if (cmpStates(states[i], newState)) {
-            console.log('duplicity detected!', i, states.length, states[i], newState);
-            console.log('resource value', getCount(newState, '|')*getCount(newState, '#'));
-        }
-    }
-
-    states.push(newState);
-
-    return newState;
-};
-
-
-const getCount = (map, what) => {
-    let count = 0;
-    for (let y = 0; y < mapSize; y++) {
-        for (let x = 0; x < mapSize; x++) {
-            if (map[y][x] == what) count++;
-        }
-    }
-
-    return count;
-};
-
-readInput();
-
-//console.log('adj', getAdjacent(map, 0, 0));
-
-console.time('Execution time');
-let newState = nextState(map);
-for (let i = 1; i < 600;i++) newState = nextState(newState); // 1 000 000 000 ugh
+console.log(getCount(states[index].flat(), TREE)*getCount(states[index].flat(), LUMB))
+// 1 000 000 000 reps
 // from states[508] the states repeat each 28 states, meaning 536 states is the same
-// states[508] is state after 510 minutes
+// states[508] is state after 510 minutes (thus the +2 adjustment above)
 // 1 000 000 000
 //   999 999 986 = 510+28*35714267
-// so I need data for states[508+14] (522) // 196876 not correct ; too low | 523 - 197276 correct
-
-console.log('resource value', getCount(newState, '|')*getCount(newState, '#'));
-console.timeEnd('Execution time');
-
-console.log(newState);
+// so I need data for states[508+14] (522) = 197276
