@@ -23,7 +23,7 @@ const nextState = lastState => lastState.map((row, y) => row.map((val, x) => {
     return val;
 }));
 
-let map = readInput(input), newState = map, freq = false;
+let newState = readInput(input), freq = false;
 
 while (!freq) {
     states.push(newState);
