@@ -37,4 +37,4 @@ let index = reps - freq*Math.floor((reps - firstDupe)/freq);
 console.log('part 1', getCount(states[10].flat(), TREE)*getCount(states[10].flat(), LUMB))
 console.log('part 2', getCount(states[index].flat(), TREE)*getCount(states[index].flat(), LUMB))
 // trick for the part 2; 1 000 000 000 reps
-// from states[firstDure] the states repeat each freq states
+// from states[firstDupe] the states repeat each freq states
