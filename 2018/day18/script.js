@@ -27,7 +27,7 @@ while (!freq) {
     states.forEach((s, i) => (cmpStates(s, state)) && (freq = states.length - i))
 }
 
-let firstDupe = states.length - freq, index = reps - freq*Math.floor((reps - firstDupe)/freq);
+let firstDupe = states.length-freq, index = reps - freq*Math.floor((reps-firstDupe)/freq);
 
 console.log('part 1', resourceValue(states[10].flat()))
 console.log('part 2', resourceValue(states[index].flat()))
