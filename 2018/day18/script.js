@@ -1,4 +1,4 @@
-let states = [], mapSize = input.length, TREE = '|', LUMB = '#', SPACE = '.', reps = 1000000000;
+let states = [], cols = input[0].length, rows = input.length, TREE = '|', LUMB = '#', SPACE = '.', reps = 1000000000;
 
 const readInput = input => input.map(row => row.split(''))
 const getCount = (map, what) => map.reduce((count, v) => count += (v == what ? 1 : 0), 0)
@@ -7,7 +7,7 @@ const cmpStates = (s1, s2) => s1.every((row, y) => row.every((v, x) => v == s2[y
 const getAdjacent = (map, xx, yy, adj = []) => {
     [-1, 0, 1].forEach(i => [-1, 0, 1].forEach(j => {
         let y = yy+i, x = xx+j;
-        if (y < 0 || y >= mapSize || x < 0 || x >= mapSize || ((i == 0) && (j == 0))) return true;
+        if (y < 0 || y >= rows || x < 0 || x >= cols || ((i == 0) && (j == 0))) return true;
         adj.push(map[y][x]);
     }))
     return adj;
