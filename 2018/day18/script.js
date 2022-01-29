@@ -1,8 +1,9 @@
-let states = [], cols = input[0].length, rows = input.length, TREE = '|', LUMB = '#', SPACE = '.',
-    state = input.map(row => row.split('')), freq = false, reps = 1000000000;
+const cols = input[0].length, rows = input.length, TREE = '|', LUMB = '#', SPACE = '.', reps = 1000000000;
+let states = [], state = input.map(row => row.split('')), freq = false;
 
 const count = (arr, what) => arr.reduce((res, v) => res += (v == what ? 1 : 0), 0)
 const cmpStates = (s1, s2) => s1.every((row, y) => row.every((v, x) => v == s2[y][x]))
+const resourceValue = state => count(state, TREE)*count(state, LUMB)
 
 const adjacent = (map, u, v, adj = []) => {
     [-1, 0, 1].forEach(i => [-1, 0, 1].forEach(j => {
@@ -28,10 +29,9 @@ while (!freq) {
     states.forEach((s, i) => (cmpStates(s, state)) && (freq = states.length - i))
 }
 
-let firstDupe = states.length - freq;
-let index = reps - freq*Math.floor((reps - firstDupe)/freq);
+let firstDupe = states.length - freq, index = reps - freq*Math.floor((reps - firstDupe)/freq);
 
-console.log('part 1', count(states[10].flat(), TREE)*count(states[10].flat(), LUMB))
-console.log('part 2', count(states[index].flat(), TREE)*count(states[index].flat(), LUMB))
+console.log('part 1', resourceValue(states[10].flat()))
+console.log('part 2', resourceValue(states[index].flat()))
 // trick for the part 2; 1 000 000 000 reps
 // from states[firstDupe] the states repeat each freq states
