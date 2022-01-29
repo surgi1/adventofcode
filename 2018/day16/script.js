@@ -1,8 +1,9 @@
+// just part 2
 let instructions = ['addr','addi','mulr','muli','banr','bani','borr','bori','setr','seti','gtir','gtri','gtrr','eqir','eqri','eqrr'];
 
-const runInstruction = (code, params, regIn) => {
-    if (regIn == undefined) regIn = [0,0,0,0];
-    let regOut = $.extend(true, [], regIn);
+const parseLine = line => line.split(' ').map(i => parseInt(i))
+const runInstruction = (code, params, regIn = [0,0,0,0]) => {
+    let regOut = regIn.slice();
     switch (code) {
         case 'addr': regOut[params[2]] = regIn[params[0]]+regIn[params[1]]; break;
         case 'addi': regOut[params[2]] = regIn[params[0]]+params[1]; break;
@@ -24,56 +25,26 @@ const runInstruction = (code, params, regIn) => {
     return regOut;
 }
 
-const cmpRegs = (a,b) => {
-    let res = true;
-    for (let i = 0; i < 4; i++) {
-        res = res && a[i] == b[i];
-    }
-    return res;
-}
-
-//let foundThreePluses = 0;
-
-data.map(sample => {
-    sample.codeParsed = sample.code.split(' ').map(i => i = parseInt(i));
-})
-
-
-let opcodes = {}, foundOpcodes = 0, opcode2code = {};
-
-while (foundOpcodes < instructions.length) {
-    data.map(sample => {
-        let matchedInstructions = 0, matchedIns = '';
-        instructions.map(code => {
-            if (!opcodes[code]) {
-                let output = runInstruction(code, sample.codeParsed.slice(1), sample.from);
-                if (cmpRegs(output, sample.to)) {
+const decodeOpcodes = (data, op2code = []) => {
+    const cmpRegs = (a,b) => a.every((v, i) => v == b[i])
+    data.map(sample => sample.codeParsed = parseLine(sample.code))
+    while (op2code.filter(v => v != undefined).length < instructions.length) {
+        data.map(sample => {
+            let matchedInstructions = 0, matchedIns = '';
+            instructions.filter(code => !op2code.includes(code)).map(code => {
+                if (cmpRegs(runInstruction(code, sample.codeParsed.slice(1), sample.from), sample.to)) {
                     matchedInstructions++;
                     matchedIns = code;
                 }
-            }
+            })
+            if (matchedInstructions == 1) op2code[sample.codeParsed[0]] = matchedIns;
         })
-        if (matchedInstructions == 1) {
-            //console.log('opcode', sample.codeParsed[0], 'is instruction', matchedIns);
-            if (!opcodes[matchedIns]) {
-                opcodes[matchedIns] = {opcode: sample.codeParsed[0]};
-                opcode2code[sample.codeParsed[0]] = matchedIns;
-                foundOpcodes++;
-            }
-        }
-    })
+    }
+    return op2code;
 }
 
-//console.log('identified sets that can be output of 3 or more instructions', foundThreePluses);
+let op2code = decodeOpcodes(data), regs = [0,0,0,0];
 
-//console.log(data);
-console.log(opcode2code);
-
-let regs = [0,0,0,0];
-
-program.map(line => {
-    lineParsed = line.split(' ').map(i => i = parseInt(i));
-    regs = runInstruction(opcode2code[lineParsed[0]], lineParsed.slice(1), regs)
-})
+program.map(line => regs = runInstruction(op2code[parseLine(line)[0]], parseLine(line).slice(1), regs))
 
 console.log('regs after program finished', regs);
