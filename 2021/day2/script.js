@@ -1,30 +1,18 @@
-const part1 = () => {
-    let x = 0, z = 0;
-    input.map(line => {
-        let tmp = line.split(' ');
-        let val = parseInt(tmp[1]);
-        switch (tmp[0]) {
-            case 'up': z  -= val; break;
-            case 'down': z  += val; break;
-            case 'forward': x  += val; break;
-        }
-    })
-    return x*z;
+const parse = a => a.map(line => [line.split(' ')[0], parseInt(line.split(' ')[1])])
+
+const run = (ev, o = {x:0, z:0, aim: 0}) => {
+    parse(input).map(([op, val]) => ev[op](o, val))
+    return o.x*o.z;
 }
 
-const part2 = () => {
-    let x = 0, z = 0, aim = 0;
-    input.map(line => {
-        let tmp = line.split(' ');
-        let val = parseInt(tmp[1]);
-        switch (tmp[0]) {
-            case 'up': aim  -= val; break;
-            case 'down': aim  += val; break;
-            case 'forward': x  += val; z += aim*val; break;
-        }
-    })
-    return x*z;
-}
+console.log(run({ 
+    up: (o, val) => o.z  -= val,
+    down: (o, val) => o.z  += val,
+    forward: (o, val) => o.x  += val
+}));
 
-console.log(part1());
-console.log(part2());
+console.log(run({ 
+    up: (o, val) => o.aim  -= val,
+    down: (o, val) => o.aim  += val,
+    forward: (o, val) => {o.x  += val; o.z += o.aim*val}
+}));
