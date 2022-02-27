@@ -6,22 +6,17 @@ const parseInput = input => {
 }
 
 const turn = nr => {
-    const cardValue = cardId => cards[cardId].flat().reduce((a, i) => a+i);
-    const checkBingo = (cardId, res = false) => {
-        for (let y = 0; y < 5; y++) if ((cards[cardId][y].reduce((a, i) => a+i, 0) == 0) || (cards[cardId].reduce((a, i) => a+i[y], 0) == 0)) res = true;
-        return res;
-    }
+    const score = card => card.flat().reduce((a, i) => a+i);
+    const checkBingo = card => Array(5).fill(1).some((v, y) => !(card[y].reduce((a, i) => a+i, 0)*card.reduce((a, i) => a+i[y], 0)))
 
-    cards.map((card, cardId) => {
-        if (binged.includes(cardId)) return;
-        for (let x = 0;x < 5; x++) for (let y = 0; y < 5; y++) if (cards[cardId][y][x] == nr) cards[cardId][y][x] = 0;
-        if (checkBingo(cardId)) {
-            console.log(nr, 'BINGO', cardValue(cardId)*nr);
-            binged.push(cardId);
-        }
+    cards = cards.filter(c => !binged.map(f => f.v).includes(c.join())).map(card => {
+        card = card.map(row => row.map(v => v == nr ? 0 : v))
+        if (checkBingo(card)) binged.push({v: card.join(), score: score(card)*nr});
+        return card;
     })
 }
 
 let [hits, cards] = parseInput(input), binged = [];
 
-hits.map(nr => turn(nr));
+hits.map(turn);
+console.log(binged[0].score, binged.pop().score);
