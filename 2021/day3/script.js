@@ -1,4 +1,4 @@
-const onesOnPos = (i, arr) => arr.filter(l => l[i] == '1').length
+const onesOnPos = (i, arr) => arr.filter(line => line[i] == '1').length
 const gamma = arr => parseInt(arr[0].split('').reduce((a, v, i) => a += onesOnPos(i, arr) < arr.length/2 ? '0' : '1'), 2)
 
 const processArr = (inv = false, arr = input.slice(), bitId = 0) => {
