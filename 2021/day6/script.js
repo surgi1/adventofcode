@@ -1,17 +1,13 @@
-const parseInput = input => input.split(",").map(n => parseInt(n));
-const run = rounds => {
-    let timers = parseInput(input), counts = Array(10).fill(0);
-    timers.map(t => counts[t]++);
+const run = (rounds, counts = Array(9).fill(0)) => {
+    input.split(',').map(t => counts[Number(t)]++);
 
-    const tick = () => {
-        let former0 = counts[0];
-        for (let i = 1; i <= 8; i++) counts[i-1] = counts[i];
+    while (rounds--) {
+        let former0 = counts.shift();
         counts[6] += former0;
         counts[8] = former0;
-    }
+    };
 
-    for (let rnd = 0; rnd < rounds; rnd++) tick();
-    return counts.reduce((a, c) => a+c, 0);
+    return counts.reduce((a, c) => a+c);
 }
 
 console.log(run(80));
