@@ -6,7 +6,7 @@ const parseInput = (input, cards = []) => {
 
 const turn = nr => cards = cards.filter(c => !!c).map(card => {
     card = card.map(row => row.map(v => v == nr ? 0 : v))
-    if (bingo(card)) binged.push(nr*card.flat().reduce((a,i) => a+i, 0)); else return card;
+    if (bingo(card)) binged.push(nr*card.flat().reduce((a,i) => a+i)); else return card;
 })
 
 let [hits, cards] = parseInput(input), binged = [];
