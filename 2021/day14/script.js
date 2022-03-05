@@ -1,11 +1,7 @@
-const run = steps => {
-    let pairs = {}, freq = {};
+const run = (steps, pairs = {}, freq = {}) => {
+    Object.keys(synt).map(k => pairs[k] = 1*input.includes(k));
 
-    for (let i = 1; i < input.length; i++) pairs[input[i-1]+input[i]] = 1;
-
-    Object.keys(synt).map(k => pairs[k] = pairs[k] || 0);
-
-    for (let i = 0; i < steps; i++) Object.entries(pairs).map(([k, v]) => {
+    while (steps--) Object.entries(pairs).map(([k, v]) => {
         let [a, c] = k.split(''), b = synt[k];
         pairs[a+c] -= v;
         pairs[a+b] += v;
@@ -17,7 +13,7 @@ const run = steps => {
     freq[input[input.length-1]]++; // last letter
 
     let sorted = Object.values(freq).sort((a, b) => b-a);
-    return sorted[0]-sorted[sorted.length-1];
+    return sorted[0]-sorted.pop();
 }
 
 console.log(run(10));
