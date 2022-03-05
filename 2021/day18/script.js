@@ -1,19 +1,9 @@
-const part1 = () => {
-    let tree = new FishTree(input[0]);
-    for (let i = 1; i < input.length; i++) tree.addArray(input[i]).reduce();
-    console.log('reduced', tree.print());
-    console.log('magnitude', tree.magnitude());
+const part1 = (tree = new FishTree()) => {
+    input.map(l => tree.addArray(l).reduce());
+    return tree.magnitude();
 }
 
-const part2 = (maxMag = 0) => {
-    for (let j = 0; j < input.length; j++) for (let i = 0; i < input.length; i++) {
-        if (i == j) continue;
-        let tree = new FishTree(input[j]);
-        tree.addArray(input[i]).reduce();
-        maxMag = Math.max(maxMag, tree.magnitude());
-    }
-    console.log('largest magnitude', maxMag);
-}
+const part2 = () => Math.max(...input.map(i => input.filter(j => i != j).map(j => new FishTree(j).addArray(i).reduce().magnitude())).flat())
 
-part1();
-part2();
+console.log('magnitude', part1());
+console.log('largest magnitude', part2());

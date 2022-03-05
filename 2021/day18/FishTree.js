@@ -76,5 +76,6 @@ class FishTree {
         }
 
         while (step() !== false) {}
+        return this;
     }
 }
