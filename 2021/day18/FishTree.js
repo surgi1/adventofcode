@@ -8,6 +8,7 @@ class FishTree {
     addNode = params => this.tree.push({...params, id:this.tree.length})-1;
     print = (n = this.rootId) => this.tree[n].val !== undefined ? this.tree[n].val : '['+this.print(this.tree[n].left) +','+this.print(this.tree[n].right)+']'
     magnitude = (n = this.rootId) => this.tree[n].val !== undefined ? this.tree[n].val : this.magnitude(this.tree[n].left)*3 + this.magnitude(this.tree[n].right)*2
+    arm = arr => this.addArray(arr).reduce().magnitude()
 
     fromArray = (params, parentId = false, id = false) => {
         if (Array.isArray(params)) {
