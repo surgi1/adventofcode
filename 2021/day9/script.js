@@ -14,7 +14,7 @@ const part1 = (map, res = []) => {
 
 const part2 = ([map, lowPoints], res = []) => {
     const spread = (x, y, o = {size: 0}) => {
-        if (map[y][x] < 9) o.size++; else return o.size;
+        if (map[y][x] < 9) o.size++; else return;
         map[y][x] = 9;
         adjacent(map, x, y).map(p => spread(p.x, p.y, o));
         return o.size;
