@@ -1,8 +1,8 @@
 class FishTree {
-    constructor(sourceArray) {
+    constructor(sourceArray = false) {
         this.tree = [];
         this.rootId = 0;
-        this.fromArray(sourceArray);
+        sourceArray && this.fromArray(sourceArray);
     }
 
     addNode = params => this.tree.push({...params, id:this.tree.length})-1;
@@ -18,10 +18,12 @@ class FishTree {
     }
 
     addArray = arr => {
-        let newRootId = this.addNode({left: this.rootId, right: false});
-        this.tree[this.rootId].parentId = newRootId;
-        this.tree[newRootId].right = this.fromArray(arr, newRootId);
-        this.rootId = newRootId;
+        if (this.tree.length != 0) {
+            let newRootId = this.addNode({left: this.rootId, right: false});
+            this.tree[this.rootId].parentId = newRootId;
+            this.tree[newRootId].right = this.fromArray(arr, newRootId);
+            this.rootId = newRootId;
+        } else this.fromArray(arr);
         return this;
     }
 
