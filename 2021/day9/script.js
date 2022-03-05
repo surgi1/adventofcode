@@ -21,7 +21,6 @@ const part2 = ([map, lowPoints], res = []) => {
     }
 
     lowPoints.map(p => res.push(spread(p.x, p.y)))
-
     return res.sort((a, b) => b-a).slice(0, 3).reduce((a, n) => a*n, 1);
 }
 
