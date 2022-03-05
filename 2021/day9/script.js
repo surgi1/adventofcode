@@ -12,21 +12,17 @@ const part1 = (map, res = []) => {
     return [map, res];
 }
 
-const part2 = ([map, lowPoints]) => {
-    const spread = (x, y) => {
-        if (map[y][x] < 9) size++; else return;
+const part2 = ([map, lowPoints], res = []) => {
+    const spread = (x, y, o = {size: 0}) => {
+        if (map[y][x] < 9) o.size++; else return o.size;
         map[y][x] = 9;
-        adjacent(map, x, y).map(p => spread(p.x, p.y));
+        adjacent(map, x, y).map(p => spread(p.x, p.y, o));
+        return o.size;
     }
 
-    let basinSizes = [], size;
-    lowPoints.map(p => {
-        size = 0;
-        spread(p.x, p.y);
-        basinSizes.push(size);
-    })
+    lowPoints.map(p => res.push(spread(p.x, p.y)))
 
-    return basinSizes.sort((a, b) => b-a).slice(0, 3).reduce((a, n) => a*n, 1);
+    return res.sort((a, b) => b-a).slice(0, 3).reduce((a, n) => a*n, 1);
 }
 
 console.log(part2(part1(input.map(l => l.split('').map(Number)))));
