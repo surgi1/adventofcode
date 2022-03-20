@@ -3,11 +3,13 @@ class Computer {
         this.pointer = 0;
         this.relativeBase = 0;
         this.ticks = 0;
+        return this;
     }
 
     load(input) {
         this.input = input;
         this.program = this.input.slice();
+        return this;
     }
     
     parse(code) {
@@ -65,7 +67,7 @@ class Computer {
             }
             this.ticks++;
         }
-        return {output: output, code: exitCode};
+        return {output: output, code: exitCode, self: this};
     }
 
     reset() {
