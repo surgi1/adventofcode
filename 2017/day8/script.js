@@ -1,5 +1,5 @@
-const getVars = () => {
-    let variables = [];
+const maxVal = () => Math.max(...regs.map(r => window[r]))
+const getVars = (variables = []) => {
     while (true) {
         try {
             input(() => {});
@@ -13,21 +13,10 @@ const getVars = () => {
     return variables;
 }
 
-let regs = getVars();
-let max = 0;
-
-const maxVal = () => {
-    let values = [];
-    regs.map(reg => values.push(window[reg]));
-    let res = Math.max(...values);
-    max = Math.max(res, max);
-    return res;
-}
+let regs = getVars(), max = 0;
 
 regs.map(reg => window[reg] = 0);
-input(() => {
-    max = Math.max(max, maxVal())
-});
+input(() => max = Math.max(max, maxVal()));
 
 console.log('part 1', maxVal());
 console.log('part 2', max);
