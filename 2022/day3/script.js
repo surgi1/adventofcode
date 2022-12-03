@@ -1,8 +1,5 @@
-const string2Map = s =>  new Map(s.split('').map(i => [i,i]))
-const getCode = l => {
-    if (l == l.toLowerCase()) return l.charCodeAt(0)-96;
-    return l.charCodeAt(0)-38;
-}
+const string2Map = s => new Map(s.split('').map(i => [i,i]))
+const getCode = l => l === l.toLowerCase() ? l.charCodeAt(0)-96: l.charCodeAt(0)-38;
 
 const part1 = (res = 0) => {
     input.split("\n").forEach(row => {
