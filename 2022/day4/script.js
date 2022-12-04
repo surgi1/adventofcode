@@ -1,8 +1,4 @@
-let p1 = 0, p2 = 0;
-input.split("\n").map(l => {
-    let e = l.split(',').map(i => i.split('-').map(Number));
-    if ( (e[0][0] >= e[1][0] && e[0][1] <= e[1][1]) || (e[1][0] >= e[0][0] && e[1][1] <= e[0][1]) ) p1++;
-    if (!((e[0][1] < e[1][0]) || (e[1][1] < e[0][0]))) p2++;
-})
+let a = input.split("\n").map(l => l.split(',').map(i => i.split('-').map(Number)));
 
-console.log(p1, p2);
+console.log('part 1', a.filter(e => (e[0][0] >= e[1][0] && e[0][1] <= e[1][1]) || (e[1][0] >= e[0][0] && e[1][1] <= e[0][1]) ).length)
+console.log('part 2', a.filter(e => !(e[0][1] < e[1][0] || e[1][1] < e[0][0])).length)
