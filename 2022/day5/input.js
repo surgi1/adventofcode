@@ -1,4 +1,4 @@
-/*
+let rawStacksInput = `
 [T] [V]                     [W]    
 [V] [C] [P] [D]             [B]    
 [J] [P] [R] [N] [B]         [Z]    
@@ -7,8 +7,7 @@
 [R] [D] [F] [P] [R] [P] [R] [S] [G]
 [M] [W] [J] [R] [V] [B] [J] [C] [S]
 [S] [B] [B] [F] [H] [C] [B] [N] [L]
- 1   2   3   4   5   6   7   8   9 
-*/
+ 1   2   3   4   5   6   7   8   9 `;
 
 let stacksInput = [[],
 ['S', 'M', 'R', 'N', 'W', 'J', 'V', 'T'],
