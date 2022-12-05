@@ -2,20 +2,16 @@ const move = (stacks, reverse = false) => {
     input.split("\n").map(l => {
         let [count, from, to] = l.match(/\d+/g).map(Number),
             load = stacks[from].splice(stacks[from].length-count, count);
-
-        if (reverse) load = load.reverse();
-        stacks[to].push(...load);
+        stacks[to].push(...(reverse ? load.reverse() : load));
     })
     return stacks.map(s => s.pop()).join('');
 }
 
 const parseStacks = () => {
-    let rawStacks = rawStacksInput.split("\n").map(l => l.split('')),
+    let tmp = rawStacksInput.split("\n").map(l => l.split('')),
         stacks = Array.from(Array(10), () => []);
 
-    rawStacks.reverse().map(l => l.map((ch, col) => {
-        if (ch.match(/[A-Z]/i)) stacks[(col+3 >> 2)].push(ch);
-    }))
+    tmp.reverse().map(l => l.map((ch, col) => ch.match(/[A-Z]/) && stacks[((col+3)/4)].push(ch)))
     return stacks;
 }
 
