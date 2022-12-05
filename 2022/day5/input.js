@@ -9,18 +9,6 @@ let rawStacksInput = `
 [S] [B] [B] [F] [H] [C] [B] [N] [L]
  1   2   3   4   5   6   7   8   9 `;
 
-let stacksInput = [[],
-['S', 'M', 'R', 'N', 'W', 'J', 'V', 'T'],
-['B', 'W', 'D', 'J', 'Q', 'P', 'C', 'V'],
-['B', 'J', 'F', 'H', 'D', 'R', 'P'],
-['F', 'R', 'P', 'B', 'M', 'N', 'D'],
-['H', 'V', 'R', 'P', 'T', 'B'],
-['C', 'B', 'P', 'T'],
-['B', 'J', 'R', 'P', 'L'],
-['N', 'C', 'S', 'L', 'T', 'Z', 'B', 'W'],
-['L', 'S', 'G']
-]
-
 let input = `move 7 from 3 to 9
 move 6 from 2 to 1
 move 2 from 4 to 8
