@@ -1,14 +1,7 @@
-const compute = (packetLen, res = 0) => {
-    let a = input.split('');
-    a.every((v, n) => {
-        if (new Set(a.slice(n, n+packetLen)).size == packetLen) {
-            res = n+packetLen;
-            return false;
-        }
-        return true;
-    })
+const compute = (a, len, res = 0) => {
+    a.every((v, n) => !(new Set(a.slice(n, n+len)).size == len && (res = n+len)))
     return res;
 }
 
-console.log(compute(4));
-console.log(compute(14));
+console.log(compute(input.split(''), 4));
+console.log(compute(input.split(''), 14));
