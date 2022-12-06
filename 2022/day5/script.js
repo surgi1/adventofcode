@@ -11,7 +11,7 @@ const parseStacks = () => {
     let tmp = rawStacksInput.split("\n").map(l => l.split('')),
         stacks = Array.from(Array(10), () => []);
 
-    tmp.reverse().map(l => l.map((c, col) => c.match(/[A-Z]/) && stacks[((col+3)/4)].push(c)))
+    tmp.reverse().map(l => l.map((c, col) => c.match(/[A-Z]/) && stacks[(col+3)/4].push(c)))
     return stacks;
 }
 
