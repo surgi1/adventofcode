@@ -31,4 +31,4 @@ let nodes = processInput();
 computeSizes();
 
 console.log('part 1', nodes.filter(n => n.type == 'dir' && n.size <= 100000).reduce((a, n) => a+n.size, 0));
-console.log('part 2', nodes.filter(n => n.type == 'dir' && ((70000000-nodes[0].size + n.size) >= 30000000)).sort((a,b) => a.size-b.size)[0].size);
+console.log('part 2', nodes.filter(n => n.type == 'dir' && 70000000-nodes[0].size + n.size >= 30000000).sort((a,b) => a.size-b.size)[0].size);
