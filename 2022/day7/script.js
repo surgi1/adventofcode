@@ -4,7 +4,7 @@ const dirSize = id => nodes[id].size || nodes.filter(n => n.parentId == id).redu
 
 const createNodeIfNotExists = (name, parentId) => {
     let tmp = nodes.filter(n => n.name == name && n.parentId == parentId && n.type == 'dir');
-    if (tmp.length > 0) return  tmp[0].id;
+    if (tmp.length > 0) return tmp[0].id;
     return createNode({type: 'dir', name: name, parentId: parentId})
 }
 
