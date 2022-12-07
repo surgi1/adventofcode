@@ -1,6 +1,6 @@
 const computeSizes = () => nodes.filter(n => n.type == 'dir').map(n => n.size = dirSize(n.id))
 const createNode = params => nodes.push({...params, id: nodes.length})-1;
-const dirSize = id => nodes.filter(n => n.parentId == id).reduce((a, n) => (n.type == 'file' ? a+n.size : a+dirSize(n.id)), 0)
+const dirSize = id => nodes[id].size || nodes.filter(n => n.parentId == id).reduce((a, n) => (n.type == 'file' ? a+n.size : a+dirSize(n.id)), 0)
 
 const createNodeIfNotExists = (name, parentId) => {
     let tmp = nodes.filter(n => n.name == name && n.parentId == parentId && n.type == 'dir');
