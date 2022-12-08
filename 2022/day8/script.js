@@ -2,14 +2,14 @@ let map = input.split("\n").map(l => l.split('').map(Number));
 let size = map.length;
 
 const part1 = () => {
-    let map2 = input.split("\n").map(l => l.split('').map(Number));
+    let map2 = Array.from({length: size}, () => []); 
 
     const checkDir = (x, y, vx, vy) => {
         let max = map[y][x];
         x += vx; y += vy;
         while (true) {
             if (x < 0 || y < 0 || x >= size || y >= size) break;
-            if (map[y][x] > max) map2[y][x] = '@';
+            if (map[y][x] > max) map2[y][x] = 1;
             max = Math.max(max, map[y][x]);
             x += vx; y += vy;
         }
@@ -22,12 +22,11 @@ const part1 = () => {
         checkDir(size-1, n, -1, 0);
     }
 
-    return size*4-4 + map2.flat().filter(e => e == '@').length;
+    return size*4-4 + map2.flat().length;
 }
 
 const part2 = () => {
-    const dist = (x, y, vx, vy) => {
-        let h = map[y][x], res = 0;
+    const d = (x, y, vx, vy, h = map[y][x], res = 0) => {
         x += vx; y += vy;
         while (true) {
             if (x < 0 || y < 0 || x >= size || y >= size) break;
@@ -38,7 +37,7 @@ const part2 = () => {
         return res;
     }
 
-    return Math.max(...map.map((r, y) => r.map((v, x) => dist(x, y, 1, 0)*dist(x, y, 0, 1)*dist(x, y, -1, 0)*dist(x, y, 0, -1))).flat())
+    return Math.max(...map.map((r, y) => r.map((v, x) => d(x,y, 1,0)*d(x,y, 0,1)*d(x,y, -1,0)*d(x,y, 0,-1))).flat())
 }
 
 console.log('part 1', part1());
