@@ -15,5 +15,5 @@ const part2 = (res = 0) => {
     return res;
 }
 
-console.log('part 1', part1());
-console.log('part 2', part2());
+console.log(part1());
+console.log(part2());

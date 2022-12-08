@@ -33,5 +33,5 @@ const visDir = (x, y, vx, vy, h = map[y][x], res = 0) => {
 
 const part2 = () => Math.max(...map.map((r, y) => r.map((v, x) => dirs.reduce((a, d) => a*visDir(x,y, ...d), 1))).flat())
 
-console.log('part 1', part1(Array.from({length: size}, () => [])));
-console.log('part 2', part2());
+console.log(part1(Array.from({length: size}, () => [])));
+console.log(part2());

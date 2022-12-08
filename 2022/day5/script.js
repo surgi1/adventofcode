@@ -15,5 +15,5 @@ const parseStacks = () => {
     return stacks;
 }
 
-console.log('part 1', move(parseStacks(), true));
-console.log('part 2', move(parseStacks()));
+console.log(move(parseStacks(), true));
+console.log(move(parseStacks()));

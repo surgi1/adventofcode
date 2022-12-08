@@ -31,5 +31,5 @@ const processInput = (nodes = []) => {
 let nodes = processInput();
 computeSizes();
 
-console.log('part 1', nodes.filter(n => n.type == 'dir' && n.size <= 1e5).reduce((a, n) => a+n.size, 0));
-console.log('part 2', nodes.filter(n => n.type == 'dir' && 4e7 + n.size >= nodes[0].size).sort((a,b) => a.size-b.size)[0].size);
+console.log(nodes.filter(n => n.type == 'dir' && n.size <= 1e5).reduce((a, n) => a+n.size, 0));
+console.log(nodes.filter(n => n.type == 'dir' && 4e7 + n.size >= nodes[0].size).sort((a,b) => a.size-b.size)[0].size);

@@ -11,5 +11,5 @@ const totalScore = (p2 = false) => input.split("\n").reduce((a, row) => {
     return a + i[1]+1 + gameScore[i[0]][i[1]];
 }, 0)
 
-console.log('part 1', totalScore());
-console.log('part 2', totalScore(true));
+console.log(totalScore());
+console.log(totalScore(true));
