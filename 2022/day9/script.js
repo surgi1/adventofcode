@@ -10,7 +10,7 @@ const simulate = knots => {
     let rope = Array.from({length: knots}, () => [0,0]), visited = {};
 
     input.split("\n").map(l => {
-        let cmd = l.split(' '), dx, dy;
+        let cmd = l.split(' ');
         for (let i = 0; i < Number(cmd[1]); i++) {
             // advance head
             rope[0] = rope[0].map((v, d) => v + dirs[cmd[0]][d]);
