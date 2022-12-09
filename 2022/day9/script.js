@@ -10,10 +10,10 @@ const simulate = knots => {
     let rope = Array.from({length: knots}, () => [0,0]), visited = {};
 
     input.split("\n").map(l => {
-        let cmd = l.split(' ');
-        for (let i = 0; i < Number(cmd[1]); i++) {
+        let [dir, steps] = l.split(' ');
+        for (let i = 0; i < steps; i++) {
             // advance head
-            rope[0] = rope[0].map((v, d) => v + dirs[cmd[0]][d]);
+            rope[0] = rope[0].map((v, d) => v + dirs[dir][d]);
             // advance ith point of rope based on (i-1)th point
             for (let i = 1; i < knots; i++)
                 if (rope[i-1].some((v, d) => Math.abs(v-rope[i][d]) > 1))
