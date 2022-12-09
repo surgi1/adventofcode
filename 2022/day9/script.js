@@ -19,7 +19,7 @@ const simulate = knots => {
                 if (rope[i-1].some((v, d) => Math.abs(v-rope[i][d]) > 1))
                     rope[i] = rope[i].map((v, d) => v + Math.sign(rope[i-1][d]-v))
             // mark tail
-            if (!visited[k(rope[knots-1])]) visited[k(rope[knots-1])] = 1;
+            visited[k(rope[knots-1])] = 1;
         }
     })
 
