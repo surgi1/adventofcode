@@ -13,11 +13,11 @@ const simulate = knots => {
         let cmd = l.split(' '), dx, dy;
         for (let i = 0; i < Number(cmd[1]); i++) {
             // advance head
-            rope[0] = [rope[0][0]+dirs[cmd[0]][0], rope[0][1]+dirs[cmd[0]][1]];
+            rope[0] = rope[0].map((v, d) => v + dirs[cmd[0]][d]);
             // advance ith point of rope based on (i-1)th point
             for (let i = 1; i < knots; i++)
-                if (Math.abs(rope[i-1][0]-rope[i][0]) > 1 || Math.abs(rope[i-1][1]-rope[i][1]) > 1)
-                    rope[i] = rope[i].map( (v, d) => v + (rope[i-1][d] == v ? 0 : (rope[i-1][d]-v)/Math.abs(rope[i-1][d]-v)) )
+                if (rope[i-1].some((v, d) => Math.abs(v-rope[i][d]) > 1))
+                    rope[i] = rope[i].map((v, d) => v + Math.sign(rope[i-1][d]-v))
             // mark tail
             if (!visited[k(rope[knots-1])]) visited[k(rope[knots-1])] = 1;
         }
