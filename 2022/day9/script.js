@@ -11,7 +11,7 @@ const simulate = knots => {
 
     input.split("\n").map(l => {
         let [dir, steps] = l.split(' ');
-        for (let n = 0; n < steps; n++) {
+        while (steps--) {
             // advance head
             rope[0] = rope[0].map((v, d) => v + dirs[dir][d]);
             // advance ith point of rope based on (i-1)th point
