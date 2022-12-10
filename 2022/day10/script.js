@@ -3,20 +3,20 @@ let cycle = 0, x = 1, strengths = [],
 
 const draw = (pos, char) => screen[Math.floor(pos/40)][pos % 40] = char;
 
-const cycleOp = () => {
+const tick = () => {
     cycle++;
     if ((cycle-20) % 40 == 0) strengths.push(cycle*x);
-    draw(cycle-1, Math.abs(((cycle-1) % 40) - x) <= 1 ? '#' : ' ')
+    draw(cycle-1, Math.abs(((cycle-1) % 40) - x) <= 1 ? '█' : ' ')
 }
 
 input.split("\n").forEach(line => {
     let tmp = line.split(' ');
-    cycleOp();
+    tick();
     if (tmp[0] == 'addx') {
-        cycleOp();
+        tick();
         x += Number(tmp[1]);
     }
 })
 
 console.log(strengths.reduce((a, v) => a+v));
-console.log(screen.map(e => e.join('')).join("\n"));
+document.getElementById('root').innerHTML = screen.map(e => e.join('')).join("\n");
