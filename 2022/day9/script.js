@@ -1,4 +1,3 @@
-const k = p => '_'+p.join('_');
 const dirs = {
     R: [1, 0],
     L: [-1, 0],
@@ -7,7 +6,7 @@ const dirs = {
 };
 
 const simulate = knots => {
-    let rope = Array.from({length: knots}, () => [0,0]), visited = {};
+    let rope = Array.from({length: knots}, () => [0,0]), visited = new Set();
 
     input.split("\n").map(l => {
         let [dir, steps] = l.split(' ');
@@ -19,11 +18,11 @@ const simulate = knots => {
                 if (rope[i-1].some((v, d) => Math.abs(v-rope[i][d]) > 1))
                     rope[i] = rope[i].map((v, d) => v + Math.sign(rope[i-1][d]-v))
             // mark tail
-            visited[k(rope[knots-1])] = 1;
+            visited.add(rope[knots-1].join('_'));
         }
     })
 
-    return Object.keys(visited).length;
+    return visited.size;
 }
     
 console.log(simulate(2));
