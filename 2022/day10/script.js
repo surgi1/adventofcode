@@ -2,7 +2,6 @@ let cycle = 0, x = 1, strengths = [],
     screen = Array(6).fill().map(e => Array(40).fill(' '));
 
 const draw = (pos, char) => screen[Math.floor(pos/40)][pos % 40] = char;
-
 const tick = () => {
     cycle++;
     if ((cycle-20) % 40 == 0) strengths.push(cycle*x);
@@ -10,11 +9,11 @@ const tick = () => {
 }
 
 input.split("\n").forEach(line => {
-    let tmp = line.split(' ');
+    let cmd = line.split(' ');
     tick();
-    if (tmp[0] == 'addx') {
+    if (cmd[0] == 'addx') {
         tick();
-        x += Number(tmp[1]);
+        x += Number(cmd[1]);
     }
 })
 
