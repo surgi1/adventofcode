@@ -34,6 +34,7 @@ Whole repo is deployed on [Github Pages](https://surgi1.github.io/adventofcode/)
 - [Summary for 2019](https://surgi1.github.io/adventofcode/2019)
 - [Summary for 2020](https://surgi1.github.io/adventofcode/2020)
 - [Summary for 2021](https://surgi1.github.io/adventofcode/2021)
+- [Summary for 2022](https://surgi1.github.io/adventofcode/2022)
 
 ## Teasers
 
