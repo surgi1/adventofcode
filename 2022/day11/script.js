@@ -10,7 +10,7 @@ const parseInput = (monkeys = []) => {
     return monkeys;
 }
 
-const compute = (part2 = false, rounds = part2 ? 10000 : 20) => {
+const compute = (part2 = false, rounds) => {
     const val = (v, old) => isNaN(v) ? old : Number(v);
     const op = (old, pars) => pars[1] == '+' ? val(pars[0], old)+val(pars[2], old)
                                              : val(pars[0], old)*val(pars[2], old)
@@ -39,5 +39,5 @@ const compute = (part2 = false, rounds = part2 ? 10000 : 20) => {
     return monkeys.sort((a,b) => b.ins-a.ins).slice(0,2).reduce((a,c) => a*c.ins, 1);
 }
 
-console.log(compute());
-console.log(compute(true));
+console.log(compute(false, 20));
+console.log(compute(true, 10000));
