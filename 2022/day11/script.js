@@ -1,14 +1,13 @@
-const parseInput = (monkeys = []) => {
-    input.split("\n\n").map(data => {
-        let monLit = data.split("\n"), tmp = {ins: 0, targets: [4, 5]};
-        tmp.stack = monLit[1].match(/\d+/g).map(Number);
-        tmp.mod = Number(monLit[3].match(/\d+/));
-        tmp.targets = tmp.targets.map(lineId => Number(monLit[lineId].match(/\d+/)));
-        tmp.opPars = monLit[2].split(' ').slice(-3);
-        monkeys.push(tmp);
-    })
-    return monkeys;
-}
+const parseInput = () => input.split("\n\n").map(data => {
+    let tmp = data.split("\n");
+    return {
+        ins: 0,
+        stack: tmp[1].match(/\d+/g).map(Number),
+        mod: Number(tmp[3].match(/\d+/)),
+        targets: [4, 5].map(lNr => Number(tmp[lNr].match(/\d+/))),
+        opPars: tmp[2].split(' ').slice(-3)
+    }
+})
 
 const compute = (part2 = false, rounds) => {
     const val = (v, old) => isNaN(v) ? old : Number(v);
