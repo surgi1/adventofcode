@@ -14,7 +14,6 @@ const compute = (part2 = false, rounds) => {
     const val = (v, old) => isNaN(v) ? old : Number(v);
     const op = (old, pars) => pars[1] == '+' ? val(pars[0], old)+val(pars[2], old)
                                              : val(pars[0], old)*val(pars[2], old)
-
     const round = () => {
         monkeys.forEach(monkey => {
             while (monkey.stack.length) {
