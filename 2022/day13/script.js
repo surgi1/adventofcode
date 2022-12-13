@@ -14,8 +14,6 @@ const arrayCmp = (a, b) => {
 
     if (Array.isArray(a) && !Array.isArray(b)) return arrayCmp(a, [b]);
     return arrayCmp([a], b);
-
-    return arrayCmp([a].flat(), [b].flat())
 }
 
 let items = [], extraItems = [[[2]], [[6]]];
