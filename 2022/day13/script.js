@@ -16,7 +16,7 @@ const arrayCmp = (a, b) => {
     return arrayCmp([a], b);
 }
 
-let items = [], extraItems = [[[2]], [[6]]];
+let items = [];
 
 const part1 = () => input.split("\n\n").reduce((res, rp, id) => {
     let tmp = rp.split("\n");
@@ -25,10 +25,10 @@ const part1 = () => input.split("\n\n").reduce((res, rp, id) => {
     return res + (arrayCmp(a, b) ? id+1 : 0);
 }, 0)
 
-const part2 = () => [...items, ...extraItems]
+const part2 = (extraItems) => [...items, ...extraItems]
         .sort((a, b) => arrayCmp(b, a) - arrayCmp(a, b))
         .reduce((a, v, i) => (extraItems.includes(v) ? a*(i+1) : a), 1)
 
 
 console.log(part1());
-console.log(part2());
+console.log(part2([[[2]], [[6]]]));
