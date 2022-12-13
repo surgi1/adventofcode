@@ -25,7 +25,7 @@ const part1 = () => input.split("\n\n").reduce((res, rp, id) => {
     return res + (arrayCmp(a, b) ? id+1 : 0);
 }, 0)
 
-const part2 = (extraItems) => [...items, ...extraItems]
+const part2 = extraItems => [...items, ...extraItems]
         .sort((a, b) => arrayCmp(b, a) - arrayCmp(a, b))
         .reduce((a, v, i) => (extraItems.includes(v) ? a*(i+1) : a), 1)
 
