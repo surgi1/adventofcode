@@ -1,6 +1,6 @@
 const canvas = document.getElementById("canvas"), ctx = canvas.getContext("2d"), sandStart = [500,0];
 const scale = 4, shift = 300;
-let screen = [], sand = [], ticks = 0, octx, drawing = false;
+let screen = [], sand = [], ticks = 0, octx, drawing = false, p1res = false;
 
 let caves = input.split("\n").map(row => row.split(' -> ').map(p => p.split(',').map(Number))),
     maxX = Math.max(...caves.flat().map(v => v[0]))*2,
@@ -21,11 +21,15 @@ const init = () => {
 const advanceSand = () => sand.filter(p => p.state == 'moving').forEach(p => {
     let moved = false;
     if (screen[p.pos[1]+1][p.pos[0]] == 0) { p.pos[1]++; moved = true }
-    if (screen[p.pos[1]+1][p.pos[0]-1] == 0) { p.pos[1]++; p.pos[0]--; moved = true }
-    if (screen[p.pos[1]+1][p.pos[0]+1] == 0) { p.pos[1]++; p.pos[0]++; moved = true }
+    else if (screen[p.pos[1]+1][p.pos[0]-1] == 0) { p.pos[1]++; p.pos[0]--; moved = true }
+    else if (screen[p.pos[1]+1][p.pos[0]+1] == 0) { p.pos[1]++; p.pos[0]++; moved = true }
     if (!moved) {
         screen[p.pos[1]][p.pos[0]] = 2;
         p.state = 'solid'
+    }
+    if (!p1res && p.pos[1] >= maxY+1) {
+        console.log('part 1', sand.filter(g => g.state == 'solid').length);
+        p1res = true;
     }
 })
 
@@ -81,7 +85,8 @@ const tick = () => {
     advanceSand();
     draw();
     ticks++;
-    setTimeout(tick, 1);
+    if (sand.filter(g => g.pos[1] == 0).length > 0) console.log('part 2', sand.length);
+        else setTimeout(tick, 1);
 }
 
 init();
