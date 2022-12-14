@@ -5,3 +5,5 @@ https://adventofcode.com/2022/day/14
 JavaScript implementation
 
 Check it live at https://surgi1.github.io/adventofcode/2022/day14/index.anim.html
+
+![Dropping sand is dropping](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_14.png)
