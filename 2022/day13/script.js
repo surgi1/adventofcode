@@ -26,6 +26,5 @@ const part2 = extraItems => [...items, ...extraItems]
         .sort(arrayCmp)
         .reduce((a, v, i) => (extraItems.includes(v) ? a*(i+1) : a), 1)
 
-
 console.log(part1());
 console.log(part2([[[2]], [[6]]]));
