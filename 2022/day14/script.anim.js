@@ -61,7 +61,7 @@ const initBackground = () => {
 const drawGrain = (ctx, grain) => {
     ctx.fillStyle = grain.state == 'solid' ? '#F4A460' : '#ffc98F';
     ctx.beginPath();
-    ctx.arc((grain.pos[0]-shift)*scale, grain.pos[1]*scale, scale/2, 0, 2 * Math.PI);
+    ctx.arc((grain.pos[0]-shift)*scale, grain.pos[1]*scale, scale, Math.random()*Math.PI/4, Math.random()* 3 * Math.PI);
     ctx.fill();
 }
 
