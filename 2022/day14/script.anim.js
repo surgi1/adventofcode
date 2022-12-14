@@ -1,5 +1,5 @@
 const canvas = document.getElementById("canvas"), ctx = canvas.getContext("2d"), sandStart = [500,0];
-const scale = 4, shift = 300;
+const scale = 4, shift = 310;
 let screen = [], sand = [], ticks = 0, octx, drawing = false, p1res = false;
 
 let caves = input.split("\n").map(row => row.split(' -> ').map(p => p.split(',').map(Number))),
@@ -45,7 +45,7 @@ const initBackground = () => {
     canvas.offscreenCanvas.width = canvas.width;
     canvas.offscreenCanvas.height = canvas.height;
 
-    octx = canvas.offscreenCanvas.getContext("2d")
+    octx = canvas.offscreenCanvas.getContext("2d");
     
     octx.lineWidth = 2;
     caves.forEach(point => point.forEach((p, i) => i && drawLine(point[i-1], p)))
