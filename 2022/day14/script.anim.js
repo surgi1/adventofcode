@@ -36,8 +36,8 @@ const dropSand = () => sand.push({pos: sandStart.slice(), state: 'moving', drawn
 
 const initBackground = () => {
     const drawLine = (from, to) => {
-        ctx.moveTo((from[0]-shift)*scale, from[1]*scale);
-        ctx.lineTo((to[0]-shift)*scale, to[1]*scale);
+        ctx.moveTo((from[0]-shift)*scale+0.0, from[1]*scale);
+        ctx.lineTo((to[0]-shift)*scale+0.0, to[1]*scale);
     }
 
     canvas.offscreenCanvas = document.createElement("canvas");
@@ -46,13 +46,15 @@ const initBackground = () => {
 
     let ctx = canvas.offscreenCanvas.getContext("2d")
     
-    ctx.lineWidth = scale;
+    ctx.lineWidth = 2;
     caves.forEach(point => point.forEach((p, i) => i && drawLine(point[i-1], p)))
     ctx.stroke();
 
     // draw sand start point
-    ctx.fillStyle = '#ff0000';
-    ctx.fillRect(Math.round((sandStart[0]-shift)*scale-scale/2), sandStart[1]*scale, scale, scale);
+    ctx.fillStyle = '#E1AD9D';
+    ctx.beginPath();
+    ctx.arc(Math.round((sandStart[0]-shift)*scale), Math.round(sandStart[1]*scale),scale*3, 0, 2 * Math.PI);
+    ctx.fill();
 }
 
 const draw = () => {
@@ -60,16 +62,15 @@ const draw = () => {
     ctx.drawImage(canvas.offscreenCanvas, 0, 0);
     sand.forEach(p => {
         let targetCtx = ctx;
-        ctx.fillStyle = p.state == 'solid' ? '#888888' : '#aaaaaa';
-        ctx.fillRect(Math.round((p.pos[0]-shift)*scale-scale/2), Math.round(p.pos[1]*scale-scale/2), scale, scale);
+        ctx.fillStyle = p.state == 'solid' ? '#F4A460' : '#E1A95F';
+        ctx.fillRect(Math.round((p.pos[0]-shift)*scale-scale/2), (p.pos[1]*scale-scale/16), scale, scale);
     })
 }
 
 const tick = () => {
     if (ticks % 2 == 0) dropSand();
     advanceSand();
-    if (ticks % 3 == 0)
-        draw();
+    if (ticks % 3 == 0) draw();
     ticks++;
 }
 
