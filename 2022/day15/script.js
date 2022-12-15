@@ -3,7 +3,6 @@ const p1y = 2000000, min = 0, max = 4000000;
 let data = [];
 
 const dist = (a, b) => Math.abs(a.x-b.x)+Math.abs(a.y-b.y)
-const tune = a => a.y+a.x*max
 const volume = bounds => Math.abs(bounds[1]-bounds[0])
 const regionIntersect = (r1, r2) => r2[0] <= r1[1] && r2[1] >= r1[0]
 const blindsOnRow = y => max-intersectionWithRegionsVolume([min, max], getIntervals(y))
@@ -35,7 +34,7 @@ const part2 = (p2y = 0) => {
     while (!blindsOnRow(p2y)) p2y++;
     let intervals = getIntervals(p2y);
     for (let x = min; x <= max; x++)
-        if (intervals.every(i => i[0] > x || i[1] < x)) return tune({x:x, y: p2y});
+        if (intervals.every(i => i[0] > x || i[1] < x)) return x*max+p2y;
 }
 
 input.split("\n").map(line => {
