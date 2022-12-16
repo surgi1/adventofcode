@@ -21,18 +21,3 @@ Sensor at x=1242851, y=838744: closest beacon is at x=-109096, y=390805
 Sensor at x=3991401, y=2367688: closest beacon is at x=3790542, y=2949630
 Sensor at x=3292286, y=2624894: closest beacon is at x=3279264, y=2775610
 Sensor at x=2194423, y=3990859: closest beacon is at x=2275951, y=3717327`;
-
-let input2 = `Sensor at x=2, y=18: closest beacon is at x=-2, y=15
-Sensor at x=9, y=16: closest beacon is at x=10, y=16
-Sensor at x=13, y=2: closest beacon is at x=15, y=3
-Sensor at x=12, y=14: closest beacon is at x=10, y=16
-Sensor at x=10, y=20: closest beacon is at x=10, y=16
-Sensor at x=14, y=17: closest beacon is at x=10, y=16
-Sensor at x=8, y=7: closest beacon is at x=2, y=10
-Sensor at x=2, y=0: closest beacon is at x=2, y=10
-Sensor at x=0, y=11: closest beacon is at x=2, y=10
-Sensor at x=20, y=14: closest beacon is at x=25, y=17
-Sensor at x=17, y=20: closest beacon is at x=21, y=22
-Sensor at x=16, y=7: closest beacon is at x=15, y=3
-Sensor at x=14, y=3: closest beacon is at x=15, y=3
-Sensor at x=20, y=1: closest beacon is at x=15, y=3`
