@@ -8,7 +8,10 @@ let nodes = input.split("\n").map((row, id) => {
     }
 })
 
-const nodeByName = name => nodes.filter(n => n.name == name)[0];
+let nodeByName = {};
+
+nodes.map((n, i) => nodeByName[n.name] = n);
+
 const activeNodes = () => nodes.filter(n => n.rate > 0)
 const duos = (a, res = []) => {
     for (let i = 0; i < a.length; i++) for (let j = 0; j<a.length; j++) if (i != j) res.push([a[i], a[j]]);
@@ -16,29 +19,31 @@ const duos = (a, res = []) => {
 }
 
 const sortDuos = (duos, d1, d2, t1, t2) => {
-    const valueFromDuo = ([target1, target2]) => (t1-d1[target1]-1)*nodeByName(target1).rate + (t2-d2[target2]-1)*nodeByName(target2).rate
+    const valueFromDuo = ([target1, target2]) => (t1-d1[target1]-1)*nodeByName[target1].rate + (t2-d2[target2]-1)*nodeByName[target2].rate
     return duos.sort((duo1, duo2) => valueFromDuo(duo1) - valueFromDuo(duo2))
 }
 
 const distanceMap = (startName, distances = {}) => {
+    if (nodeByName[startName].distanceMap) return nodeByName[startName].distanceMap;
     const spread = (name, steps) => {
         if (distances[name] != undefined && distances[name] <= steps) return;
         distances[name] = steps;
-        nodeByName(name).connections.map(n => spread(n, steps+1));
+        nodeByName[name].connections.forEach(n => spread(n, steps+1));
     }
     spread(startName, 0);
+    nodeByName[startName].distanceMap = distances;
     return distances;
 }
 
 console.log(nodes);
 
-let paths = [{curr1: 'AA', curr2: 'AA', active: activeNodes().map(n => n.name), timeLeft1: 26, timeLeft2: 26, finished: false, finished1: false, finished2: false, steps1: [], steps2: [], releasedPressure: 0}]
+let paths = [{curr1: 'AA', curr2: 'AA', active: activeNodes().map(n => n.name), timeLeft1: 26, timeLeft2: 26, finished: false, finished1: false, finished2: false, /*steps1: [], steps2: [], */releasedPressure: 0}]
 
 let max = 0, i = 0;
 
 while (paths.length) {
-
     let path = paths.pop();
+
     if (path.finished) continue;
 
     let distances1 = distanceMap(path.curr1),
@@ -62,24 +67,20 @@ while (paths.length) {
         if (moved1 && !path.finished1) {
             tmp.curr1 = act1;
             tmp.timeLeft1 = path.timeLeft1-distances1[act1]-1;
-            tmp.steps1 = [...path.steps1, act1];
-            tmp.releasedPressure += (path.timeLeft1-distances1[act1]-1)*nodeByName(act1).rate;
+            tmp.releasedPressure += (path.timeLeft1-distances1[act1]-1)*nodeByName[act1].rate;
         } else {
             tmp.curr1 = path.curr1;
             tmp.timeLeft1 = path.timeLeft1;
-            tmp.steps1 = [...path.steps1];
             tmp.finished1 = true;
         }
 
         if (moved2 && !path.finished2) {
             tmp.curr2 = act2;
             tmp.timeLeft2 = path.timeLeft2-distances2[act2]-1;
-            tmp.steps2 = [...path.steps2, act2];
-            tmp.releasedPressure += (path.timeLeft2-distances2[act2]-1)*nodeByName(act2).rate;
+            tmp.releasedPressure += (path.timeLeft2-distances2[act2]-1)*nodeByName[act2].rate;
         } else {
             tmp.curr2 = path.curr2;
             tmp.timeLeft2 = path.timeLeft2;
-            tmp.steps2 = [...path.steps2];
             tmp.finished2 = true;
         }
 
@@ -87,12 +88,12 @@ while (paths.length) {
     })
     if (!moved) path.finished = true;
     if (path.finished && path.releasedPressure > max) {
-        console.log('we have a new max', path.releasedPressure);
+        console.log('we have a new max', path.releasedPressure/*, path.steps1.join(', '), ' | ', path.steps2.join(', ')*/, path);
         max = path.releasedPressure;
     }
     i++;
-    if (i % 100000 == 0) console.log('still on it', i);
-    if (i > 10000000) {console.log('em break'); break}
+    if (i % 100000000 == 0) console.log('still on it', i/10000000);
+    if (i > 60000000000) {console.log('em break'); break}
 }
 
 console.log(paths.filter(p => p.finished).sort((a, b) => b.releasedPressure-a.releasedPressure));

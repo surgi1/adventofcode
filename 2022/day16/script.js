@@ -13,15 +13,6 @@ let nodeByName = {};
 nodes.map((n, i) => nodeByName[n.name] = n);
 
 const activeNodes = () => nodes.filter(n => n.rate > 0)
-const duos = (a, res = []) => {
-    for (let i = 0; i < a.length; i++) for (let j = 0; j<a.length; j++) if (i != j) res.push([a[i], a[j]]);
-    return res
-}
-
-const sortDuos = (duos, d1, d2, t1, t2) => {
-    const valueFromDuo = ([target1, target2]) => (t1-d1[target1]-1)*nodeByName[target1].rate + (t2-d2[target2]-1)*nodeByName[target2].rate
-    return duos.sort((duo1, duo2) => valueFromDuo(duo1) - valueFromDuo(duo2))
-}
 
 const distanceMap = (startName, distances = {}) => {
     if (nodeByName[startName].distanceMap) return nodeByName[startName].distanceMap;
@@ -35,67 +26,53 @@ const distanceMap = (startName, distances = {}) => {
     return distances;
 }
 
-console.log(nodes);
+let timeLeft = 26;
 
-let paths = [{curr1: 'AA', curr2: 'AA', active: activeNodes().map(n => n.name), timeLeft1: 26, timeLeft2: 26, finished: false, finished1: false, finished2: false, /*steps1: [], steps2: [], */releasedPressure: 0}]
+let paths = [{curr: 'AA', active: activeNodes().map(n => n.name), timeLeft: timeLeft, finished: false, steps: [], releasedPressure: 0}]
 
-let max = 0, i = 0;
+let max = 0;
 
-while (paths.length) {
-    let path = paths.pop();
-
+for (let n = 0; n < paths.length; n++) {
+    let path = paths[n];
+    if (path.timeLeft <= 0) path.finished = true;
     if (path.finished) continue;
 
-    let distances1 = distanceMap(path.curr1),
-        distances2 = distanceMap(path.curr2),
-        moved1 = false, moved2 = false, moved = false;
-
-    let nextStepDuos = duos(path.active.filter(v => v != path.curr1 && v != path.curr2));
-
-    //nextStepDuos = sortDuos(nextStepDuos, distances1, distances2, path.timeLeft1, path.timeLeft2)
-    
-    nextStepDuos.forEach(([act1, act2]) => {
-        if (path.timeLeft1-distances1[act1] > 1) moved1 = true;
-        if (path.timeLeft2-distances2[act2] > 1) moved2 = true;
-        moved = moved1 || moved2;
-        let tmp = {
-            finished: false, finished1: false, finished2: false,
-            active: path.active.filter(v => v != act1 && v != act2),
-            releasedPressure: path.releasedPressure
-        };
-
-        if (moved1 && !path.finished1) {
-            tmp.curr1 = act1;
-            tmp.timeLeft1 = path.timeLeft1-distances1[act1]-1;
-            tmp.releasedPressure += (path.timeLeft1-distances1[act1]-1)*nodeByName[act1].rate;
-        } else {
-            tmp.curr1 = path.curr1;
-            tmp.timeLeft1 = path.timeLeft1;
-            tmp.finished1 = true;
-        }
-
-        if (moved2 && !path.finished2) {
-            tmp.curr2 = act2;
-            tmp.timeLeft2 = path.timeLeft2-distances2[act2]-1;
-            tmp.releasedPressure += (path.timeLeft2-distances2[act2]-1)*nodeByName[act2].rate;
-        } else {
-            tmp.curr2 = path.curr2;
-            tmp.timeLeft2 = path.timeLeft2;
-            tmp.finished2 = true;
-        }
-
-        paths.push(tmp);
+    let distances = distanceMap(path.curr), moved = false;
+    path.active.forEach(act => {
+        if (act == path.curr) return true;
+        if (path.timeLeft-distances[act] <= 1) return true;
+        moved = true;
+        paths.push({
+            curr: act,
+            active: path.active.filter(v => v != act),
+            timeLeft: path.timeLeft-distances[act]-1,
+            finished: false,
+            steps: [...path.steps, act],
+            releasedPressure: path.releasedPressure + (path.timeLeft-distances[act]-1)*nodeByName[act].rate
+        })
     })
     if (!moved) path.finished = true;
     if (path.finished && path.releasedPressure > max) {
-        console.log('we have a new max', path.releasedPressure/*, path.steps1.join(', '), ' | ', path.steps2.join(', ')*/, path);
+        console.log('we have a new max', path.releasedPressure);
         max = path.releasedPressure;
     }
-    i++;
-    if (i % 10000000 == 0) console.log('still on it', i/10000000);
-    if (i > 60000000000) {console.log('em break'); break}
 }
 
-console.log(paths.filter(p => p.finished).sort((a, b) => b.releasedPressure-a.releasedPressure));
-// 2500 too low
-// 2525 
+console.log(paths.filter(p => p.finished).sort((a, b) => b.releasedPressure-a.releasedPressure)[0]);
+
+let tmp = [];
+max = 0;
+
+let paths2 = paths.filter(p => p.finished).sort((a, b) => b.releasedPressure-a.releasedPressure)
+
+paths2.map((p1, i1) => {
+    if (i1 % 1000 == 0) console.log('processing', i1, tmp.length);
+    paths2.map(p2 => {
+        if (p1.steps.every(s => !p2.steps.includes(s))) {
+            if (p1.releasedPressure+p2.releasedPressure > max) {
+                console.log('we have a new max', p1.releasedPressure+p2.releasedPressure);
+                max = p1.releasedPressure+p2.releasedPressure;
+            }
+        }
+    })
+})
