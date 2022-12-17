@@ -15,9 +15,12 @@ let shapes = [[[1, 1, 1, 1]],
 [[1, 1], [1, 1]]]
 
 const dirs = {'>': 1, '<': -1}
-let vents = input.split(''), vent = 0, height = 0, shapeNr = 0, heights = [];
+let vents = input.split(''), vent, height, shapeNr, heights, screen;
 let pow2Lookup = Array.from({length: 10}, (v, i) => Math.pow(2, i));
-let screen = [];
+
+const reset = () => {
+    vent = 0; height = 0; shapeNr = 0; heights = []; screen = [];
+}
 
 const advanceHeight = () => {
     while (screen[height] != 0) height++;
@@ -27,51 +30,38 @@ const getScreen = (x, y) => (screen[y] & pow2Lookup[x]) >> x;
 const setScreen = (x, y) => screen[y] += pow2Lookup[x];
 
 const advanceBrick = brick => {
-    let done = false;
-    while (!done) {
-        let dir = dirs[vents[vent % vents.length]], canSlide = false;
-        if (dir == -1) {
-            canSlide = brick.shape.every((row, y) => row.every((v, x) => {
-                if (v == 0) return true;
-                if (brick.x-1+x < 0) return false;
-                return getScreen(brick.x+x-1, brick.y+y) == 0;
-            }))
-            if (canSlide) brick.x--;
-        } else {
-            canSlide = brick.shape.every((row, y) => row.every((v, x) => {
-                if (v == 0) return true;
-                if (brick.x+1+x > 6) return false;
-                return getScreen(brick.x+x+1, brick.y+y) == 0;
-            }))
-            if (canSlide) brick.x++;
-        }
+    while (true) {
+        let dir = dirs[vents[vent % vents.length]];
+        if (brick.shape.every((row, y) => row.every((v, x) => {
+            if (v == 0) return true;
+            if (dir == -1 && brick.x+dir+x < 0) return false;
+            if (dir ==  1 && brick.x+dir+x > 6) return false;
+            return getScreen(brick.x+x+dir, brick.y+y) == 0;
+        }))) brick.x += dir;
         vent++;
 
-        let canFall = brick.shape.every((row, y) => row.every((v, x) => {
+        if (brick.shape.every((row, y) => row.every((v, x) => {
             if (v == 0) return true;
-            if (brick.y-1+y < 0) return false;
+            if (brick.y+y < 1) return false;
             return getScreen(brick.x+x, brick.y-1+y) == 0;
-        }))
-        if (canFall) brick.y--; else done = true;
+        }))) brick.y--; else break;
     }
-    if (done) {
-        brick.shape.forEach((row, y) => row.forEach((v, x) => {
-            if (v == 0) return true;
-            setScreen(x+brick.x, y+brick.y);
-        }))
-    }
+
+    brick.shape.forEach((row, y) => row.forEach((v, x) => {
+        if (v == 0) return true;
+        setScreen(x+brick.x, y+brick.y);
+    }))
+    
     advanceHeight();
 }
 
 const newBrick = () => {
     while (screen.length <= height+5) screen.push(0);
-    let tmp = {
-        shape: shapes[shapeNr % 5],
+    return {
+        shape: shapes[(shapeNr++) % 5],
         x: 2,
         y: height+3
     }
-    shapeNr++;
-    return tmp;
 }
 
 const tick = steps => {
@@ -81,16 +71,13 @@ const tick = steps => {
 }
 
 const part1 = () => {
+    reset();
     tick(2022);
     console.log('part1', height);
 }
 
 const findSequence = (res = false) => {
-    vent = 0;
-    height = 0;
-    shapeNr = 0;
-    screen = [];
-    heights = [];
+    reset();
 
     tick(vents.length*shapes.length); // initial tick
 
@@ -111,10 +98,7 @@ const findSequence = (res = false) => {
 }
 
 const part2 = step => {
-    vent = 0;
-    height = 0;
-    shapeNr = 0;
-    screen = [];
+    reset();
 
     const sloni = 1000000000000, fst = vents.length*shapes.length;
 
