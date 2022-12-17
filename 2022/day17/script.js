@@ -17,7 +17,7 @@ const dirs = {'>': 1, '<': -1}
 let vents = input.split(''), vent, height, shapeNr, heights, screen;
 let pow2Lookup = Array.from({length: 10}, (v, i) => Math.pow(2, i));
 
-const reset = () => {
+const init = () => {
     vent = 0; height = 0; shapeNr = 0; heights = []; screen = [];
 }
 
@@ -61,13 +61,7 @@ const newBrick = () => {
 const tick = steps => {
     let lastHeight = height;
     while (steps--) advanceBrick(newBrick());
-    heights.push(height-lastHeight);
-}
-
-const part1 = () => {
-    reset();
-    tick(2022);
-    console.log('part1', height);
+    return heights.push(height-lastHeight);
 }
 
 const findSequence = (res = false) => {
@@ -79,7 +73,7 @@ const findSequence = (res = false) => {
         }))
     }
 
-    reset();
+    init();
     tick(vents.length*shapes.length); // initial tick
 
     let i = 50000, i2 = i/4;
@@ -93,7 +87,7 @@ const findSequence = (res = false) => {
 const part2 = step => {
     const sloni = 1e12, fst = vents.length*shapes.length;
 
-    reset();
+    init();
     tick(fst); // first tick
 
     let offset = height;
@@ -102,8 +96,9 @@ const part2 = step => {
 
     tick(((sloni-fst-step) % step)) // last tick for the remainder
 
-    console.log('part2', height+mult*Math.floor(-1+(sloni-fst)/step))
+    return height+mult*Math.floor(-1+(sloni-fst)/step);
 }
 
-part1();
-part2(findSequence())
+init();
+console.log(heights[tick(2022)-1]);
+console.log(part2(findSequence()));
