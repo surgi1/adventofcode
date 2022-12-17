@@ -21,41 +21,36 @@ const reset = () => {
     vent = 0; height = 0; shapeNr = 0; heights = []; screen = [];
 }
 
-const advanceHeight = () => {
-    while (screen[height] != 0) height++;
-}
-
 const getScreen = (x, y) => (screen[y] & pow2Lookup[x]) >> x;
 const setScreen = (x, y) => screen[y] += pow2Lookup[x];
 
 const advanceBrick = brick => {
     while (true) {
         let dir = dirs[vents[vent % vents.length]];
-        if (brick.shape.every((row, y) => row.every((v, x) => {
-            if (v == 0) return true;
-            if (dir == -1 && brick.x+dir+x < 0) return false;
-            if (dir ==  1 && brick.x+dir+x > 6) return false;
-            return getScreen(brick.x+x+dir, brick.y+y) == 0;
-        }))) brick.x += dir;
+
+        if (brick.shape.every((r, y) => r.every((v, x) => {
+                if (v == 0) return true;
+                if (dir == -1 && brick.x+dir+x < 0) return false;
+                if (dir ==  1 && brick.x+dir+x > 6) return false;
+                return getScreen(brick.x+dir+x, brick.y+y) == 0;
+            }))) brick.x += dir;
         vent++;
 
-        if (brick.shape.every((row, y) => row.every((v, x) => {
-            if (v == 0) return true;
-            if (brick.y+y < 1) return false;
-            return getScreen(brick.x+x, brick.y-1+y) == 0;
-        }))) brick.y--; else break;
+        if (brick.shape.every((r, y) => r.every((v, x) => {
+                if (v == 0) return true;
+                if (brick.y+y < 1) return false;
+                return getScreen(brick.x+x, brick.y-1+y) == 0;
+            }))) brick.y--;
+        else break;
     }
 
-    brick.shape.forEach((row, y) => row.forEach((v, x) => {
-        if (v == 0) return true;
-        setScreen(x+brick.x, y+brick.y);
-    }))
+    brick.shape.forEach((r, y) => r.forEach((v, x) => v && setScreen(x+brick.x, y+brick.y)))
     
-    advanceHeight();
+    while (screen[height] != 0) height++;
 }
 
 const newBrick = () => {
-    while (screen.length <= height+5) screen.push(0);
+    while (screen.length <= height+6) screen.push(0);
     return {
         shape: shapes[(shapeNr++) % 5],
         x: 2,
@@ -87,16 +82,16 @@ const findSequence = (res = false) => {
     reset();
     tick(vents.length*shapes.length); // initial tick
 
-    let i = 20000, i2 = i/4;
+    let i = 50000, i2 = i/4;
     while (i--) tick(1);
 
-    heights.shift(); // move out the first as it is not important
+    heights.shift(); // move out the first as it from the initial tick
 
     for (let n = 2; n < i2; n++) if (checkChunksSum(n)) return n;
 }
 
 const part2 = step => {
-    const sloni = 1000000000000, fst = vents.length*shapes.length;
+    const sloni = 1e12, fst = vents.length*shapes.length;
 
     reset();
     tick(fst); // first tick
