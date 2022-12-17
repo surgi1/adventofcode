@@ -6,13 +6,12 @@ Object.defineProperty(Array.prototype, 'chunk', {
     }
 });
 
-let shapes = [[[1, 1, 1, 1]],
-[[0,1,0],[1,1,1],[0,1,0]],
-[[1,1,1],
- [0,0,1],
- [0,0,1]], // this one is rotated to fit my interpretation
-[[1], [1], [1], [1]],
-[[1, 1], [1, 1]]]
+const shapes = [
+    [[1, 1, 1, 1]],
+    [[0,1,0], [1,1,1], [0,1,0]],
+    [[1,1,1], [0,0,1], [0,0,1]], // this one is rotated to fit my interpretation
+    [[1], [1], [1], [1]],
+    [[1, 1], [1, 1]] ]
 
 const dirs = {'>': 1, '<': -1}
 let vents = input.split(''), vent, height, shapeNr, heights, screen;
@@ -77,15 +76,6 @@ const part1 = () => {
 }
 
 const findSequence = (res = false) => {
-    reset();
-
-    tick(vents.length*shapes.length); // initial tick
-
-    let i = 24000, i2 = i/4;
-    while (i--) tick(1);
-
-    heights.shift(); // move out the first as it is not important
-
     const checkChunksSum = chunkSize => {
         let tmp = heights.chunk(chunkSize).map(c => c.reduce((a,v) => a+v, 0));
         return (tmp.length > 5 && tmp.every((v, i) => {
@@ -94,14 +84,21 @@ const findSequence = (res = false) => {
         }))
     }
 
+    reset();
+    tick(vents.length*shapes.length); // initial tick
+
+    let i = 20000, i2 = i/4;
+    while (i--) tick(1);
+
+    heights.shift(); // move out the first as it is not important
+
     for (let n = 2; n < i2; n++) if (checkChunksSum(n)) return n;
 }
 
 const part2 = step => {
-    reset();
-
     const sloni = 1000000000000, fst = vents.length*shapes.length;
 
+    reset();
     tick(fst); // first tick
 
     let offset = height;
