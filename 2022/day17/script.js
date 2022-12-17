@@ -24,7 +24,7 @@ let shapes = [[[1, 1, 1, 1]],
 const dirs = {'>': 1, '<': -1}
 let vents = input.split(''), vent = 0, height = 0, shapeNr = 0, heights = [];
 let pow2Lookup = Array.from({length: 10}, (v, i) => Math.pow(2, i));
-let screen;
+let screen = [];
 
 const advanceHeight = () => {
     while (screen[height] != 0) height++;
@@ -71,6 +71,7 @@ const advanceBrick = brick => {
 }
 
 const newBrick = () => {
+    while (screen.length <= height+5) screen.push(0);
     let tmp = {
         shape: shapes[shapeNr % 5],
         x: 2,
@@ -88,13 +89,11 @@ const tick = steps => {
 }
 
 const part1 = () => {
-    screen = Array(5000).fill(0);
     tick(2022);
     console.log('part1', height);
 }
 
 const findMagicAdepts = () => {
-    screen = Array(100000000).fill(0);
     tick(vents.length*shapes.length); // initial tick
 
     let i = 1200, i2 = i/2;
@@ -115,7 +114,6 @@ const findMagicAdepts = () => {
 }
 
 const part2Attempt = magic => {
-    screen = Array(100000000).fill(0);
     const sloni = 1000000000000;
 
     tick(vents.length*shapes.length); // first tick
@@ -133,6 +131,5 @@ const part2Attempt = magic => {
 
 //part1();
 
-//findMagicAdepts();
-
-part2Attempt(344);  // joy!! this was found using the method above
+findMagicAdepts();
+//part2Attempt(344);  // joy!! this was found using the method above
