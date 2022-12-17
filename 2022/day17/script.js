@@ -13,20 +13,24 @@ const shapes = [
     [[1], [1], [1], [1]],
     [[1, 1], [1, 1]] ]
 
+const p1Ticks = 2022, sequenceSkimTicks = 50000, eleDemand = 1e12;
 const dirs = {'>': 1, '<': -1}
-let vents = input.split(''), vent, height, shapeNr, heights, screen;
+let vents = input.split(''), vent = 0; height = 0; shapeNr = 0; heights = []; screen = [];
 let pow2Lookup = Array.from({length: 10}, (v, i) => Math.pow(2, i));
-
-const init = () => {
-    vent = 0; height = 0; shapeNr = 0; heights = []; screen = [];
-}
 
 const getScreen = (x, y) => (screen[y] & pow2Lookup[x]) >> x;
 const setScreen = (x, y) => screen[y] += pow2Lookup[x];
 
-const advanceBrick = brick => {
+const dropBrick = () => {
+    while (screen.length <= height+6) screen.push(0);
+    let brick = {
+        shape: shapes[(shapeNr++) % 5],
+        x: 2,
+        y: height+3
+    }
+
     while (true) {
-        let dir = dirs[vents[vent % vents.length]];
+        let dir = dirs[vents[(vent++) % vents.length]];
 
         if (brick.shape.every((r, y) => r.every((v, x) => {
                 if (v == 0) return true;
@@ -34,7 +38,6 @@ const advanceBrick = brick => {
                 if (dir ==  1 && brick.x+dir+x > 6) return false;
                 return getScreen(brick.x+dir+x, brick.y+y) == 0;
             }))) brick.x += dir;
-        vent++;
 
         if (brick.shape.every((r, y) => r.every((v, x) => {
                 if (v == 0) return true;
@@ -49,18 +52,9 @@ const advanceBrick = brick => {
     while (screen[height] != 0) height++;
 }
 
-const newBrick = () => {
-    while (screen.length <= height+6) screen.push(0);
-    return {
-        shape: shapes[(shapeNr++) % 5],
-        x: 2,
-        y: height+3
-    }
-}
-
 const tick = steps => {
     let lastHeight = height;
-    while (steps--) advanceBrick(newBrick());
+    while (steps--) dropBrick();
     return heights.push(height-lastHeight);
 }
 
@@ -73,32 +67,23 @@ const findSequence = (res = false) => {
         }))
     }
 
-    init();
-    tick(vents.length*shapes.length); // initial tick
+    tick(p1Ticks);
+    console.log(heights.shift()); // get out the first as it from the initial p1 tick
 
-    let i = 50000, i2 = i/4;
+    let i = sequenceSkimTicks, i2 = i/4;
     while (i--) tick(1);
 
-    heights.shift(); // move out the first as it from the initial tick
-
-    for (let n = 2; n < i2; n++) if (checkChunksSum(n)) return n;
+    for (let n = 30; n < i2; n++) if (checkChunksSum(n)) return n;
 }
 
 const part2 = step => {
-    const sloni = 1e12, fst = vents.length*shapes.length;
+    const fst = p1Ticks+sequenceSkimTicks, offset = height;
 
-    init();
-    tick(fst); // first tick
-
-    let offset = height;
     tick(step); // first repeatable tick
     let mult = height-offset;
 
-    tick(((sloni-fst-step) % step)) // last tick for the remainder
-
-    return height+mult*Math.floor(-1+(sloni-fst)/step);
+    tick(((eleDemand-fst-step) % step)) // last tick for the remainder
+    return height+mult*Math.floor((eleDemand-fst)/step-1);
 }
 
-init();
-console.log(heights[tick(2022)-1]);
 console.log(part2(findSequence()));
