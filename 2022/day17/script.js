@@ -1,10 +1,3 @@
-// the solution for part 2 is a 2 step process
-// 1. run findMagicAdepts (takes a minute) to find candidates for possible multipliers of vents.length*shapes.length
-// 2. run part2Attempt with each multipliers found in the step 1 and hope for the best
-// apparently I'm missing something here
-// ...
-// hope it helps!
-
 Object.defineProperty(Array.prototype, 'chunk', {
     value: function(chunkSize) {
         let res = [];
@@ -84,7 +77,6 @@ const newBrick = () => {
 const tick = steps => {
     let lastHeight = height;
     while (steps--) advanceBrick(newBrick());
-    //console.log(height, height-lastHeight);
     heights.push(height-lastHeight);
 }
 
@@ -93,43 +85,49 @@ const part1 = () => {
     console.log('part1', height);
 }
 
-const findMagicAdepts = () => {
+const findSequence = (res = false) => {
+    vent = 0;
+    height = 0;
+    shapeNr = 0;
+    screen = [];
+    heights = [];
+
     tick(vents.length*shapes.length); // initial tick
 
-    let i = 1200, i2 = i/2;
-    while (i--) tick(vents.length*shapes.length);
+    let i = 24000, i2 = i/4;
+    while (i--) tick(1);
 
     heights.shift(); // move out the first as it is not important
 
     const checkChunksSum = chunkSize => {
         let tmp = heights.chunk(chunkSize).map(c => c.reduce((a,v) => a+v, 0));
-        if (tmp.every((v, i) => {
+        return (tmp.length > 5 && tmp.every((v, i) => {
             if (i == tmp.length-1) return true;
             return v == tmp[0];
-        })) console.log('chunkSize sums', chunkSize, tmp)
+        }))
     }
 
-    for (let n = 2; n < i2; n++) checkChunksSum(n);
-
+    for (let n = 2; n < i2; n++) if (checkChunksSum(n)) return n;
 }
 
-const part2Attempt = magic => {
-    const sloni = 1000000000000;
+const part2 = step => {
+    vent = 0;
+    height = 0;
+    shapeNr = 0;
+    screen = [];
 
-    tick(vents.length*shapes.length); // first tick
+    const sloni = 1000000000000, fst = vents.length*shapes.length;
+
+    tick(fst); // first tick
 
     let offset = height;
-    tick(vents.length*shapes.length*magic); // first repeatable tick
+    tick(step); // first repeatable tick
     let mult = height-offset;
 
-    console.log(offset+mult*Math.floor(-1+sloni/(vents.length*shapes.length*magic)), 'with rocks left:', (sloni % (vents.length*shapes.length*magic))-vents.length*shapes.length)
+    tick(((sloni-fst-step) % step)) // last tick for the remainder
 
-    tick((sloni % (vents.length*shapes.length*magic))-vents.length*shapes.length) // last tick for the remainder
-
-    console.log('attempt on p2 answer', height+mult*Math.floor(-1+sloni/(vents.length*shapes.length*magic)))
+    console.log('part2', height+mult*Math.floor(-1+(sloni-fst)/step))
 }
 
-//part1();
-
-findMagicAdepts();
-//part2Attempt(344);  // joy!! this was found using the method above
+part1();
+part2(findSequence())
