@@ -8,7 +8,7 @@ const inRange = cube => cube.every((v, i) => v >= min[i] && v <= max[i]);
 const addCube = (c1, c2) => c1.map((v, i) => v+c2[i]);
 const cubeDist = (c1, c2) => c1.reduce((a, v, i) => a+Math.abs(v-c2[i]), 0);
 
-console.log(cubes.reduce((acc, c1, i) => {
+console.log(cubes.reduce((acc, c1) => {
     cubeSet.add(k(c1));
     max = max.map((v, d) => Math.max(v, c1[d]+1));
     min = min.map((v, d) => Math.min(v, c1[d]-1));
