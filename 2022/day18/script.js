@@ -22,8 +22,7 @@ const spread = cube => {
     water.push(cube);
     // and spread
     for (let i = 0; i < dirs.length; i++) {
-        let dir = dirs[i];
-        let targetCube = addCube(cube, dir);
+        let targetCube = addCube(cube, dirs[i]);
         if (inRange(targetCube) && !cubeSet.has(k(targetCube))) spread(targetCube);
     }
 }
