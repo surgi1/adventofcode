@@ -2,7 +2,7 @@ let cubes = input.split("\n").map(line => line.split(',').map(Number)),
     water = [], processed = new Set(), cubeSet = new Set(),
     max = [0,0,0], min = [20,20,20];
 
-const dirs = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0],[0,0,1], [0,0,-1]];
+const dirs = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]];
 const k = cube => cube.join('_')
 const inRange = cube => cube.every((v, i) => v >= min[i] && v <= max[i]);
 const addCube = (c1, c2) => c1.map((v, i) => v+c2[i]);
