@@ -1,6 +1,6 @@
-// just part 2
+// just part 2, for part 1 check script.part1.js
 
-const resourceTypes = {
+const types = {
     ORE: 0,
     CLAY: 1,
     OBSIDIAN: 2,
@@ -10,52 +10,42 @@ const resourceTypes = {
 const getBlueprintes = input => input.split("\n").map(line => {
     let tmp = line.match(/\d+/g).map(Number), bots = [];
     bots.push({
-        type: resourceTypes.ORE,
         cost: [{
-            type: resourceTypes.ORE,
+            type: types.ORE,
             amount: tmp[1]
         }]
-    })
-    bots.push({
-        type: resourceTypes.CLAY,
+    }, {
         cost: [{
-            type: resourceTypes.ORE,
+            type: types.ORE,
             amount: tmp[2]
         }]
-    })
-    bots.push({
-        type: resourceTypes.OBSIDIAN,
+    }, {
         cost: [{
-            type: resourceTypes.ORE,
+            type: types.ORE,
             amount: tmp[3]
         }, {
-            type: resourceTypes.CLAY,
+            type: types.CLAY,
             amount: tmp[4]
         }]
-    })
-    bots.push({
-        type: resourceTypes.GEODE,
+    }, {
         cost: [{
-            type: resourceTypes.ORE,
+            type: types.ORE,
             amount: tmp[5]
         }, {
-            type: resourceTypes.OBSIDIAN,
+            type: types.OBSIDIAN,
             amount: tmp[6]
         }]
     })
 
-    return {
-        id: tmp[0],
-        bots: bots
-    }
+    return bots;
 })
 
 const run = (bp, timeLeft) => {
-
-    const canBuildBot = (type, resourcePool) => bp.bots[type].cost.every(c => resourcePool[c.type] >= c.amount)
+    const getBotCost = (botType, costType) => bp[botType].cost.filter(c => c.type == costType)[0].amount
+    const canBuildBot = (type, resourcePool) => bp[type].cost.every(c => resourcePool[c.type] >= c.amount)
     const buildBot = (type, resourcePool) => {
         let rp = resourcePool.slice();
-        bp.bots[type].cost.forEach(c => rp[c.type] -= c.amount)
+        bp[type].cost.forEach(c => rp[c.type] -= c.amount)
         return rp;
     }
     const advancePool = (resourcePool, bots) => {
@@ -71,17 +61,16 @@ const run = (bp, timeLeft) => {
         let path = paths.pop();
         path.steps.push([path.resourcePool.join(', '), path.bots.join(', ')]);
 
-        if (path.resourcePool[resourceTypes.GEODE] >= 1 && path.timeLeft > earliestGeoge) {
+        if (path.resourcePool[types.GEODE] >= 1 && path.timeLeft > earliestGeoge) {
             earliestGeoge = path.timeLeft;
         }
 
-        if (path.timeLeft < earliestGeoge && path.resourcePool[resourceTypes.GEODE] == 0) continue;
+        if (path.timeLeft < earliestGeoge && path.resourcePool[types.GEODE] == 0) continue;
 
         if (path.timeLeft <= 0) {
             path.finished = true;
-            if (path.resourcePool[resourceTypes.GEODE] > maxResult) {
-                maxResult = path.resourcePool[resourceTypes.GEODE];
-                console.log('new max', maxResult, path);
+            if (path.resourcePool[types.GEODE] > maxResult) {
+                maxResult = path.resourcePool[types.GEODE];
             }
         }
         if (path.finished) continue;
@@ -92,21 +81,21 @@ const run = (bp, timeLeft) => {
         let attempts = [], noBuiltOption = true;
 
         if (path.timeLeft > 1) {
-            if (canBuildBot(resourceTypes.GEODE, referenceRP)) {
-                attempts.push(resourceTypes.GEODE);
+            if (canBuildBot(types.GEODE, referenceRP)) {
+                attempts.push(types.GEODE);
                 noBuiltOption = false;
-            } else if (canBuildBot(resourceTypes.OBSIDIAN, referenceRP)) {
-                attempts.push(resourceTypes.OBSIDIAN);
+            } else if (canBuildBot(types.OBSIDIAN, referenceRP)) {
+                attempts.push(types.OBSIDIAN);
                 noBuiltOption = false;
             } else {
-                if (path.bots[resourceTypes.OBSIDIAN] <= 2) {
+                if (path.bots[types.OBSIDIAN] <= 2) {
                     if (path.timeLeft > 10) {
-                        if (path.bots[resourceTypes.ORE] == 1) {
-                            attempts.push(resourceTypes.ORE);
-                            if (canBuildBot(resourceTypes.ORE, referenceRP)) noBuiltOption = false;
+                        if (path.bots[types.ORE] == 1) {
+                            attempts.push(types.ORE);
+                            if (canBuildBot(types.ORE, referenceRP)) noBuiltOption = false;
                         } else {
-                            if (path.bots[resourceTypes.ORE] < 3) attempts.push(resourceTypes.ORE);
-                            if (path.bots[resourceTypes.CLAY] < bp.bots[2].cost[1].amount-1) attempts.push(resourceTypes.CLAY);
+                            if (path.bots[types.ORE] < 3) attempts.push(types.ORE);
+                            if (path.bots[types.CLAY] < getBotCost(types.OBSIDIAN, types.CLAY)-1) attempts.push(types.CLAY);
                         }
                     }
                 }
@@ -133,28 +122,44 @@ const run = (bp, timeLeft) => {
                 tmp.resourcePool = buildBot(botType, advancedRP);
 
                 paths.push(tmp);
-                built = true;
             }
         })
 
-        i++; if (i > 10000000) {console.log('em break'); break}
+        i++; if (i > 10000000) {console.log('em break');break}
     }
 
     return maxResult;
 }
 
-let res = 1;
+const part2 = blueprints => blueprints.slice(0, 3).reduce((res, bp, bpId) => res * run(bp, 32), 1)
 
 let blueprints = getBlueprintes(input);
 
-//run(blueprints[1], 32);
+console.log('part2', part2(blueprints));
 
-blueprints.slice(0, 3).forEach((bp, bpId) => {
-    console.log('***************************** START ', bpId+1);
-    let p = run(bp, 32);
-    console.log('***************************** RESULT ', bpId+1, p);
-    res *= p;
-})
 
-console.log('part2', res);
+/*
+// this branch pruning works on both parts, but just on my input
 
+if (path.timeLeft > 1) {
+    if (canBuildBot(types.GEODE, referenceRP)) {
+        attempts.push(types.GEODE);
+        noBuiltOption = false;
+    } else if (canBuildBot(types.OBSIDIAN, referenceRP)) {
+        attempts.push(types.OBSIDIAN);
+        noBuiltOption = false;
+    } else {
+        if (path.bots[types.OBSIDIAN] <= 2) {
+            if (path.timeLeft > 10) {
+                if (path.bots[types.ORE] == 1) {
+                    attempts.push(types.ORE);
+                    if (canBuildBot(types.ORE, referenceRP)) noBuiltOption = false;
+                } else {
+                    if (path.bots[types.ORE] < 3) attempts.push(types.ORE);
+                    if (path.bots[types.CLAY] < bp.bots[2].cost[1].amount-1) attempts.push(types.CLAY);
+                }
+            }
+        }
+    }
+}
+*/
