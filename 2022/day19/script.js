@@ -1,3 +1,5 @@
+// just part 2
+
 const resourceTypes = {
     ORE: 0,
     CLAY: 1,
@@ -63,21 +65,20 @@ const run = (bp, timeLeft) => {
     }
 
     let paths = [{bots: [1, 0, 0, 0], timeLeft: timeLeft, steps: [], finished: false, resourcePool: [0, 0, 0, 0]}];
-    let i = 0, maxResult = 0;
-
-    let visited = new Set();
+    let i = 0, maxResult = 0, earliestGeoge = 0;
 
     while (paths.length) {
         let path = paths.pop();
         path.steps.push([path.resourcePool.join(', '), path.bots.join(', ')]);
 
-        /*let k = path.steps.map(s => s[1]).flat().join('_');
-        if (visited.has(k)) continue;
-        visited.add(k);*/
+        if (path.resourcePool[resourceTypes.GEODE] >= 1 && path.timeLeft > earliestGeoge) {
+            earliestGeoge = path.timeLeft;
+        }
+
+        if (path.timeLeft < earliestGeoge && path.resourcePool[resourceTypes.GEODE] == 0) continue;
 
         if (path.timeLeft <= 0) {
             path.finished = true;
-            //console.log('a finished path', maxResult, path);
             if (path.resourcePool[resourceTypes.GEODE] > maxResult) {
                 maxResult = path.resourcePool[resourceTypes.GEODE];
                 console.log('new max', maxResult, path);
@@ -98,35 +99,19 @@ const run = (bp, timeLeft) => {
                 attempts.push(resourceTypes.OBSIDIAN);
                 noBuiltOption = false;
             } else {
-                if (path.bots[resourceTypes.ORE] < 4) attempts.push(resourceTypes.ORE);
-                //if (path.bots[resourceTypes.CLAY] < 5)
-                attempts.push(resourceTypes.CLAY);
-            }
-        }
-
-        /*if (path.timeLeft > 1) {
-            if (canBuildBot(resourceTypes.GEODE, referenceRP)) {
-                attempts.push(resourceTypes.GEODE);
-                noBuiltOption = false;
-            } else {
-                if (path.bots[resourceTypes.OBSIDIAN] == 0) {
-                    if (path.bots[resourceTypes.ORE] == 1) {
-                        attempts.push(resourceTypes.ORE);
-                        if (canBuildBot(resourceTypes.ORE, referenceRP)) noBuiltOption = false;
-                    } else {
-                        //if (path.bots[resourceTypes.CLAY] == 0 && path.bots[resourceTypes.ORE] < 2) attempts.push(resourceTypes.ORE);
-                        //if (path.bots[resourceTypes.CLAY] < 5)
-                        attempts.push(resourceTypes.CLAY);
-                    }
-                    if (path.bots[resourceTypes.CLAY] == 0 && path.bots[resourceTypes.ORE] < 4) attempts.push(resourceTypes.ORE);
-                    attempts.push(resourceTypes.CLAY);
-                    if (path.bots[resourceTypes.ORE] == 1) {
-                        if (canBuildBot(resourceTypes.ORE, referenceRP)) noBuiltOption = false;
+                if (path.bots[resourceTypes.OBSIDIAN] <= 2) {
+                    if (path.timeLeft > 10) {
+                        if (path.bots[resourceTypes.ORE] == 1) {
+                            attempts.push(resourceTypes.ORE);
+                            if (canBuildBot(resourceTypes.ORE, referenceRP)) noBuiltOption = false;
+                        } else {
+                            if (path.bots[resourceTypes.ORE] < 3) attempts.push(resourceTypes.ORE);
+                            if (path.bots[resourceTypes.CLAY] < bp.bots[2].cost[1].amount-1) attempts.push(resourceTypes.CLAY);
+                        }
                     }
                 }
-                attempts.push(resourceTypes.OBSIDIAN);
             }
-        }*/
+        }
 
         // default path, let's advance
         if (noBuiltOption) paths.push({
@@ -152,11 +137,8 @@ const run = (bp, timeLeft) => {
             }
         })
 
-
-        i++; if (i > 100000000) {console.log('em break'); break}
+        i++; if (i > 10000000) {console.log('em break'); break}
     }
-
-    console.log('paths', paths);
 
     return maxResult;
 }
@@ -176,6 +158,3 @@ blueprints.slice(0, 3).forEach((bp, bpId) => {
 
 console.log('part2', res);
 
-// 1725 star p1
-
-// p2 9*33*47 = 13959 too low
