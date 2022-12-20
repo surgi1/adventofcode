@@ -18,7 +18,7 @@ const moveNode = (node, moves) => {
     let leftId = node.leftId, rightId = node.rightId, nodeId = node.id;
     let moveFnc = moves > 0 ? right : left;
     
-    for (let m = 0; m < absMoves; m++) nodeId = moveFnc(nodeId);
+    while (absMoves--) nodeId = moveFnc(nodeId);
     // disconnect original node, connect it to the left of the target
     if (moves < 0) {
         node.leftId = nodes[nodeId].leftId;
