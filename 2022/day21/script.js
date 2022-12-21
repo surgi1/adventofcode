@@ -21,17 +21,19 @@ const compute = (m, monkeys, part2 = true, res = 0) => {
     return res;
 }
 
+const parenthe = v => v.match(/[\+\-\*\\=]/) ? '('+v+')' : v;
+
 const print = (m, monkeys, res = '') => {
     if (m == 'humn') return 'x'; // so wolfram alpha catches up
     if (notConst.has(m) && m != 'root' && !isNaN(monkeys[m])) return m;
 
     if (!isNaN(monkeys[m])) return monkeys[m]+'';
 
-    if (m == 'root') res = '('+print(monkeys[m][0], monkeys)+')=('+print(monkeys[m][2], monkeys)+')'; else {
-        if (monkeys[m][1] == '+') res = '('+print(monkeys[m][0], monkeys)+')+('+print(monkeys[m][2], monkeys)+')';
-        if (monkeys[m][1] == '-') res = '('+print(monkeys[m][0], monkeys)+')-('+print(monkeys[m][2], monkeys)+')';
-        if (monkeys[m][1] == '*') res = '('+print(monkeys[m][0], monkeys)+')*('+print(monkeys[m][2], monkeys)+')';
-        if (monkeys[m][1] == '/') res = '('+print(monkeys[m][0], monkeys)+')/('+print(monkeys[m][2], monkeys)+')';
+    if (m == 'root') res = parenthe(print(monkeys[m][0], monkeys))+'='+parenthe(print(monkeys[m][2], monkeys)); else {
+        if (monkeys[m][1] == '+') res = parenthe(print(monkeys[m][0], monkeys))+'+'+parenthe(print(monkeys[m][2], monkeys));
+        if (monkeys[m][1] == '-') res = parenthe(print(monkeys[m][0], monkeys))+'-'+parenthe(print(monkeys[m][2], monkeys));
+        if (monkeys[m][1] == '*') res = parenthe(print(monkeys[m][0], monkeys))+'*'+parenthe(print(monkeys[m][2], monkeys));
+        if (monkeys[m][1] == '/') res = parenthe(print(monkeys[m][0], monkeys))+'/'+parenthe(print(monkeys[m][2], monkeys));
     }
     return res;
 }
@@ -50,9 +52,9 @@ const findNotConst = monkeys => {
 const part2 = monkeys => {
     findNotConst(monkeys);
     compute('root', monkeys);
-    console.log('Paste the following to Wolfram Alpha or solve by hand!')
+    console.log('part 2: Paste the following to Wolfram Alpha or solve by hand!')
     console.log(print('root', monkeys));
 }
 
-console.log(compute('root', {...monkeys}, false));
+console.log('part 1', compute('root', {...monkeys}, false));
 part2({...monkeys});
