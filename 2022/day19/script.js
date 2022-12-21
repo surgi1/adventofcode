@@ -1,9 +1,3 @@
-// just part 2, for part 1 check script.part1.js
-
-// inception! need to rewrite this, instead by stepping 1 second at a time
-// we need to figure out what are all the next bots we can possibly build
-// (that make also sense to build) and ffwd directly to that time (TBD)
-
 const types = {
     ORE: 0,
     CLAY: 1,
@@ -11,159 +5,99 @@ const types = {
     GEODE: 3
 }
 
-const getBlueprintes = input => input.split("\n").map(line => {
-    let tmp = line.match(/\d+/g).map(Number), bots = [];
-    bots.push({
-        cost: [{
-            type: types.ORE,
-            amount: tmp[1]
-        }]
+const getBlueprints = input => input.split("\n").map(line => {
+    let tmp = line.match(/\d+/g).map(Number);
+    return [[{
+        type: types.ORE,
+        amount: tmp[1]
+    }], [{
+        type: types.ORE,
+        amount: tmp[2]
+    }], [{
+        type: types.ORE,
+        amount: tmp[3]
     }, {
-        cost: [{
-            type: types.ORE,
-            amount: tmp[2]
-        }]
+        type: types.CLAY,
+        amount: tmp[4]
+    }], [{
+        type: types.ORE,
+        amount: tmp[5]
     }, {
-        cost: [{
-            type: types.ORE,
-            amount: tmp[3]
-        }, {
-            type: types.CLAY,
-            amount: tmp[4]
-        }]
-    }, {
-        cost: [{
-            type: types.ORE,
-            amount: tmp[5]
-        }, {
-            type: types.OBSIDIAN,
-            amount: tmp[6]
-        }]
-    })
-
-    return bots;
+        type: types.OBSIDIAN,
+        amount: tmp[6]
+    }]]
 })
 
 const run = (bp, timeLeft) => {
-    const getBotCost = (botType, costType) => bp[botType].cost.filter(c => c.type == costType)[0].amount
-    const canBuildBot = (type, resourcePool) => bp[type].cost.every(c => resourcePool[c.type] >= c.amount)
+    const getBotCost = (botType, costType) => bp[botType].filter(c => c.type == costType)[0].amount
+    const canBuildBot = (type, resourcePool) => bp[type].every(c => resourcePool[c.type] > 0)
     const buildBot = (type, resourcePool) => {
         let rp = resourcePool.slice();
-        bp[type].cost.forEach(c => rp[c.type] -= c.amount)
-        return rp;
-    }
-    const advancePool = (resourcePool, bots) => {
-        let rp = resourcePool.slice();
-        bots.forEach((bots, type) => rp[type] += bots);
+        bp[type].forEach(c => rp[c.type] -= c.amount)
         return rp;
     }
 
-    let paths = [{bots: [1, 0, 0, 0], timeLeft: timeLeft, steps: [], finished: false, resourcePool: [0, 0, 0, 0]}];
-    let i = 0, maxResult = 0, earliestGeoge = 0;
+    const advancePool = (resourcePool, bots, mult = 1) => {
+        let rp = resourcePool.slice();
+        bots.forEach((bots, type) => rp[type] += bots*mult);
+        return rp;
+    }
+
+    const addBot = (type, bots) => {
+        bots[type]++;
+        return bots;
+    }
+
+    const spitPathIfPossible = (path, botType, minRemainingT) => {
+        if (!canBuildBot(botType, path.bots)) return 0;
+        let t = Math.max(0, ...bp[botType].map(c => Math.ceil((c.amount-path.resourcePool[c.type])/path.bots[c.type])))
+        if (path.timeLeft - t >= minRemainingT) return paths.push({
+            timeLeft: path.timeLeft-t-1,
+            bots: addBot(botType, path.bots.slice()),
+            resourcePool: buildBot(botType, advancePool(path.resourcePool, path.bots, t+1))
+        })
+        return 0;
+    }
+
+    let paths = [{bots: [1, 0, 0, 0], timeLeft: timeLeft, resourcePool: [0, 0, 0, 0]}];
+    let maxResult = 0, earliestGeode = 0;
 
     while (paths.length) {
         let path = paths.pop();
-        path.steps.push([path.resourcePool.join(', '), path.bots.join(', ')]);
 
-        if (path.resourcePool[types.GEODE] >= 1 && path.timeLeft > earliestGeoge) {
-            earliestGeoge = path.timeLeft;
-        }
-
-        if (path.timeLeft < earliestGeoge && path.resourcePool[types.GEODE] == 0) continue;
+        if (path.resourcePool[types.GEODE] > 0 && path.timeLeft > earliestGeode) earliestGeode = path.timeLeft;
+        if (path.timeLeft < earliestGeode && path.resourcePool[types.GEODE] == 0) continue;
 
         if (path.timeLeft <= 0) {
-            path.finished = true;
-            if (path.resourcePool[types.GEODE] > maxResult) {
-                maxResult = path.resourcePool[types.GEODE];
-            }
-        }
-        if (path.finished) continue;
-
-        let referenceRP = path.resourcePool.slice();
-        let advancedRP = advancePool(path.resourcePool, path.bots);
-
-        let attempts = [], noBuiltOption = true;
-
-        if (path.timeLeft > 1) {
-            if (canBuildBot(types.GEODE, referenceRP)) {
-                attempts.push(types.GEODE);
-                noBuiltOption = false;
-            } else if (canBuildBot(types.OBSIDIAN, referenceRP)) {
-                attempts.push(types.OBSIDIAN);
-                noBuiltOption = false;
-            } else {
-                if (path.bots[types.OBSIDIAN] <= 2) {
-                    if (path.timeLeft > 10) {
-                        if (path.bots[types.ORE] == 1) {
-                            attempts.push(types.ORE);
-                            if (canBuildBot(types.ORE, referenceRP)) noBuiltOption = false;
-                        } else {
-                            if (path.bots[types.ORE] < 3) attempts.push(types.ORE);
-                            if (path.bots[types.CLAY] < getBotCost(types.OBSIDIAN, types.CLAY)-1) attempts.push(types.CLAY);
-                        }
-                    }
-                }
-            }
+            maxResult = Math.max(maxResult, path.resourcePool[types.GEODE]);
+            continue;
         }
 
-        // default path, let's advance
-        if (noBuiltOption) paths.push({
-            timeLeft: path.timeLeft-1,
+        let spitPaths = 0;
+
+        spitPaths += spitPathIfPossible(path, types.GEODE, 1);
+        spitPaths += spitPathIfPossible(path, types.OBSIDIAN, 4);
+
+        if (path.bots[types.CLAY] < getBotCost(types.OBSIDIAN, types.CLAY)-1)
+            spitPaths += spitPathIfPossible(path, types.CLAY, 7);
+       
+        if (path.bots[types.ORE] < 4)
+            spitPaths += spitPathIfPossible(path, types.ORE, 16);
+
+        if (!spitPaths) paths.push({
+            timeLeft: 0,
             bots: path.bots.slice(),
-            steps: path.steps.slice(),
-            resourcePool: advancedRP.slice()
-        });
-
-        attempts.forEach(botType => {
-            if (canBuildBot(botType, referenceRP)) {
-                let tmp = {
-                    timeLeft: path.timeLeft-1,
-                    bots: path.bots.slice(),
-                    steps: path.steps.slice(),
-                    resourcePool: advancedRP
-                }
-                tmp.bots[botType]++;
-                tmp.resourcePool = buildBot(botType, advancedRP);
-
-                paths.push(tmp);
-            }
+            resourcePool: advancePool(path.resourcePool, path.bots, path.timeLeft)
         })
-
-        i++; if (i > 10000000) {console.log('em break');break}
     }
 
     return maxResult;
 }
 
+const part1 = blueprints => blueprints.reduce((res, bp, bpId) => res + run(bp, 24)*(bpId+1), 0)
 const part2 = blueprints => blueprints.slice(0, 3).reduce((res, bp, bpId) => res * run(bp, 32), 1)
 
-let blueprints = getBlueprintes(input);
+let blueprints = getBlueprints(input);
 
+console.log('part1', part1(blueprints));
 console.log('part2', part2(blueprints));
-
-
-/*
-// this branch pruning works on both parts, but just on my input
-
-if (path.timeLeft > 1) {
-    if (canBuildBot(types.GEODE, referenceRP)) {
-        attempts.push(types.GEODE);
-        noBuiltOption = false;
-    } else if (canBuildBot(types.OBSIDIAN, referenceRP)) {
-        attempts.push(types.OBSIDIAN);
-        noBuiltOption = false;
-    } else {
-        if (path.bots[types.OBSIDIAN] <= 2) {
-            if (path.timeLeft > 10) {
-                if (path.bots[types.ORE] == 1) {
-                    attempts.push(types.ORE);
-                    if (canBuildBot(types.ORE, referenceRP)) noBuiltOption = false;
-                } else {
-                    if (path.bots[types.ORE] < 3) attempts.push(types.ORE);
-                    if (path.bots[types.CLAY] < bp.bots[2].cost[1].amount-1) attempts.push(types.CLAY);
-                }
-            }
-        }
-    }
-}
-*/
