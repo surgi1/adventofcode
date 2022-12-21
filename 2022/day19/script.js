@@ -1,5 +1,9 @@
 // just part 2, for part 1 check script.part1.js
 
+// inception! need to rewrite this, instead by stepping 1 second at a time
+// we need to figure out what are all the next bots we can possibly build
+// (that make also sense to build) and ffwd directly to that time (TBD)
+
 const types = {
     ORE: 0,
     CLAY: 1,
