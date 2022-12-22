@@ -2,7 +2,7 @@
 // a fun twist: actually *all the real inputs are the same shape*!
 // (my pocket troll-o-meter was stuck on 3.6 and then just melted down)
 
-let map = [], cols = false, rows;
+let map = [], cols = false, rows, size;
 let pos = {row: 0, col: 0, dir: '>'}
 
 const inc = {'>': [1, 0], 'v': [0, 1], '<': [-1, 0], '^': [0, -1]}
@@ -12,12 +12,9 @@ const rotate = {
     R: {'>': 'v', 'v': '<', '<': '^', '^': '>'}
 }
 
-const startingCols = [50, 100, 50, 0, 50, 0];
-const startingRows = [0, 0, 50, 100, 100, 150];
-
 const val = pos => (pos.row+1)*1000+(pos.col+1)*4+dirValue[pos.dir]
 const mapVal = pos => map[pos.row][pos.col];
-const sideVal = pos => sideMap[pos.row][pos.col];
+const sideVal = pos => sideMap[Math.floor(pos.row / size)][Math.floor(pos.col / size)];
 
 // this can definitely be simplified / made a lot more generic ¯\_(ツ)_/¯
 const nextPosP2 = (p) => {
@@ -39,7 +36,7 @@ const nextPosP2 = (p) => {
     if (sideTo) return pos;
 
     // and now the fun part, this is tied to the specific shape of the cube map, check the image in the repo for better understanding
-
+    // possible todo: locate sideFrom and sideTo on the minimap, use their col, row indices to replace the 50, 100, 150 numbers below
     if (sideFrom == 1 && pos.dir == '^') {
         // 1 to 6
         pos.dir = '>';
@@ -142,14 +139,13 @@ const move = (steps, nextPos) => {
 }
 
 const genSideMap = () => {
-    // construct clone of map but with cube sides
-    let sideMap = Array.from({length:rows}, () => Array(cols));
-    // mark sides
-    for (let side = 0; side <= 5; side++)
-        for (let row = 0; row < 50; row++)
-            for (let col = 0; col < 50; col++)
-                sideMap[row+startingRows[side]][col+startingCols[side]] = side+1;
-    return sideMap;
+    let div = rows > cols ? [3, 4] : [4, 3]; // cols, rows
+    size = cols/div[0];
+    let miniMap = Array.from({length:div[1]}, () => Array(div[0])), side = 1;
+    for (let row = 0; row < div[1]; row++)
+        for (let col = 0; col < div[0]; col++)
+            if (map[row*size][col*size] != undefined) miniMap[row][col] = side++;
+    return miniMap;
 }
 
 const run = nextPosFnc => {
