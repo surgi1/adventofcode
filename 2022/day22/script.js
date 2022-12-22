@@ -1,4 +1,6 @@
-// part 2 works only for inputs in the same shape as mine, sorry jako
+// part 2 works only for inputs in the same shape as mine
+// a fun twist: actually *all the real inputs are the same shape*!
+// (my pocket troll-o-meter was stuck on 3.6 and then just melted down)
 
 let map = [], cols = false, rows;
 let pos = {row: 0, col: 0, dir: '>'}
