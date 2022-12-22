@@ -28,23 +28,15 @@ const nextPosP2 = (p) => {
     pos.col += i[0];
 
     // check bounds as well
-    let sideTo = (pos.row < 0 || pos.col < 0 || pos.row >= rows || pos.col >= cols) ? 123 : sideVal(pos);
+    let sideTo = (pos.row < 0 || pos.col < 0 || pos.row >= rows || pos.col >= cols) ? undefined : sideVal(pos);
 
+    // no transition
     if (sideTo == sideFrom) return pos;
 
-    // and now the fun part, this is tied to the specific shape of the cube map, check the image in the repo for better understanding
+    // naturally supported transitions
+    if (sideTo) return pos;
 
-    // first the easy ones
-    if (sideFrom == 1 && pos.dir == '>') return pos;
-    if (sideFrom == 1 && pos.dir == 'v') return pos;
-    if (sideFrom == 2 && pos.dir == '<') return pos;
-    if (sideFrom == 3 && pos.dir == '^') return pos;
-    if (sideFrom == 3 && pos.dir == 'v') return pos;
-    if (sideFrom == 4 && pos.dir == '>') return pos;
-    if (sideFrom == 4 && pos.dir == 'v') return pos;
-    if (sideFrom == 5 && pos.dir == '^') return pos;
-    if (sideFrom == 5 && pos.dir == '<') return pos;
-    if (sideFrom == 6 && pos.dir == '^') return pos;
+    // and now the fun part, this is tied to the specific shape of the cube map, check the image in the repo for better understanding
 
     if (sideFrom == 1 && pos.dir == '^') {
         // 1 to 6
