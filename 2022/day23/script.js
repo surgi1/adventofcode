@@ -1,7 +1,7 @@
 const k = (x, y) => y+'_'+x;
 
 const init = (input, elves = new Set(), s = '') => {
-    const drawElf = (e, x, y) => s += '<div id="_'+e+'" class="elf" style="top:'+Math.round(300+(y*16))+'px;left:'+Math.round(300+(x*16))+'px"></div>'+"\n"
+    const drawElf = (e, x, y) => s += '<div id="'+e+'" class="elf" style="top:'+Math.round(300+(y*16))+'px;left:'+Math.round(300+(x*16))+'px"></div>'+"\n"
 
     input.split("\n").map((line, y) => {
         line.split('').map((v, x) => (v == '#') && elves.add(k(x,y)) && drawElf(k(x,y), x, y))
@@ -21,14 +21,14 @@ const locsToConsider = [
 let startingLoc = 0;
 
 const directions = {
-    N:  {xd: 0, yd: -1},
-    NE: {xd: 1, yd: -1},
+    N:  {xd:  0, yd: -1},
+    NE: {xd:  1, yd: -1},
     NW: {xd: -1, yd: -1},
-    S:  {xd: 0, yd: 1},
-    SE: {xd: 1, yd: 1},
-    SW: {xd: -1, yd: 1},
-    W:  {xd: -1, yd: 0},
-    E:  {xd: 1, yd: 0}}
+    S:  {xd:  0, yd:  1},
+    SE: {xd:  1, yd:  1},
+    SW: {xd: -1, yd:  1},
+    W:  {xd: -1, yd:  0},
+    E:  {xd:  1, yd:  0}}
 
 const round = elves => {
     let considerations = new Map(); // keyed by new loc, additive
@@ -53,29 +53,27 @@ const round = elves => {
         }
     })
 
-    let newElves = new Set(), elfMap = new Map(), moved = false;
+    let elfMap = new Map(), moved = false;
     elves.forEach(e => {
         if (destinations[e] && considerations[destinations[e]] == 1) {
-            newElves.add(destinations[e]);
             elfMap[e] = destinations[e];
             moved = true;
             return true;
         }
         elfMap[e] = e;
-        newElves.add(e);
     })
 
     startingLoc++;
 
-    Object.entries(elfMap).map(([k, v]) => {
+    Object.entries(elfMap).filter(([k, v]) => k != v).map(([k, v]) => {
         let [y, x] = v.split('_').map(Number);
-        let elfEl = document.getElementById('_'+k);
+        let elfEl = document.getElementById(k);
         elfEl.style.left = x*16+300+'px';
         elfEl.style.top = y*16+300+'px';
-        elfEl.id = '_'+v;
+        elfEl.id = v;
     })
 
-    return [newElves, moved];
+    return [new Set(Object.values(elfMap)), moved];
 }
 
 const getBounds = elves => {
