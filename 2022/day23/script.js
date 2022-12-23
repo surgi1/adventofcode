@@ -1,7 +1,7 @@
 const k = (x, y) => y+'_'+x;
 
 const init = (input, elves = new Set(), s = '') => {
-    const drawElf = (e, x, y) => s += '<div id="_'+e+'" class="elf" style="top:'+Math.round(400.0+(y*16))+'px;left:'+Math.round(400.0+(x*16))+'px"></div>'+"\n"
+    const drawElf = (e, x, y) => s += '<div id="_'+e+'" class="elf" style="top:'+Math.round(300+(y*16))+'px;left:'+Math.round(300+(x*16))+'px"></div>'+"\n"
 
     input.split("\n").map((line, y) => {
         line.split('').map((v, x) => (v == '#') && elves.add(k(x,y)) && drawElf(k(x,y), x, y))
@@ -70,8 +70,8 @@ const round = elves => {
     Object.entries(elfMap).map(([k, v]) => {
         let [y, x] = v.split('_').map(Number);
         let elfEl = document.getElementById('_'+k);
-        elfEl.style.left = Math.round(x*16+400)+'px';
-        elfEl.style.top = Math.round(y*16+400)+'px';
+        elfEl.style.left = x*16+300+'px';
+        elfEl.style.top = y*16+300+'px';
         elfEl.id = '_'+v;
     })
 
