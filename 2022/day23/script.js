@@ -1,10 +1,14 @@
 const k = (x, y) => y+'_'+x;
 
-const init = (input, elves = new Set()) => {
-    startingLoc = 0;
+const init = (input, elves = new Set(), s = '') => {
+    const drawElf = (e, x, y) => s += '<div id="_'+e+'" class="elf" style="top:'+Math.round(400.0+(y*16))+'px;left:'+Math.round(400.0+(x*16))+'px"></div>'+"\n"
+
     input.split("\n").map((line, y) => {
-        line.split('').map((v, x) => (v == '#') && elves.add(k(x,y)))
+        line.split('').map((v, x) => (v == '#') && elves.add(k(x,y)) && drawElf(k(x,y), x, y))
     })
+
+    document.getElementById('root').innerHTML += s;
+
     return elves;
 }
 
@@ -49,28 +53,32 @@ const round = elves => {
         }
     })
 
-    let newElves = new Set(), moved = false;
+    let newElves = new Set(), elfMap = new Map(), moved = false;
     elves.forEach(e => {
         if (destinations[e] && considerations[destinations[e]] == 1) {
             newElves.add(destinations[e]);
+            elfMap[e] = destinations[e];
             moved = true;
             return true;
         }
+        elfMap[e] = e;
         newElves.add(e);
     })
 
     startingLoc++;
 
-    // graphics for deugging
-    //console.log(input.split("\n").map((line, y) => line.split('').map((v, x) => elves.has(k(x,y) ? '#' : '.').join('')).join("\n"))
+    Object.entries(elfMap).map(([k, v]) => {
+        let [y, x] = v.split('_').map(Number);
+        let elfEl = document.getElementById('_'+k);
+        elfEl.style.left = Math.round(x*16+400)+'px';
+        elfEl.style.top = Math.round(y*16+400)+'px';
+        elfEl.id = '_'+v;
+    })
 
     return [newElves, moved];
 }
 
-const part1 = input => {
-    let elves = init(input), rounds = 10;
-    while (rounds--) elves = round(elves)[0];
-    
+const getBounds = elves => {
     let minX = 4, maxX = 4, minY = 4, maxY = 4;
     elves.forEach(e => {
         let [y, x] = e.split('_').map(Number);
@@ -79,21 +87,23 @@ const part1 = input => {
         maxX = Math.max(maxX, x);
         maxY = Math.max(maxY, y);
     })
-
-    return (1+Math.abs(maxY-minY))*(1+Math.abs(maxX-minX))-elves.size;
+    return [minX, maxX, minY, maxY];
 }
 
-const part2 = input => {
-    let elves = init(input);
-    let rounds = 0, moved = true;
+const run = input => {
+    let elves = init(input), rounds = 0, moved = true;
 
-    while (moved) {
+    const tick = () => {
         [elves, moved] = round(elves);
         rounds++;
+        if (rounds == 10) {
+            let [minX, maxX, minY, maxY] = getBounds(elves);
+            console.log((1+Math.abs(maxY-minY))*(1+Math.abs(maxX-minX))-elves.size);
+        }
+        if (moved) setTimeout(tick, 10); else console.log(rounds);
     }
 
-    return rounds;
+    tick();
 }
 
-console.log(part1(input));
-console.log(part2(input));
+run(input);
