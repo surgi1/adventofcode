@@ -8,7 +8,6 @@ const init = (input, elves = new Set(), s = '') => {
     })
 
     document.getElementById('root').innerHTML += s;
-
     return elves;
 }
 
@@ -53,27 +52,21 @@ const round = elves => {
         }
     })
 
-    let elfMap = new Map(), moved = false;
+    let newElves = new Set(), moved = false;
     elves.forEach(e => {
         if (destinations[e] && considerations[destinations[e]] == 1) {
-            elfMap[e] = destinations[e];
+            newElves.add(destinations[e]);
             moved = true;
-            return true;
-        }
-        elfMap[e] = e;
+            let elfEl = document.getElementById(e);
+            let [y, x] = destinations[e].split('_').map(Number);
+            elfEl.style.left = x*16+300+'px';
+            elfEl.style.top = y*16+300+'px';
+            elfEl.id = destinations[e];
+        } else newElves.add(e);
     })
 
     startingLoc++;
-
-    Object.entries(elfMap).filter(([k, v]) => k != v).map(([k, v]) => {
-        let [y, x] = v.split('_').map(Number);
-        let elfEl = document.getElementById(k);
-        elfEl.style.left = x*16+300+'px';
-        elfEl.style.top = y*16+300+'px';
-        elfEl.id = v;
-    })
-
-    return [new Set(Object.values(elfMap)), moved];
+    return [newElves, moved];
 }
 
 const getBounds = elves => {
@@ -90,7 +83,6 @@ const getBounds = elves => {
 
 const run = input => {
     let elves = init(input), rounds = 0, moved = true;
-
     const tick = () => {
         [elves, moved] = round(elves);
         rounds++;
@@ -100,7 +92,6 @@ const run = input => {
         }
         if (moved) setTimeout(tick, 10); else console.log(rounds);
     }
-
     tick();
 }
 
