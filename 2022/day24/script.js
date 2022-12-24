@@ -6,11 +6,7 @@ let map = [], blizMaps = [], t;
 
 const gcd = (a, b) => a ? gcd(b % a, a) : b;
 const lcm = (a, b) => a * b / gcd(a, b);
-
-const negMod = (a, b) => {
-  a += b*100000000;
-  return a % b;
-}
+const negMod = (a, b) => (a+b*100000000) % b;
 
 const dirs = [
   [-1, 0],
@@ -51,9 +47,9 @@ const run = (start, end, t0) => {
         if (p.y == end.y && p.x == end.x) return p.t;
 
         dirs.forEach(([dy, dx]) => {
-            if (blizMaps[(p.t+1) % blizMaps.length][p.y+dy])
-                if (blizMaps[(p.t+1) % blizMaps.length][p.y+dy][p.x+dx] == 0) 
-                    paths.push({y: p.y+dy, x: p.x+dx, t: p.t+1})
+            if (!blizMaps[(p.t+1) % blizMaps.length][p.y+dy]) return true;
+            if (blizMaps[(p.t+1) % blizMaps.length][p.y+dy][p.x+dx] == 0) 
+                paths.push({y: p.y+dy, x: p.x+dx, t: p.t+1})
         })
     }
 }
