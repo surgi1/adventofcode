@@ -4,12 +4,11 @@
 let map = [], blizMaps = [], t;
 
 const dirs = [
-  [-1, 0],
-  [0, -1],
-  [0, 0],
-  [1, 0],
-  [0, 1]
-];
+  [-1,  0],
+  [ 0, -1],
+  [ 0,  0], // waiting
+  [ 1,  0],
+  [ 0,  1]];
 
 const getBlizMap = t => {
     const safeMod = (a, b) => (a+b*100000000) % b;
