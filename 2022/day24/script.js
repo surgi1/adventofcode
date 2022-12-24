@@ -1,7 +1,7 @@
 // the trick: do not compute blizzard map for each minute repeatedly
 // then it is simple bfs with tracing visited triplets of x, y and time
 
-let map = [], blizMaps = [], t;
+let map = [], blizMaps = [];
 
 const dirs = [
   [-1,  0],
@@ -48,9 +48,6 @@ map = input.split("\n").map(l => l.split(''));
 let start = {x: map[0].indexOf('.'), y: 0};
 let end = {x: map[map.length-1].indexOf('.'), y: map.length-1};
 
-t = run(start, end, 0);
+let t = run(start, end, 0);
 console.log('part 1', t);
-
-t = run(end, start, t);
-t = run(start, end, t);
-console.log('part 2', t);
+console.log('part 2', run(start, end, run(end, start, t)));
