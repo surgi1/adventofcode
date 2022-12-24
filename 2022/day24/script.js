@@ -12,17 +12,18 @@ const dirs = [
 ];
 
 const getBlizMap = t => {
-    const negMod = (a, b) => (a+b*100000000) % b;
+    const safeMod = (a, b) => (a+b*100000000) % b;
 
     if (blizMaps[t]) return blizMaps[t];
+    
     let h = map.length-2, w = map[0].length-2;
     let bmap = map.map(l => l.map(v => v == '#' ? 1 : 0 ));
 
     map.map((l, y) => l.map((v, x) => {
-        if (v == '^') bmap[negMod(y-1-t, h) + 1][x] = 1;
+        if (v == '^') bmap[safeMod(y-1-t, h) + 1][x] = 1;
         if (v == 'v') bmap[((y-1+t) % h) + 1][x] = 1;
         if (v == '>') bmap[y][((x-1+t) % w) + 1] = 1;
-        if (v == '<') bmap[y][negMod(x-1-t, w) + 1] = 1;
+        if (v == '<') bmap[y][safeMod(x-1-t, w) + 1] = 1;
     }))
 
     blizMaps[t] = bmap;
@@ -30,7 +31,7 @@ const getBlizMap = t => {
 }
 
 const run = (start, end, t0) => {
-    const k = p => p.x+'_'+p.y+'_'+ p.t % blizMaps.length;
+    const k = p => p.x+'_'+p.y+'_'+ p.t;
 
     let paths = [{x: start.x, y: start.y, t: t0}], seen = new Set();
     while (paths.length) {
@@ -39,7 +40,7 @@ const run = (start, end, t0) => {
         seen.add(k(p));
         if (p.y == end.y && p.x == end.x) return p.t;
         let bmap = getBlizMap(p.t+1);
-        dirs.forEach(([dy, dx]) => bmap[p.y+dy] && bmap[p.y+dy][p.x+dx] == 0 && paths.push({y: p.y+dy, x: p.x+dx, t: p.t+1}))
+        dirs.forEach(([dx, dy]) => bmap[p.y+dy] && bmap[p.y+dy][p.x+dx] == 0 && paths.push({y: p.y+dy, x: p.x+dx, t: p.t+1}))
     }
 }
 
