@@ -58,16 +58,19 @@ const computePaths = timeLeft => {
 }
 
 const part2 = () => {
-    let paths = computePaths(26), max = 0;
+    let paths = computePaths(26), max = 0, ref = paths[0].releasedPressure;
 
-    // this needs some memoization / speed-up / rethinking. Runs approx for 2 minutes ;/
-    for (let i = 0; i < paths.length; i++)
-        for (let j = i+1; j < paths.length; j++)
+    for (let i = 0; i < paths.length; i++) {
+        if (paths[i].releasedPressure+ref < max) continue;
+        for (let j = i+1; j < paths.length; j++) {
+            if (paths[i].releasedPressure+paths[j].releasedPressure < max) continue;
             if (paths[i].steps.every(s => !paths[j].steps.includes(s)))
                 if (paths[i].releasedPressure+paths[j].releasedPressure > max) {
                     console.log('we have a new p2 max', paths[i].releasedPressure+paths[j].releasedPressure );
                     max = paths[i].releasedPressure+paths[j].releasedPressure;
                 }
+        }
+    }
 }
 
 console.log(computePaths(30)[0].releasedPressure); // p1
