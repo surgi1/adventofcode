@@ -1,6 +1,6 @@
 # Advent of Code 2022
 
-Summary for puzzles of 2022; TBD.
+Puzzles of 2022's set maintained difficulty roughly similar to the previous year, making it another great set of sometimes innovative and most of times fun challenges!
 
 [https://adventofcode.com/2022](https://adventofcode.com/2022)
 
