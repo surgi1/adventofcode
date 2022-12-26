@@ -1,15 +1,4 @@
-let nodes = input.split("\n").map((row, id) => {
-    let tmp = row.split(' ');
-    return {
-        id: id,
-        name: tmp[1],
-        rate: Number(tmp[4].match(/\d+/g)[0]),
-        connections: tmp.slice(tmp.indexOf('to')+2).map(v => v.substr(0, 2))
-    }
-})
-
-let nodeByName = {};
-nodes.map((n, i) => nodeByName[n.name] = n);
+let nodes = [], nodeByName = {};
 
 const activeNodes = () => nodes.filter(n => n.rate > 0)
 
@@ -27,8 +16,7 @@ const distanceMap = (startName, distances = {}) => {
 
 const computePaths = timeLeft => {
     console.log('compute paths for time', timeLeft)
-    let paths = [{curr: 'AA', active: activeNodes().map(n => n.name), timeLeft: timeLeft, finished: false, steps: [], releasedPressure: 0}]
-
+    let paths = [{curr: 'AA', active: activeNodes().map(n => n.name), timeLeft: timeLeft, finished: false, steps: [], releasedPressure: 0}];
     let max = 0;
 
     for (let n = 0; n < paths.length; n++) {
@@ -65,13 +53,23 @@ const part2 = () => {
         for (let j = i+1; j < paths.length; j++) {
             if (paths[i].releasedPressure+paths[j].releasedPressure < max) continue;
             if (paths[i].steps.every(s => !paths[j].steps.includes(s)))
-                if (paths[i].releasedPressure+paths[j].releasedPressure > max) {
-                    console.log('we have a new p2 max', paths[i].releasedPressure+paths[j].releasedPressure );
-                    max = paths[i].releasedPressure+paths[j].releasedPressure;
-                }
+                max = Math.max(max, paths[i].releasedPressure+paths[j].releasedPressure);
         }
     }
+    return max;
 }
 
+nodes = input.split("\n").map((row, id) => {
+    let tmp = row.split(' ');
+    return {
+        id: id,
+        name: tmp[1],
+        rate: Number(tmp[4].match(/\d+/g)[0]),
+        connections: tmp.slice(tmp.indexOf('to')+2).map(v => v.substr(0, 2))
+    }
+})
+
+nodes.forEach((n, i) => nodeByName[n.name] = n);
+
 console.log(computePaths(30)[0].releasedPressure); // p1
-part2();
+console.log(part2());
