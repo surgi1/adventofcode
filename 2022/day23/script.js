@@ -1,13 +1,13 @@
 const k = (x, y) => y+'_'+x;
 
 const init = (input, elves = new Set(), s = '') => {
-    const drawElf = (e, x, y) => s += '<div id="'+e+'" class="elf" style="top:'+Math.round(300+(y*16))+'px;left:'+Math.round(300+(x*16))+'px"></div>'+"\n"
+    const drawElf = (e, x, y) => s += `<div id="${e}" class="elf" style="top:${300+(y*16)}px;left:${300+(x*16)}px"></div>\n`
 
     input.split("\n").map((line, y) => {
         line.split('').map((v, x) => (v == '#') && elves.add(k(x,y)) && drawElf(k(x,y), x, y))
     })
 
-    document.getElementById('root').innerHTML += s;
+    document.getElementById('root').innerHTML = s;
     return elves;
 }
 
