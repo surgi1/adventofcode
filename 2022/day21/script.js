@@ -21,21 +21,6 @@ const compute = (m, monkeys, part2 = true, res = 0) => {
     return res;
 }
 
-const parenthe = v => v.match(/[\+\-\*\\=]/) ? '('+v+')' : v;
-
-const print = (m, monkeys) => {
-    if (m == 'humn') return 'x'; // so wolfram alpha catches up
-    if (notConst.has(m) && m != 'root' && !isNaN(monkeys[m])) return m;
-
-    if (!isNaN(monkeys[m])) return monkeys[m]+'';
-
-    if (m == 'root') return parenthe(print(monkeys[m][0], monkeys))+'='+parenthe(print(monkeys[m][2], monkeys));
-    if (monkeys[m][1] == '+') return parenthe(print(monkeys[m][0], monkeys))+'+'+parenthe(print(monkeys[m][2], monkeys));
-    if (monkeys[m][1] == '-') return parenthe(print(monkeys[m][0], monkeys))+'-'+parenthe(print(monkeys[m][2], monkeys));
-    if (monkeys[m][1] == '*') return parenthe(print(monkeys[m][0], monkeys))+'*'+parenthe(print(monkeys[m][2], monkeys));
-    if (monkeys[m][1] == '/') return parenthe(print(monkeys[m][0], monkeys))+'/'+parenthe(print(monkeys[m][2], monkeys));
-}
-
 const findNotConst = monkeys => {
     let m1 = {...monkeys}, m2 = {...monkeys}
 
@@ -49,9 +34,35 @@ const findNotConst = monkeys => {
 const part2 = monkeys => {
     findNotConst(monkeys);
     compute('root', monkeys);
-    console.log('part 2: Paste the following to Wolfram Alpha or solve by hand!')
-    console.log(print('root', monkeys));
+
+    monkeys.humn = 'humn';
+    let res, n;
+    if (isNaN(monkeys[monkeys.root[0]])) {
+        res = monkeys[monkeys.root[2]];
+        n = monkeys[monkeys.root[0]];
+    } else {
+        res = monkeys[monkeys.root[0]];
+        n = monkeys[monkeys.root[2]];
+    }
+
+    while (n != 'humn') {
+        if (isNaN(monkeys[n[0]])) {
+            if (n[1] == '+') res = res - monkeys[n[2]];
+            if (n[1] == '-') res = res + monkeys[n[2]];
+            if (n[1] == '*') res = res / monkeys[n[2]];
+            if (n[1] == '/') res = res * monkeys[n[2]];
+            n = monkeys[n[0]];
+        } else {
+            if (n[1] == '+') res = res - monkeys[n[0]];
+            if (n[1] == '-') res = -(res - monkeys[n[0]]);
+            if (n[1] == '*') res = res / monkeys[n[0]];
+            if (n[1] == '/') res = 1/(res / monkeys[n[0]]);
+            n = monkeys[n[2]]
+        }
+    }
+
+    return res;
 }
 
 console.log('part 1', compute('root', {...monkeys}, false));
-part2({...monkeys});
+console.log('part 2', part2({...monkeys}));
