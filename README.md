@@ -13,7 +13,7 @@ Hence comes this repo, documenting my path to gathering now 400★ stars and bey
 - A number of puzzles are alike. Abstracting meaningful parts of your solution might be worth it. Talking Distance maps, Graph traversing algorithms or ASCII-art rendering here.
 - This one is even mentioned in one of the puzzle descriptions: Do not always aim to solve all the imaginable puzzle configurations. Look for simplifications, boundaries, try to cut the corners.
 - And last but not least, remember that you don't have to solve everything by your code. Cumbersome inputs can be converted into more manageable state by a tool of choice rather than by lengthy regexes, difficult math problems can be passed to Wolfram Alpha, complicated logic can be solved manually, often even as a game. Your task is to find the answers to the puzzles, and the means and measures you take to do so are also yours.
-- For general puzzle categorization and general difficulty roster, check [this awesome summary](https://www.reddit.com/r/adventofcode/comments/z0vmy0/350_stars_a_categorization_and_megaguide/).
+- For general puzzle categorization and difficulty roster, check [this awesome summary](https://www.reddit.com/r/adventofcode/comments/z0vmy0/350_stars_a_categorization_and_megaguide/).
 
 # Advent of Code
 
