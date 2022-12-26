@@ -15,7 +15,6 @@ const distanceMap = (startName, distances = {}) => {
 }
 
 const computePaths = timeLeft => {
-    console.log('compute paths for time', timeLeft)
     let paths = [{curr: 'AA', active: activeNodes().map(n => n.name), timeLeft: timeLeft, finished: false, steps: [], releasedPressure: 0}];
     let max = 0;
 
