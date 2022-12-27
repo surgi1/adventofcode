@@ -29,3 +29,7 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 ### Day 23: Marching elves!
 
 ![Marching elves!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_23.png)
+
+### Day 24: Dancing hero!
+
+![Dancing hero!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_24.png)

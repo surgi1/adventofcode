@@ -4,4 +4,6 @@ https://adventofcode.com/2022/day/24
 
 JavaScript implementation
 
-Check it live at https://surgi1.github.io/adventofcode/2022/day24/index.html
+Check it live, contains oh-so-leet visuals and playable game! https://surgi1.github.io/adventofcode/2022/day24/index.game.html
+
+![Dancing hero!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_24.png)
