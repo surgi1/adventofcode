@@ -1,6 +1,7 @@
 // the speed-up: do not compute blizzard map for each minute repeatedly
 // simple bfs with tracing visited triplets of x, y and time
-
+const wallColors = ['#2f3f63', '#1f1f53'];
+const grndColors = ['#e0e6f4', '#eee', '#eee', '#eee'];
 const moves = {
     '<': [-1, 0],
     '^': [0, -1],
@@ -8,8 +9,30 @@ const moves = {
     '>': [1, 0],
     'v': [0, 1]
 }
+const elfSpriteIds = {
+    '^': 0,
+    '<': 1,
+    'v': 2,
+    'wait': 2,
+    '>': 7
+}
+const keyMap = {
+    ArrowLeft: '<',
+    ArrowRight: '>',
+    ArrowUp: '^',
+    ArrowDown: 'v',
+    KeyA: '<',
+    KeyD: '>',
+    KeyW: '^',
+    KeyS: 'v',
+    Space: 'wait'
+};
 
-let map = [], blizMaps = [], dirs = Object.values(moves), movesEntries = Object.entries(moves), autoRun = false;
+let map = [], blizMaps = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
+    autoRun = false, elf = {}, step = 0, p, steps, start, end,
+    canvas = document.getElementById("canvas"), ctx = canvas.getContext("2d"), spriteSize = 32,
+    drawing = false, sprites = new Image(),
+    frame = 0, stepStartFrame = false, keysPressed = {};
 
 const getBlizMap = t => {
     const safeMod = (a, b) => (a+b*100000000) % b;
@@ -52,28 +75,6 @@ const run = (start, end, t0) => {
     }
 }
 
-blizMaps = [];
-map = input.split("\n").map(l => l.split(''));
-
-let start = {x: map[0].indexOf('.'), y: 0};
-let end = {x: map[map.length-1].indexOf('.'), y: map.length-1};
-
-let p, steps;
-
-let blizs = [];
-input.split("\n").forEach((l, y) => l.split('').forEach((v, x) => {
-    if ('<>^v'.indexOf(v) == -1) return true;
-    blizs.push({x:x, y:y, t:v})
-}));
-
-const canvas = document.getElementById("canvas"), ctx = canvas.getContext("2d"), spriteSize = 32;
-//const wallColors = ['#689', '#888', '#789'];
-const wallColors = ['#2f3f63', '#1f1f53', /*'#3f3f53'*/];
-
-const grndColors = ['#e0e6f4', '#eee', '#eee', '#eee'];
-let drawing = false, sprites = new Image(), step = 0;
-let elf = {x: start.x, y: start.y, spriteId: 2, action: 'wait', hp: 50}
-
 const initBackground = () => {
     canvas.offscreenCanvas = document.createElement("canvas");
     canvas.offscreenCanvas.width = canvas.width;
@@ -100,7 +101,6 @@ const initBackground = () => {
 }
 
 const adjust = (dir, anim, v) => moves[v][dir]*anim
-
 const drawSprite = (spriteId, x, y, ax, ay) => ctx.drawImage(sprites, spriteId*spriteSize, 0, spriteSize, spriteSize, x*spriteSize+ax, y*spriteSize+ay, spriteSize, spriteSize);
 
 const draw = () => {
@@ -186,16 +186,6 @@ const draw = () => {
     }
 }
 
-let frame = 0, stepStartFrame = false;
-
-const elfSpriteIds = {
-    '^': 0,
-    '<': 1,
-    'v': 2,
-    'wait': 2,
-    '>': 7
-}
-
 const action = v => {
     if (stepStartFrame !== false) return;
     elf.spriteId = elfSpriteIds[v];
@@ -205,35 +195,13 @@ const action = v => {
     stepStartFrame = frame;
 }
 
-let keyMap = {
-    ArrowLeft: '<',
-    ArrowRight: '>',
-    ArrowUp: '^',
-    ArrowDown: 'v',
-    KeyA: '<',
-    KeyD: '>',
-    KeyW: '^',
-    KeyS: 'v',
-    Space: 'wait'
-};
-
-let keysPressed = {};
-
-window.addEventListener('keyup', e => {
-    if (keyMap[e.code] !== undefined) keysPressed[e.code] = false;
-});
-window.addEventListener('keydown', e => {
-    if (keyMap[e.code] !== undefined) {
-        keysPressed[e.code] = true;
-        e.preventDefault();
-    }
-});
-
 const restart = () => {
     blizMaps = [];
     map = input.split("\n").map(l => l.split(''));
+    start = {x: map[0].indexOf('.'), y: 0};
+    end = {x: map[map.length-1].indexOf('.'), y: map.length-1};
     step = 0;
-    elf.x = 1; elf.y = 0; elf.hp = 50;
+    elf = {x: start.x, y: start.y, spriteId: 2, action: 'wait', hp: 50}
     blizs = [];
     input.split("\n").forEach((l, y) => l.split('').forEach((v, x) => {
         if ('<>^v'.indexOf(v) == -1) return true;
@@ -241,23 +209,34 @@ const restart = () => {
     }));
 }
 
-document.getElementById('auto').addEventListener('click', e => {
-    if (autoRun) return;
+const initUI = () => {
+    window.addEventListener('keyup', e => {
+        if (keyMap[e.code] !== undefined) keysPressed[e.code] = false;
+    });
+    window.addEventListener('keydown', e => {
+        if (keyMap[e.code] !== undefined) {
+            keysPressed[e.code] = true;
+            e.preventDefault();
+        }
+    });
+    document.getElementById('auto').addEventListener('click', e => {
+        if (autoRun) return;
 
-    restart();
+        restart();
 
-    p = run(start, end, 0);
+        p = run(start, end, 0);
 
-    steps = p.steps.slice();
-    console.log('part 1', p.t);
-    p = run(end, start, p.t);
-    steps = [...steps, ...p.steps];
-    p = run(start, end, p.t)
-    steps = [...steps, ...p.steps];
-    console.log('part 2', p.t);
+        steps = p.steps.slice();
+        console.log('part 1', p.t);
+        p = run(end, start, p.t);
+        steps = [...steps, ...p.steps];
+        p = run(start, end, p.t)
+        steps = [...steps, ...p.steps];
+        console.log('part 2', p.t);
 
-    autoRun = true;
-})
+        autoRun = true;
+    })
+}
 
 document.getElementById('load').addEventListener('click', e => {
     autoRun = false;
@@ -265,6 +244,11 @@ document.getElementById('load').addEventListener('click', e => {
     restart();
 })
 
-sprites.onload = () => initBackground();
+sprites.onload = () => {
+    restart();
+    initUI();
+    initBackground();
+}
+
 sprites.src = './spritesheet.png';
 // elf up, elf left, elf down, w left, w up, w down, w right, elf right
