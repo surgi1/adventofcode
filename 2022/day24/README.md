@@ -6,4 +6,4 @@ JavaScript implementation
 
 Check it live, contains oh-so-leet visuals and playable game! https://surgi1.github.io/adventofcode/2022/day24/index.game.html
 
-![Dancing hero!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_24.png)
+![Dancing hero!](https://surgi1.github.io/adventofcode/screenshots/2022_24.png)

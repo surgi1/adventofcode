@@ -20,16 +20,16 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ### Day 14: "A stone is heavy and the sand is weighty; but a fool's wrath is heavier than them both." *— F. Herbert, Dune*
 
-![Dropping sand is dropping](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_14.png)
+![Dropping sand is dropping](https://surgi1.github.io/adventofcode/screenshots/2022_14.png)
 
 ### Day 22: The companion cube!
 
-![Necessary accessory](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_22.png)
+![Necessary accessory](https://surgi1.github.io/adventofcode/screenshots/2022_22.png)
 
 ### Day 23: Marching elves!
 
-![Marching elves!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_23.png)
+![Marching elves!](https://surgi1.github.io/adventofcode/screenshots/2022_23.png)
 
 ### Day 24: Dancing hero!
 
-![Dancing hero!](https://github.com/surgi1/adventofcode/blob/main/screenshots/2022_24.png)
+![Dancing hero!](https://surgi1.github.io/adventofcode/screenshots/2022_24.png)
