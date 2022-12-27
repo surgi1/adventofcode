@@ -236,13 +236,12 @@ const initUI = () => {
 
         autoRun = true;
     })
+    document.getElementById('load').addEventListener('click', e => {
+        autoRun = false;
+        input = document.getElementById('custom').value;
+        restart();
+    })
 }
-
-document.getElementById('load').addEventListener('click', e => {
-    autoRun = false;
-    input = document.getElementById('custom').value;
-    restart();
-})
 
 sprites.onload = () => {
     restart();
