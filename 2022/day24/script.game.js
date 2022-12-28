@@ -145,7 +145,7 @@ const draw = () => {
     // scroll to our tricky element
     let el = document.getElementById('elf');
     el.style.left = (elf.x*spriteSize-112+adjust(0, anim, elf.action))+'px';
-    el.style.top = (elf.y*spriteSize-112+adjust(1, anim, elf.action))+'px';
+    el.style.top = (elf.y*spriteSize-64+adjust(1, anim, elf.action))+'px';
     el.innerHTML = '❤'+elf.hp;//'❤'★
     if (el.scrollIntoViewIfNeeded) el.scrollIntoViewIfNeeded({behavior: 'smooth', inline: 'center', block: 'center'});
     else el.scrollIntoView({behavior: 'smooth', inline: 'center', block: 'center'});
