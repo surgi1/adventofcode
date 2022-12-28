@@ -29,7 +29,7 @@ const keyMap = {
 };
 
 let map = [], blizMaps = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
-    autoRun = false, elf = {}, step = 0, p, steps, start, end,
+    autoRun = false, elf = {}, step = 0, steps, start, end,
     canvas = document.getElementById("canvas"), ctx = canvas.getContext("2d"), spriteSize = 32,
     drawing = false, sprites = new Image(),
     frame = 0, stepStartFrame = false, keysPressed = {};
@@ -147,7 +147,8 @@ const draw = () => {
     el.style.left = (elf.x*spriteSize-112+adjust(0, anim, elf.action))+'px';
     el.style.top = (elf.y*spriteSize-112+adjust(1, anim, elf.action))+'px';
     el.innerHTML = '❤'+elf.hp;//'❤'★
-    el.scrollIntoViewIfNeeded({behavior: 'smooth', inline: 'center', block: 'center'});
+    if (el.scrollIntoViewIfNeeded) el.scrollIntoViewIfNeeded({behavior: 'smooth', inline: 'center', block: 'center'});
+    else el.scrollIntoView({behavior: 'smooth', inline: 'center', block: 'center'});
 
     /*if (anim > 0) {
         ctx.save();
@@ -224,7 +225,7 @@ const initUI = () => {
 
         restart();
 
-        p = run(start, end, 0);
+        let p = run(start, end, 0);
 
         steps = p.steps.slice();
         console.log('part 1', p.t);
