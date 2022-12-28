@@ -28,7 +28,7 @@ const keyMap = {
     Space: 'wait'
 };
 
-let map = [], blizMaps = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
+let map = [], blizMaps = [], graves = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
     autoRun = false, elf = {}, step = 0, steps, start, end,
     canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'), spriteSize = 32,
     drawing = false, sprites = new Image(), elfSprites = new Image(), frame = 0, stepStartFrame = false, keysPressed = {};
@@ -108,7 +108,7 @@ const advanceBlizzards = blizs => blizs.map(b => {
 })
 
 const adjust = (dir, animFrame, v) => moves[v][dir]*animFrame;
-const drawSprite = (spriteId, [x, y], [ax, ay]) => ctx.drawImage(sprites, spriteId*spriteSize, 0, spriteSize, spriteSize, x*spriteSize+ax, y*spriteSize+ay, spriteSize, spriteSize);
+const drawSprite = (spriteId, [x, y], [ax, ay] = [0,0]) => ctx.drawImage(sprites, spriteId*spriteSize, 0, spriteSize, spriteSize, x*spriteSize+ax, y*spriteSize+ay, spriteSize, spriteSize);
 const drawElfSprite = (spriteId, [x, y], [ax, ay]) => ctx.drawImage(elfSprites, spriteId[0]*24, spriteId[1]*32, 24, 32, x*32+ax+4, y*32+ay, 24, 32);
 
 const drawElf = animFrame => {
@@ -127,7 +127,7 @@ const drawElf = animFrame => {
 const drawBlizzards = animFrame => {
     //if (animFrame > 0) { ctx.save(); ctx.globalAlpha = 0.5+Math.abs(animFrame-16)/32;}
     blizs.forEach(b => {
-        let spriteId = 3+'<^v>'.indexOf(b.t), animAdj = [0,1].map(d => adjust(d, animFrame, b.t));
+        let spriteId = '<^v>'.indexOf(b.t), animAdj = [0,1].map(d => adjust(d, animFrame, b.t));
         drawSprite(spriteId, [b.x, b.y], animAdj);
         
         // extra winds for the border transitions
@@ -162,12 +162,16 @@ const draw = () => {
             animFrame = frame - stepStartFrame;
         } else {
             finishStep();
-            if (elf.hp <= 0) restart();
+            if (elf.hp <= 0) {
+                graves.push({...elf})
+                restart();
+            }
         }
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear
     ctx.drawImage(canvas.planes.ground, 0, 0);
+    graves.forEach(g => drawSprite(5, [g.x, g.y]));
     drawElf(animFrame);
     drawBlizzards(animFrame);
     ctx.drawImage(canvas.planes.walls, 0, 0);
