@@ -236,6 +236,7 @@ const initUI = () => {
         autoRun = false;
         input = document.getElementById('custom').value;
         restart();
+        initPlanes();
     });
 }
 
