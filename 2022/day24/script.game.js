@@ -147,6 +147,7 @@ const finishStep = () => {
     elf.y += moves[elf.action][1];
 
     elf.hp -= blizs.filter(b => b.x == elf.x && b.y == elf.y).length;
+    if ((elf.y == 0 || elf.y == map.length-1) && elf.hp < 50) elf.hp++;
     stepStartFrame = false;
     step++;
 }
