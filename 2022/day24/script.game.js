@@ -81,7 +81,7 @@ const createPlane = src => {
     return e;
 }
 
-const initBackground = () => {
+const initPlanes = () => {
     canvas.planes = {
         walls: createPlane(canvas),
         ground: createPlane(canvas)
@@ -95,8 +95,6 @@ const initBackground = () => {
         target.rect(x*32, y*32, 32, 32);
         target.fill();
     }
-
-    setInterval(draw, 10);
 }
 
 const advanceBlizzards = blizs => blizs.map(b => {
@@ -243,7 +241,8 @@ const initUI = () => {
 sprites.onload = () => {
     restart();
     initUI();
-    initBackground();
+    initPlanes();
+    setInterval(draw, 10);
 }
 
 sprites.src = './spritesheet.png';
