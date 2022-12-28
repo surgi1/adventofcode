@@ -101,7 +101,9 @@ const tick = () => {
     requestAnimationFrame(tick);
     if (ticks % subSteps == 0) moveCarts();
     drawCarts();
-    document.getElementById('cart_'+camTargets[camTargetPtr]).scrollIntoViewIfNeeded({behavior: 'smooth', inline: 'center', block: 'center'});
+    let params = {behavior: 'smooth', inline: 'center', block: 'center'},
+        el = document.getElementById('cart_'+camTargets[camTargetPtr]);
+    if (el.scrollIntoViewIfNeeded) el.scrollIntoViewIfNeeded(params); else el.scrollIntoView(params);
 }
 
 const solve = () => {
