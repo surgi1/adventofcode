@@ -31,7 +31,8 @@ const keyMap = {
 let map = [], blizMaps = [], graves = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
     autoRun = false, elf = {}, step = 0, steps, start, end,
     canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'), spriteSize = 32,
-    drawing = false, sprites = new Image(), elfSprites = new Image(), frame = 0, stepStartFrame = false, keysPressed = {};
+    drawing = false, frame = 0, stepStartFrame = false, keysPressed = {},
+    resources = {elfSprites: {url: './elf.png'}, sprites: {url: './spritesheet.png'}};
 
 const getBlizMap = t => {
     const safeMod = (a, b) => (a+b*100000000) % b;
@@ -108,8 +109,8 @@ const advanceBlizzards = blizs => blizs.map(b => {
 })
 
 const adjust = (dir, animFrame, v) => moves[v][dir]*animFrame;
-const drawSprite = (spriteId, [x, y], [ax, ay] = [0,0]) => ctx.drawImage(sprites, spriteId*spriteSize, 0, spriteSize, spriteSize, x*spriteSize+ax, y*spriteSize+ay, spriteSize, spriteSize);
-const drawElfSprite = (spriteId, [x, y], [ax, ay]) => ctx.drawImage(elfSprites, spriteId[0]*24, spriteId[1]*32, 24, 32, x*32+ax+4, y*32+ay, 24, 32);
+const drawSprite = (spriteId, [x, y], [ax, ay] = [0,0]) => ctx.drawImage(resources.sprites.data, spriteId*spriteSize, 0, spriteSize, spriteSize, x*spriteSize+ax, y*spriteSize+ay, spriteSize, spriteSize);
+const drawElfSprite = (spriteId, [x, y], [ax, ay]) => ctx.drawImage(resources.elfSprites.data, spriteId[0]*24, spriteId[1]*32, 24, 32, x*32+ax+4, y*32+ay, 24, 32);
 
 const drawElf = animFrame => {
     let elfAnimAdj = [0,1].map(d => adjust(d, animFrame, elf.action));
@@ -245,12 +246,18 @@ const initUI = () => {
     });
 }
 
-elfSprites.onload = () => sprites.src = './spritesheet.png';
-sprites.onload = () => {
+const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v => {
+    v.data = new Image();
+    v.data.onload = () => {
+        if (++resourcesLoaded < Object.keys(resources).length) return;
+        run();
+    }
+    v.data.src = v.url;
+});
+
+load(() => {
     restart();
     initUI();
     initPlanes();
     setInterval(draw, 10);
-}
-
-elfSprites.src = './elf.png';
+})
