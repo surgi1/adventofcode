@@ -10,11 +10,11 @@ const moves = {
     'v': [0, 1]
 }
 const elfSpriteIds = {
-    '^': 0,
-    '<': 1,
-    'v': 2,
-    'wait': 2,
-    '>': 7
+    'v': 0,
+    '^': 1,
+    '<': 2,
+    'wait': 0,
+    '>': 3
 }
 const keyMap = {
     ArrowLeft: '<',
@@ -31,7 +31,7 @@ const keyMap = {
 let map = [], blizMaps = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
     autoRun = false, elf = {}, step = 0, steps, start, end,
     canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'), spriteSize = 32,
-    drawing = false, sprites = new Image(), frame = 0, stepStartFrame = false, keysPressed = {};
+    drawing = false, sprites = new Image(), elfSprites = new Image(), frame = 0, stepStartFrame = false, keysPressed = {};
 
 const getBlizMap = t => {
     const safeMod = (a, b) => (a+b*100000000) % b;
@@ -107,12 +107,13 @@ const advanceBlizzards = blizs => blizs.map(b => {
     return b;
 })
 
-const adjust = (dir, animFrame, v) => moves[v][dir]*animFrame
+const adjust = (dir, animFrame, v) => moves[v][dir]*animFrame;
 const drawSprite = (spriteId, [x, y], [ax, ay]) => ctx.drawImage(sprites, spriteId*spriteSize, 0, spriteSize, spriteSize, x*spriteSize+ax, y*spriteSize+ay, spriteSize, spriteSize);
+const drawElfSprite = (spriteId, [x, y], [ax, ay]) => ctx.drawImage(elfSprites, spriteId[0]*24, spriteId[1]*32, 24, 32, x*32+ax+4, y*32+ay, 24, 32);
 
 const drawElf = animFrame => {
     let elfAnimAdj = [0,1].map(d => adjust(d, animFrame, elf.action));
-    drawSprite(elf.spriteId, [elf.x, elf.y], elfAnimAdj);
+    drawElfSprite([elf.action == 'wait' ? 0 : Math.round(animFrame/4) % 8, elf.spriteId], [elf.x, elf.y], elfAnimAdj);
     
     // scroll page into elf view, update hp
     const params = {behavior: 'smooth', inline: 'center', block: 'center'};
@@ -197,7 +198,7 @@ const restart = () => {
     start = {x: map[0].indexOf('.'), y: 0};
     end = {x: map[map.length-1].indexOf('.'), y: map.length-1};
     step = 0;
-    elf = {x: start.x, y: start.y, spriteId: 2, action: 'wait', hp: 50}
+    elf = {x: start.x, y: start.y, spriteId: 0, action: 'wait', hp: 50}
     blizs = [];
     input.split("\n").forEach((l, y) => l.split('').forEach((v, x) => {
         if ('<>^v'.indexOf(v) == -1) return true;
@@ -238,6 +239,7 @@ const initUI = () => {
     });
 }
 
+elfSprites.onload = () => sprites.src = './spritesheet.png';
 sprites.onload = () => {
     restart();
     initUI();
@@ -245,5 +247,4 @@ sprites.onload = () => {
     setInterval(draw, 10);
 }
 
-sprites.src = './spritesheet.png';
-// elf up, elf left, elf down, w left, w up, w down, w right, elf right
+elfSprites.src = './elf.png';
