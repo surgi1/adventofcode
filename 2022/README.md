@@ -22,10 +22,6 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ![Dropping sand is dropping](https://surgi1.github.io/adventofcode/screenshots/2022_14.png)
 
-### Day 22: The companion cube!
-
-![Necessary accessory](https://surgi1.github.io/adventofcode/screenshots/2022_22.png)
-
 ### Day 23: Marching elves!
 
 ![Marching elves!](https://surgi1.github.io/adventofcode/screenshots/2022_23.png)
