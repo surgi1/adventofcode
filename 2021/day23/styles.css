@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css?family=VT323');
+html {
+    /*font-family: 'Source Code Pro', monospace;*/
+    font-family: 'VT323', monospace;
+    background-color: #0f0f23;
+}
+body {
+    margin:0;
+    padding:0;
+    overflow:hidden;
+}
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    /*padding-top:32px;*/
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 1092px;
+    height: 756px;
+}
+#nav, #footer {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 1092px;
+    color:white;
+    font-size: 24px;
+    /*position:absolute;*/
+    text-align: center;
+    padding-top:6px;
+    padding-bottom:6px;
+}
+
+a:link, a:visited, a:active { color:lightblue;text-decoration:none; }
+a:hover { color:#99ff99;text-decoration:none; }        
+textarea {
+    position:absolute;
+    height:16px;
+    width:120px;
+    display:none;
+}
+.right {
+    float:right;
+    text-align:right;
+    width:300px;
+}
+.left {
+    float:left;
+    text-align:left;
+    width:300px;
+}
+.score {
+    font-weight: bold;
+}
+.titleimg {
+    clear:both;
+    padding-top:4px;
+}
+.title {
+    font-size: 30px;
+    line-height: 40px;
+    width: 100%;
+    border-bottom: white solid 2px;
+    margin-bottom:6px;
+}
+.message {
+    position:absolute;
+    top:130px;
+    width: 380px;
+    height:180px;
+    background-image: url('./messagebox2.png');
+    background-repeat: no-repeat;
+
+    left: 50%;
+    margin-left: -190px;
+    box-shadow: inset 0 -0em 3em rgb(0 0 0 / 10%), 0.93em 0.93em 0em rgb(0 0 0 / 30%);
+    transition: all 0.5s ease;
+}
+.message.out {
+    top:-250px;
+}
+.inner {
+    /*margin-left:20px;*/
+    padding-top: 12px;
+    color:azure;
+    text-align: center;
+    font-size: 24px;
+    width:100%;
+    line-height:34px;
+}
+.victory {
+     animation: Color 4s linear infinite;
+    -webkit-animation: Color 4s ease-in-out infinite;
+    font-size:30px;
+    /*font-weight:bold;*/
+    margin-bottom:6px;
+}
+.messagebuttons {
+    margin-top:12px;
+}
+
+.message a:link, .message a:visited, .message a:active { color:white;text-decoration:none; }
+.message a:hover { color:#99ff99;text-decoration:none; }    
+
+@keyframes Color{
+  0%{
+    color:#fff;
+  }
+  
+  20%{
+    color:yellow;
+  }
+  
+  40%{
+    color:#000;
+  }
+  
+  60%{
+    color:lightblue;
+  }
+  /*
+  80%{
+    color:#ED5565;
+  }
+  
+  100%{
+    color:#AC92EC;
+  }*/
+}

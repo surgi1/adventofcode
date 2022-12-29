@@ -81,6 +81,7 @@ const solve = (initState, finalStateVal) => {
     return final.sort((a, b) => a.cost - b.cost)[0].cost;
 }
 
-console.log(solve(input, '.'.repeat(11)+'ABCD'.repeat(2)));
-input.splice(3, 0,'  #D#C#B#A#  ','  #D#B#A#C#  ');
-console.log(solve(input, '.'.repeat(11)+'ABCD'.repeat(4)));
+let inputArr = input.split("\n");
+console.log(solve(inputArr, '.'.repeat(11)+'ABCD'.repeat(2)));
+inputArr.splice(3, 0,'  #D#C#B#A#  ','  #D#B#A#C#  ');
+console.log(solve(inputArr, '.'.repeat(11)+'ABCD'.repeat(4)));

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Advent of Code 2021, Day 23: AMPHIPOD, The Game</title>
+
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+</head>
+<body>
+    <div id="nav">
+        <!--<img class="titleimg" src="https://fontmeme.com/temporary/bc098e7173dd074d55c021f52b238182.png"/><br/>-->
+        <div class="title">AMPHIPOD</div>
+        <div class="left">Current cost: <span class="score" id="score">0</span></div>
+        Level: <span class="score" id="level">1</span>
+        <div class="right">All-time lowest cost: <span class="score" id="topscore">N/A</span></div>
+    </div>
+    <canvas id="canvas" width="1092" height="756"></canvas>
+    <div id="footer">
+        <span class="left">
+            <a id="restart" href="#">[Restart]</a>
+            <a id="load" href="#">[Load your input]</a>
+        </span>
+        <span class="right">
+            Based on <a href="https://adventofcode.com/2021/day/23" target="_blank">this</a> | 
+            Source is <a href="https://github.com/surgi1/adventofcode/tree/main/2021/day23" target="_blank">here</a>
+        </span>
+    </div>
+    <div id="message" class="message out">
+        <div class="inner">
+            <div class="victory">VICTORY!</div>
+            Final cost: <span class="score" id="mbscore">0</span><br/>
+            Maybe you can do better?<br />
+            <div class="messagebuttons">
+                <a id="tryagain" href="#">[Try again]</a>
+                <a id="nextlevel" href="#">[Next level]</a>
+            </div>
+        </div>
+    </div>
+    <script src="input.js"></script>
+    <script src="script.game.js"></script>
+</body>
+</html>
