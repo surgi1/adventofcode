@@ -1,6 +1,6 @@
 # Advent of Code 2020
 
-Puzzles of AoC 2020 were a great deal lighter than the ones of 2018 or 2019. With exceptions, of course!
+Puzzles of AoC 2020 were a great deal easier than the ones of 2018 or 2019. With exceptions, of course!
 
 [https://adventofcode.com/2020](https://adventofcode.com/2020)
 
