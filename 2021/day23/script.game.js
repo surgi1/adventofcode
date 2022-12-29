@@ -1,3 +1,13 @@
+(function () {
+
+/*
+todos:
+- implement additional move restrictions
+- save global score
+- upload custom input (save to local storage as well?)
+- maybe impose some code org?
+*/
+
 const spriteIds = {
     A: 6,
     B: 0, // 0 if r2d2 (1) not fit
@@ -8,18 +18,18 @@ const spriteIds = {
     floor: 8,
 }
 
-let map = [], pods = [], mousePos = {x:0, y:0},
-    canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'), spriteSize = [84, 108], cellSize = [84, 84],
-    drawing = false, frame = 0, keysPressed = {},
-    resources = {sprites: {url: './spritesheet.png'}},
-    dirs = [[0,1], [0,-1], [-1,0], [1,0]], score = 0, moveInProgress = false;
-
 const cloneMap = source => source.map(row => row.slice())
 const charVal = ch => ch.charCodeAt(0)-65;
 const charCost = ch => Math.pow(10, charVal(ch));
 const stateVal = map => map.reduce((res, line) => res+line.join('').replace(/(#|\s)/g, ''), '')
 const isSolved = map => stateVal(map) === '.'.repeat(11)+'ABCD'.repeat(map.length-3);
 const id = k => document.getElementById(k);
+
+let map = [], pods = [], mousePos = {x:0, y:0},
+    canvas = id('canvas'), ctx = canvas.getContext('2d'), spriteSize = [84, 108], cellSize = [84, 84],
+    drawing = false, frame = 0, keysPressed = {},
+    resources = {sprites: {url: './spritesheet.png'}},
+    dirs = [[0,1], [0,-1], [-1,0], [1,0]], score = 0, moveInProgress = false;
 
 const createPlane = src => {
     let e = document.createElement('canvas');
@@ -173,15 +183,12 @@ const initUI = () => {
         }
         if (hPod.length == 1) {
             if (moveInProgress) return;
-
-            let target = {...mousePos}, p = hPod[0];
-            let dMap = distanceMap(cloneMap(map), p.x, p.y);
-            if (parseInt(dMap[target.y][target.x]) != dMap[target.y][target.x]) {
+            let dMap = distanceMap(cloneMap(map), hPod[0].x, hPod[0].y);
+            if (parseInt(dMap[mousePos.y][mousePos.x]) != dMap[mousePos.y][mousePos.x]) {
                 console.log('unable to move to target location');
                 return;
             }
-
-            doMove(p, target);            
+            doMove(hPod[0], {...mousePos});            
         }
     })
 }
@@ -201,3 +208,5 @@ load(() => {
     initPlanes();
     setInterval(draw, 10);
 })
+
+})();
