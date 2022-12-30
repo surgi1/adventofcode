@@ -49,6 +49,9 @@ textarea {
     text-align:right;
     width:350px;
 }
+.small {
+    font-size: 18px;
+}
 .left {
     float:left;
     text-align:left;
