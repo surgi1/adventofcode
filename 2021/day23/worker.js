@@ -19,8 +19,8 @@ const distanceMap = (map, {x, y}) => {
 }
 
 const solve = (initState, finalStateVal) => {
-    const nextMoves = (map, val, origX, origY) => {
-        let v = map[origY][origX], vHomeX = charVal[v]*2+3;
+    const nextMoves = (map, from) => {
+        let v = map[from.y][from.x], vHomeX = charVal[v]*2+3;
 
         const adjacentToCaves = (x, y) => y == 1 && [3, 5, 7, 9].includes(x);
         const isSubjectsHouse = (x, y) => (y > 1) && (x == vHomeX);
@@ -33,20 +33,20 @@ const solve = (initState, finalStateVal) => {
         }
 
         let cleanHouse = subjectsHouseIsClean(), targets = [],
-            dMap = distanceMap(cloneMap(map), {x: origX, y: origY});
+            dMap = distanceMap(cloneMap(map), from);
 
         for (let y = 1; y < rows-1; y++) {
-            if (origY == 1 && y == 1) continue; // once moved out of cave, has to move only to the cave ..
-            if (origY != 1 && y != 1) continue; // to limit possibilities, we allow moving from initial cave only to the top line
-            if (origY == 1 && !cleanHouse) continue; // .. specifically into its own cave, once it is clean (or occupied by its bros only)
+            if (from.y == 1 && y == 1) continue; // once moved out of cave, has to move only to the cave ..
+            if (from.y != 1 && y != 1) continue; // to limit possibilities, we allow moving from initial cave only to the top line
+            if (from.y == 1 && !cleanHouse) continue; // .. specifically into its own cave, once it is clean (or occupied by its bros only)
             for (let x = 1; x < cols-1; x++) {
                 if (isNaN(dMap[y][x])) continue; // only reachable spots are considered
                 let ish = isSubjectsHouse(x, y);
-                if (origY == 1 && !ish) continue; // .. specifically into its own cave, once it is clean (or occupied by its bros only)
-                if (origY == 1 && ish && cleanHouse) {
+                if (from.y == 1 && !ish) continue; // .. specifically into its own cave, once it is clean (or occupied by its bros only)
+                if (from.y == 1 && ish && cleanHouse) {
                     if (map[y+1][x] != '#' && map[y+1][x] != v) continue; // more to that, a valid move is only to the most bottom spot in the house
                 };
-                if (origY != 1 && adjacentToCaves(x, y)) continue; // spots adjacent to caves are banned
+                if (from.y != 1 && adjacentToCaves(x, y)) continue; // spots adjacent to caves are banned
                 targets.push({x:x, y:y, dist: dMap[y][x]})
             }
         }
@@ -69,7 +69,7 @@ const solve = (initState, finalStateVal) => {
 
             if (alreadyDone) continue;
 
-            nextMoves(p.state, p.val, x,y).forEach(move => {
+            nextMoves(p.state, {x: x, y: y}).forEach(move => {
                 let tmp = {state: cloneMap(p.state)};
                 tmp.state[y][x] = '.';
                 tmp.state[move.y][move.x] = p.state[y][x];
@@ -88,12 +88,25 @@ const solve = (initState, finalStateVal) => {
 }
 
 onmessage = e => {
-    let workerResult = [], inputArr = e.data.split("\n");
+    /*let workerResult = [], inputArr = e.data.split("\n");
 
+    console.time('p1');
     workerResult.push(solve(inputArr, '.'.repeat(11)+'ABCD'.repeat(2)));
 
     inputArr.splice(3, 0,'  #D#C#B#A#  ','  #D#B#A#C#  ');
     workerResult.push(solve(inputArr, '.'.repeat(11)+'ABCD'.repeat(4)));
+    console.timeEnd('p1');
+
+    workerResult.push(stateVal( parseInput(e.data.split("\n")) ))
+
+    postMessage(workerResult);*/
+    let workerResult = [], inputArr = e.data.split("\n");
+
+    console.time('solve time');
+    workerResult.push(solve(inputArr, '.'.repeat(11)+'ABCD'.repeat( inputArr.length == 5 ? 2 : 4 )));
+    console.timeEnd('solve time');
+
+    workerResult.push(stateVal( parseInput(e.data.split("\n")) ))
 
     postMessage(workerResult);
 }

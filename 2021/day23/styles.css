@@ -52,7 +52,7 @@ textarea {
     text-align:left;
     width:300px;
 }
-.score {
+.score, .selected {
     font-weight: bold;
 }
 .titleimg {
