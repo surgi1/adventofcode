@@ -41,7 +41,7 @@ Whole repo is deployed on [Github Pages](https://surgi1.github.io/adventofcode/)
 
 ### [AoC 2021](https://surgi1.github.io/adventofcode/2021) - [Day 23](https://surgi1.github.io/adventofcode/2021/day23): Amphipod
 
-![Intcode Maze](https://surgi1.github.io/adventofcode/screenshots/2019_15.png)
+![Troopahs](https://surgi1.github.io/adventofcode/screenshots/2021_23.png)
 
 ### [AoC 2018](https://surgi1.github.io/adventofcode/2018) - [Day 15](https://surgi1.github.io/adventofcode/2018/day15): Battle between elves and goblins in full swing
 
