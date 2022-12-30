@@ -18,6 +18,10 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 ## Screenshots
 
+### Day 23: Troopahs The Game!
+
+![Troopahs march!](https://surgi1.github.io/adventofcode/screenshots/2021_23.png)
+
 ### Day 25: Sea Cucumbers en route to their destination!
 
 ![Cucumberos](https://surgi1.github.io/adventofcode/screenshots/2021_25.png)
