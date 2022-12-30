@@ -47,12 +47,12 @@ textarea {
 .right {
     float:right;
     text-align:right;
-    width:300px;
+    width:350px;
 }
 .left {
     float:left;
     text-align:left;
-    width:300px;
+    width:350px;
 }
 .score {
     font-weight: bold;
