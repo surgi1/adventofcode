@@ -14,7 +14,7 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 * [Day 18: Snailfish](https://adventofcode.com/2021/day/18) - [code](https://github.com/surgi1/adventofcode/tree/main/2021/day18) - [live](https://surgi1.github.io/adventofcode/2021/day18) - tricky Snailfish tree-based math!
 * [Day 19: Beacon Scanner](https://adventofcode.com/2021/day/19) - [code](https://github.com/surgi1/adventofcode/tree/main/2021/day19) - [live](https://surgi1.github.io/adventofcode/2021/day19) - transforms for the win!
 * [Day 22: Reactor Reboot](https://adventofcode.com/2021/day/22) - [code](https://github.com/surgi1/adventofcode/tree/main/2021/day22) - [live](https://surgi1.github.io/adventofcode/2021/day22) - another computer graphics oriented task, this time dealing with intersections of cubes.
-* [Day 23: Amphipod](https://adventofcode.com/2021/day/23) - [code](https://github.com/surgi1/adventofcode/tree/main/2021/day23) - [live](https://surgi1.github.io/adventofcode/2021/day23) - Tower of Hanoi -inspired puzzle, solvable by hand as well!
+* [Day 23: Amphipod](https://adventofcode.com/2021/day/23) - [code](https://github.com/surgi1/adventofcode/tree/main/2021/day23) - [live](https://surgi1.github.io/adventofcode/2021/day23/index.game.html) - Tower of Hanoi -inspired puzzle, solvable as a game as well!
 
 ## Screenshots
 
