@@ -9,11 +9,21 @@
 <body>
     <div id="nav">
         <!--<img class="titleimg" src="https://fontmeme.com/temporary/bc098e7173dd074d55c021f52b238182.png"/><br/>-->
-        <div class="title">AMPHIPOD</div>
-        <div class="left">Current cost: <span class="score" id="score">0</span></div>
-        Map: <span class="score" id="level">1</span>
-        | Mode: <a id="easymode" class="selected" href="#">[kid]</a><a id="hardmode" href="#">[pro]</a>
-        <div class="right">Lowest cost (for map): <span class="score" id="topscore">N/A</span></div>
+        <div class="title">
+            <div class="left" style="font-size:24px;">
+                Map: <span id="maps"></span>
+            </div>
+            <strike>AMPHIPOD</strike> TROOPAHS
+            <div class="right" style="font-size:24px;"> &nbsp;
+            </div>
+        </div>
+        <div class="left">
+            [<span id="easymode" class="selected" href="#">easy</span>·<span id="hardmode" class="link" href="#">hard</span>]
+        </div>
+            Current cost: <span class="score" id="score">0</span>
+        <div class="right">
+            Best effort: <span class="score" id="topscore">N/A</span>
+        </div>
     </div>
     <canvas id="canvas" width="1092" height="756"></canvas>
     <div id="footer">

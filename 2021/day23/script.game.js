@@ -2,8 +2,6 @@
 
 /*
 todos:
-- introduce collection of maps
-- save global score
 - upload custom input (save to local storage as well?)
 - maybe impose some code org?
 */
@@ -18,6 +16,7 @@ const spriteIds = {
     floor: 8,
 }
 const charVal = {A: 0, B: 1, C: 2, D: 3};
+const storageScorePrefix = 'troopahs__best_cost_';
 
 const cloneMap = source => source.map(row => row.slice())
 const charCost = ch => Math.pow(10, charVal[ch]);
@@ -25,12 +24,14 @@ const stateVal = map => map.reduce((res, line) => res+line.join('').replace(/(#|
 const isSolved = map => stateVal(map) === '.'.repeat(11)+'ABCD'.repeat(map.length-3);
 const id = k => document.getElementById(k);
 const eqVect = (a, b) => a && b && a.x == b.x && a.y == b.y;
+const parseInput = input => input.split("\n").map((l => l.split('')));
 
-let map = [], pods = [], mousePos = {x:0, y:0}, solver, moves = [], difficulty = 1,
+let map = [], pods = [], mousePos = {x:0, y:0}, solver, moves = [], difficulty = 1, inputId = 0,
     canvas = id('canvas'), ctx = canvas.getContext('2d'), spriteSize = [84, 108], cellSize = [84, 84],
-    drawing = false, frame = 0, keysPressed = {},
+    drawing = false, frame = 0, keysPressed = {}, animStartFrame = false,
     resources = {sprites: {url: './spritesheet.png'}},
-    dirs = [[0,1], [0,-1], [-1,0], [1,0]], score = 0, moveInProgress = false;
+    dirs = [[0,1], [0,-1], [-1,0], [1,0]], score = 0, moveInProgress = false,
+    solutionsCache = {}, mapInitState = '';
 
 const createPlane = src => {
     let e = document.createElement('canvas');
@@ -77,7 +78,8 @@ const draw = () => {
         ctx.restore();
     }
 
-    pods.sort((a, b) => a.y-b.y).forEach(p => drawPodSprite(p.highlighted ? p.spriteId+10:p.spriteId, [p.x, p.y]));
+    pods.sort((a, b) => a.y-b.y).forEach((p, i) => drawPodSprite(p.highlighted ? p.spriteId+10:p.spriteId, [p.x, p.y],
+        [0, (animStartFrame !== false) && (animStartFrame+i > 0) ? 10*Math.sin(i+frame/10) : 0 ]));
 
     'ABCD'.split('').forEach((v, i) => drawEmblemSprite(spriteIds[v]+10, [3+i*2, map.length-1]));
 
@@ -91,13 +93,13 @@ const setScore = v => {
     id('mbscore').innerHTML = score;
 }
 
-let solutionsCache = {};
-
 const restart = () => {
     setScore(0);
 
+    animStartFrame = false;
+
     pods = [];
-    let inputArr = input.split("\n");
+    let inputArr = inputs[inputId].split("\n");
     if (difficulty == 2) inputArr.splice(3, 0,'  #D#C#B#A#  ','  #D#B#A#C#  ');
     map = inputArr.map((l, y) => l.split('').map((v, x) => {
         if ('ABCD'.indexOf(v) > -1) pods.push({
@@ -107,10 +109,14 @@ const restart = () => {
         return v;
     }));
 
-    let k = stateVal(map);
-    if (!solutionsCache[k]) {
+    mapInitState = stateVal(map);
+
+    if (!solutionsCache[mapInitState]) {
         solver.postMessage( map.map(l => l.join('')).join("\n") );
     }
+
+    let bestScore = localStorage.getItem(storageScorePrefix+mapInitState);
+    id('topscore').innerHTML = bestScore != undefined ? bestScore : 'N/A';
 
     canvas.style.height = cellSize[1]*map.length+'px';
     canvas.setAttribute('height', cellSize[1]*map.length);
@@ -142,8 +148,14 @@ const doMove = (p, target) => {
         p.highlighted = false;
         moveInProgress = false;
         if (isSolved(map)) {
-            id('candobetter').innerHTML = (solutionsCache[stateVal(map)] < score ? 'Maybe you can do better?' : 'Lowest cost reached, congratulations!');
+            animStartFrame = frame;
+            id('candobetter').innerHTML = (solutionsCache[mapInitState] < score ? 'Maybe you can do better?' : 'Lowest cost reached, congratulations!');
             id('message').classList.toggle('out');
+            let bestScore = localStorage.getItem(storageScorePrefix+mapInitState);
+            if (score < bestScore || bestScore == undefined) {
+                localStorage.setItem(storageScorePrefix+mapInitState, score);
+                id('topscore').innerHTML = score;
+            }
         }
         return;
     }
@@ -219,36 +231,56 @@ const clickHandle = () => {
     }
 }
 
+const switchDifficulty = () => {
+    id('easymode').classList.toggle('selected');
+    id('hardmode').classList.toggle('selected');
+    id('easymode').classList.toggle('link');
+    id('hardmode').classList.toggle('link');
+    if (difficulty == 1) difficulty = 2; else difficulty = 1;
+    restart();
+    initPlanes();
+}
+
+const renderMapsSwitch = () => {
+    id('maps').innerHTML = '';
+    inputs.forEach((inp, i) => {
+        let el = document.createElement('span');
+        
+        if (i == inputId) el.classList.add('selected'); else el.classList.add('link');
+        el.innerHTML = i+1+' ';
+        el.addEventListener('click', e => {
+            inputId = i;
+            renderMapsSwitch();
+            restart();
+            initPlanes();
+        })
+        id('maps').appendChild(el);
+    })
+}
+
 const initUI = () => {
     id('restart').addEventListener('click', e => {
-        restart(map.length == 5 ? 1 : 2);
+        restart();
         initPlanes();
     });
     id('tryagain').addEventListener('click', e => {
         id('message').classList.toggle('out');
-        restart(map.length == 5 ? 1 : 2);
+        restart();
         initPlanes();
     });
     id('nextmap').addEventListener('click', e => {
         id('message').classList.toggle('out');
-        // switch map todo
+        inputId++;
+        if (inputId == inputs.length) inputId = 0;
+        renderMapsSwitch();
         restart();
         initPlanes();
     });
-    id('easymode').addEventListener('click', e => {
-        id('easymode').classList.toggle('selected');
-        id('hardmode').classList.toggle('selected');
-        difficulty = 1;
-        restart();
-        initPlanes();
-    });
-    id('hardmode').addEventListener('click', e => {
-        id('easymode').classList.toggle('selected');
-        id('hardmode').classList.toggle('selected');
-        difficulty = 2;
-        restart();
-        initPlanes();
-    });
+    id('easymode').addEventListener('click', e => switchDifficulty());
+    id('hardmode').addEventListener('click', e => switchDifficulty());
+
+    renderMapsSwitch();
+
     canvas.addEventListener('mousemove', e => getCursorPosition(canvas, e))
     canvas.addEventListener('mouseup', e => clickHandle())
 }

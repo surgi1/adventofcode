@@ -34,8 +34,12 @@ canvas {
     padding-bottom:6px;
 }
 
-a:link, a:visited, a:active { color:lightblue;text-decoration:none; }
-a:hover { color:#99ff99;text-decoration:none; }        
+.link {
+    cursor:pointer;
+}
+
+a:link, a:visited, a:active, .link { color:lightblue;text-decoration:none; }
+a:hover, .link:hover { color:#99ff99;text-decoration:none; }        
 textarea {
     position:absolute;
     height:16px;
@@ -52,7 +56,7 @@ textarea {
     text-align:left;
     width:300px;
 }
-.score, .selected {
+.score {
     font-weight: bold;
 }
 .titleimg {
@@ -68,7 +72,7 @@ textarea {
 }
 .message {
     position:absolute;
-    top:130px;
+    top:60px;
     width: 380px;
     height:180px;
     background-image: url('./messagebox2.png');
