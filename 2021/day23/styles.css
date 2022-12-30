@@ -41,10 +41,8 @@ canvas {
 a:link, a:visited, a:active, .link { color:lightblue;text-decoration:none; }
 a:hover, .link:hover { color:#99ff99;text-decoration:none; }        
 textarea {
-    position:absolute;
-    height:16px;
-    width:120px;
-    display:none;
+    height:76px;
+    width:180px;
 }
 .right {
     float:right;
@@ -72,7 +70,7 @@ textarea {
 }
 .message {
     position:absolute;
-    top:60px;
+    top:58px;
     width: 380px;
     height:180px;
     background-image: url('./messagebox2.png');

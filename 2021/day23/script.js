@@ -4,9 +4,9 @@ solver.onmessage = e => {
     console.log('Solution', e.data);
 }
 
-solver.postMessage(inputs[1]);
+solver.postMessage(baseInputs[1]);
 
-let inputArr = inputs[1].split("\n");
+let inputArr = baseInputs[1].split("\n");
 inputArr.splice(3, 0,'  #D#C#B#A#  ','  #D#B#A#C#  ');
 
 solver.postMessage(inputArr.join("\n"));

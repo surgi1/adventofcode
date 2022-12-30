@@ -2,7 +2,6 @@
 
 /*
 todos:
-- upload custom input (save to local storage as well?)
 - maybe impose some code org?
 */
 
@@ -18,6 +17,7 @@ const spriteIds = {
 const charVal = {A: 0, B: 1, C: 2, D: 3};
 const storageScorePrefix = 'troopahs__best_cost_';
 const storageLowestReachedPrefix = 'troopahs__lowest_reached_';
+const storageCustomInputsPrefix = 'troopahs__custom_inputs_';
 
 const cloneMap = source => source.map(row => row.slice())
 const charCost = ch => Math.pow(10, charVal[ch]);
@@ -27,7 +27,7 @@ const id = k => document.getElementById(k);
 const eqVect = (a, b) => a && b && a.x == b.x && a.y == b.y;
 const parseInput = input => input.split("\n").map((l => l.split('')));
 
-let map = [], pods = [], mousePos = {x:0, y:0}, solver, moves = [], difficulty = 1, inputId = 0,
+let map = [], pods = [], mousePos = {x:0, y:0}, solver, moves = [], difficulty = 1, inputId = 0, inputs,
     canvas = id('canvas'), ctx = canvas.getContext('2d'), spriteSize = [84, 108], cellSize = [84, 84],
     drawing = false, frame = 0, keysPressed = {}, animStartFrame = false,
     resources = {sprites: {url: './spritesheet.png'}},
@@ -288,6 +288,13 @@ const initUI = () => {
     id('easymode').addEventListener('click', e => switchDifficulty());
     id('hardmode').addEventListener('click', e => switchDifficulty());
 
+    id('openloadbox').addEventListener('click', e => id('loadbox').classList.toggle('out'));
+    id('load').addEventListener('click', e => {
+        addCustomInput(document.getElementById('custom').value);
+        id('loadbox').classList.toggle('out');
+    });
+    id('closeloadbox').addEventListener('click', e => id('loadbox').classList.toggle('out'));
+
     renderMapsSwitch();
 
     canvas.addEventListener('mousemove', e => getCursorPosition(canvas, e))
@@ -311,7 +318,28 @@ const initSolver = () => {
     }
 }
 
+const addCustomInput = inputLiteral => {
+    let customInputs = getCustomInputs();
+    customInputs[stateVal(inputLiteral.split("\n").map(l => l.split('')))] = inputLiteral;
+    localStorage.setItem(storageCustomInputsPrefix, JSON.stringify(customInputs));
+    initInputs();
+}
+
+const getCustomInputs = () => {
+    let customInputs = JSON.parse(localStorage.getItem(storageCustomInputsPrefix));
+    if (customInputs) {
+        return customInputs;
+    }
+    return {};
+}
+
+const initInputs = () => {
+    inputs = [...baseInputs.slice(), ...Object.values(getCustomInputs())];
+    renderMapsSwitch();
+}
+
 load(() => {
+    initInputs();
     initSolver();
     restart();
     initUI();
