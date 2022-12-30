@@ -17,6 +17,7 @@ const spriteIds = {
 }
 const charVal = {A: 0, B: 1, C: 2, D: 3};
 const storageScorePrefix = 'troopahs__best_cost_';
+const storageLowestReachedPrefix = 'troopahs__lowest_reached_';
 
 const cloneMap = source => source.map(row => row.slice())
 const charCost = ch => Math.pow(10, charVal[ch]);
@@ -116,7 +117,8 @@ const restart = () => {
     }
 
     let bestScore = localStorage.getItem(storageScorePrefix+mapInitState);
-    id('topscore').innerHTML = bestScore != undefined ? bestScore : 'N/A';
+    let lowestReached = localStorage.getItem(storageLowestReachedPrefix+mapInitState);
+    id('topscore').innerHTML = bestScore != undefined ? (bestScore +''+ (lowestReached == 1 ? '*' : '')): 'N/A';
 
     canvas.style.height = cellSize[1]*map.length+'px';
     canvas.setAttribute('height', cellSize[1]*map.length);
@@ -149,12 +151,19 @@ const doMove = (p, target) => {
         moveInProgress = false;
         if (isSolved(map)) {
             animStartFrame = frame;
-            id('candobetter').innerHTML = (solutionsCache[mapInitState] < score ? 'Maybe you can do better?' : 'Lowest cost reached, congratulations!');
+            if (solutionsCache[mapInitState] < score) {
+                id('victory').innerHTML = 'GOOD JOB!';
+                id('candobetter').innerHTML = 'Maybe you can do better?';
+            } else {
+                id('victory').innerHTML = 'CONGRATULATIONS!';
+                id('candobetter').innerHTML = 'Lowest cost reached!';
+                localStorage.setItem(storageLowestReachedPrefix+mapInitState, 1);
+            }
             id('message').classList.toggle('out');
             let bestScore = localStorage.getItem(storageScorePrefix+mapInitState);
-            if (score < bestScore || bestScore == undefined) {
+            if (score <= bestScore || bestScore == undefined) {
                 localStorage.setItem(storageScorePrefix+mapInitState, score);
-                id('topscore').innerHTML = score;
+                id('topscore').innerHTML = score+''+ (solutionsCache[mapInitState] == score ? '*' : '');
             }
         }
         return;
