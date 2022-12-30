@@ -24,8 +24,9 @@ const charCost = ch => Math.pow(10, charVal(ch));
 const stateVal = map => map.reduce((res, line) => res+line.join('').replace(/(#|\s)/g, ''), '')
 const isSolved = map => stateVal(map) === '.'.repeat(11)+'ABCD'.repeat(map.length-3);
 const id = k => document.getElementById(k);
+const eqVect = (a, b) => a && b && a.x == b.x && a.y == b.y;
 
-let map = [], pods = [], mousePos = {x:0, y:0},
+let map = [], pods = [], mousePos = {x:0, y:0}, solutions = [], solver,
     canvas = id('canvas'), ctx = canvas.getContext('2d'), spriteSize = [84, 108], cellSize = [84, 84],
     drawing = false, frame = 0, keysPressed = {},
     resources = {sprites: {url: './spritesheet.png'}},
@@ -86,18 +87,25 @@ const setLevel = level => {
     if (level == 2) id('nextlevel').style.display = 'none';
 }
 
-const restart = (level = 1) => {
-    score = 0;
+const setScore = v => {
+    score = v;
     id('score').innerHTML = score;
+    id('mbscore').innerHTML = score;
+}
+
+const restart = (level = 1) => {
+    setScore(0);
     setLevel(level);
+
+    solver.postMessage(input);
+
     pods = [];
     let inputArr = input.split("\n");
     if (level == 2) inputArr.splice(3, 0,'  #D#C#B#A#  ','  #D#B#A#C#  ');
     map = inputArr.map((l, y) => l.split('').map((v, x) => {
         if ('ABCD'.indexOf(v) > -1) pods.push({
-            type: v,
-            spriteId: spriteIds[v],
-            x:x, y:y, highlighted: false
+            type: v, x:x, y:y, highlighted: false,
+            spriteId: spriteIds[v]
         })
         return v;
     }));
@@ -112,7 +120,7 @@ function getCursorPosition(canvas, event) {
     mousePos = {x:x, y:y};
 }
 
-const distanceMap = (map, x, y) => {
+const distanceMap = (map, {x, y}) => {
     const canSpreadTo = (x, y) => map[y][x] == '.';
     const spread = (x, y, dist) => {
         if (canSpreadTo(x,y)) map[y][x] = dist;
@@ -127,27 +135,53 @@ const distanceMap = (map, x, y) => {
 
 const doMove = (p, target) => {
     moveInProgress = true;
-    if (p.x == target.x && p.y == target.y) {
+    if (eqVect(p, target)) {
         p.highlighted = false;
         moveInProgress = false;
         if (isSolved(map)) {
-            id('mbscore').innerHTML = score;
+            id('candobetter').innerHTML = (solutions[map.length == 5 ? 0 : 1] < score ? 'Maybe you can do better?' : 'Lowest cost reached, congratulations!');
             id('message').classList.toggle('out');
         }
         return;
     }
 
-    let dMapFromTarget = distanceMap(cloneMap(map), target.x, target.y);
+    let dMapFromTarget = distanceMap(cloneMap(map), target);
     let move = dirs.filter(d => !isNaN(dMapFromTarget[p.y+d[1]][p.x+d[0]])).map(d => ({x: p.x+d[0], y: p.y+d[1]}))[0];
 
     map[p.y][p.x] = '.';
     p.x = move.x;
     p.y = move.y;
     map[p.y][p.x] = p.type;
-    score += charCost(p.type);
-    id('score').innerHTML = score;
+    setScore(score + charCost(p.type));
 
     setTimeout(() => doMove(p, target), 100);
+}
+
+const clickHandle = () => {
+    if (!map[mousePos.y] || ['#', ' '].includes(map[mousePos.y]?.[mousePos.x])) return;
+
+    let hovered = pods.filter(p => eqVect(p, mousePos))?.[0],
+        selected = pods.filter(p => p.highlighted)?.[0];
+
+    if (hovered) {
+        if (eqVect(selected, mousePos)) {
+            selected.highlighted = false;
+            return;
+        }
+        pods.forEach(p => p.highlighted = false);
+        hovered.highlighted = true;
+        return;
+    }
+
+    if (selected) {
+        if (moveInProgress) return;
+        let dMap = distanceMap(cloneMap(map), selected);
+        if (isNaN(dMap[mousePos.y][mousePos.x])) {
+            console.log('unable to move to target location');
+            return;
+        }
+        doMove(selected, {...mousePos});            
+    }
 }
 
 const initUI = () => {
@@ -165,32 +199,8 @@ const initUI = () => {
         restart(2);
         initPlanes();
     });
-    canvas.addEventListener('mousemove', function(e) {
-        getCursorPosition(canvas, e)
-    })
-    canvas.addEventListener('mouseup', function(e) {
-        if (!map[mousePos.y] || ['#', ' '].includes(map[mousePos.y]?.[mousePos.x])) return;
-        let podOnMouse = pods.filter(p => p.x == mousePos.x && p.y == mousePos.y);
-        let hPod = pods.filter(p => p.highlighted);
-        if (podOnMouse.length == 1) {
-            if (hPod.length == 1 && hPod[0].x == mousePos.x && hPod[0].y == mousePos.y) {
-                hPod[0].highlighted = false;
-                return;
-            }
-            pods.forEach(p => p.highlighted = false);
-            podOnMouse[0].highlighted = true;
-            return;
-        }
-        if (hPod.length == 1) {
-            if (moveInProgress) return;
-            let dMap = distanceMap(cloneMap(map), hPod[0].x, hPod[0].y);
-            if (parseInt(dMap[mousePos.y][mousePos.x]) != dMap[mousePos.y][mousePos.x]) {
-                console.log('unable to move to target location');
-                return;
-            }
-            doMove(hPod[0], {...mousePos});            
-        }
-    })
+    canvas.addEventListener('mousemove', e => getCursorPosition(canvas, e))
+    canvas.addEventListener('mouseup', e => clickHandle())
 }
 
 const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v => {
@@ -202,7 +212,16 @@ const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v =>
     v.data.src = v.url;
 });
 
+const initSolver = () => {
+    solver = new Worker('./worker.js');
+    solver.onmessage = e => {
+        console.log('Solutions arrived', e.data);
+        solutions = e.data;
+    }
+}
+
 load(() => {
+    initSolver();
     restart();
     initUI();
     initPlanes();
