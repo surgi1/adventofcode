@@ -295,6 +295,9 @@ const initUI = () => {
     });
     id('closeloadbox').addEventListener('click', e => id('loadbox').classList.toggle('out'));
 
+    id('openinstructions').addEventListener('click', e => id('instructions').classList.toggle('out'));
+    id('closeinstructions').addEventListener('click', e => id('instructions').classList.toggle('out'));
+
     renderMapsSwitch();
 
     canvas.addEventListener('mousemove', e => getCursorPosition(canvas, e))
