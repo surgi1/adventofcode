@@ -103,4 +103,13 @@ class Renderer {
         this.canvas.addEventListener('mousemove', e => this.getCursorPosition(e))
         this.canvas.addEventListener('mouseup', e => this.action.click(this.mousePos))
     }
+
+    load = (resourcesLoaded = 0) => Object.values(this.resources).forEach(v => {
+        v.data = new Image();
+        v.data.onload = () => {
+            if (++resourcesLoaded < Object.keys(this.resources).length) return;
+            this.action.onload();
+        }
+        v.data.src = v.url;
+    })
 }

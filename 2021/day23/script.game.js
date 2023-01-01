@@ -1,20 +1,9 @@
 (function() {
 
-    /*
-    todos:
-    - maybe make modal available to have arbitrary height?
-    - maybe impose some code org?
-    */
-
     const mapState = map => map.reduce((res, line) => res + line.join('').replace(/(#|\s)/g, ''), '')
     const eqVect = (a, b) => a && b && a.x == b.x && a.y == b.y;
 
-    const charVal = {
-        A: 0,
-        B: 1,
-        C: 2,
-        D: 3
-    };
+    const charVal = {A: 0, B: 1, C: 2, D: 3};
     const solutionsCache = {};
     const solver = new Worker('./worker.js');
 
@@ -51,12 +40,10 @@
         if (drawing) return;
         drawing = true;
 
-        let mousePos = renderer.getMousePos();
-
         renderer.prepareFrame();
 
-        // highlight active cell
-        let hovered = pods.filter(p => eqVect(p, mousePos))?.[0],
+        let mousePos = renderer.getMousePos(),
+            hovered = pods.filter(p => eqVect(p, mousePos))?.[0],
             selected = pods.filter(p => p.highlighted)?.[0];
 
         if (map[mousePos.y] && !['#', ' ', undefined].includes(map[mousePos.y]?.[mousePos.x])) {
@@ -104,7 +91,6 @@
         updateTopScore();
 
         renderer.setCanvasHeight(map.length);
-
         renderer.initPlanes(map);
     }
 
@@ -244,18 +230,9 @@
 
     const initInputs = () => inputs = [...baseInputs.slice(), ...Object.values(getCustomInputs())]
 
-    const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v => {
-        v.data = new Image();
-        v.data.onload = () => {
-            if (++resourcesLoaded < Object.keys(resources).length) return;
-            run();
-        }
-        v.data.src = v.url;
-    })
-
-    load(() => {
+    const init = () => {
         solver.onmessage = e => solutionsCache[e.data[1]] = e.data[0];
-        
+
         initInputs();
 
         gui = new Gui({
@@ -270,12 +247,16 @@
         renderer = new Renderer({
             resources: resources,
             action: {
-                click: mousePos => clickHandle(mousePos)
+                click: mousePos => clickHandle(mousePos),
+                onload: () => {
+                    restart();
+                    setInterval(draw, 10);
+                }
             }
         });
+    }
 
-        restart();
-        setInterval(draw, 10);
-    })
+    init();
+    renderer.load(); // start
 
 })();
