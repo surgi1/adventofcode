@@ -1,6 +1,6 @@
 import { nextMoves, charVal, distanceMap } from './gameLogic.js';
-import { init as initGUI, showVictoryBox, updateTopScore, updateScore, renderMapsSwitch } from './gui.js';
-import { init as initRender, initPlanes, render } from './render.js';
+import * as gui from './gui.js';
+import * as renderer from './render.js';
 import { storagePrefix } from './prefix.js';
 import { eqVect } from './vect.js';
 
@@ -28,7 +28,7 @@ const draw = () => {
     if (drawing) return;
     drawing = true;
 
-    render(pods, animStartFrame, frame, map, moves);
+    renderer.render(pods, animStartFrame, frame, map, moves);
 
     frame++;
     drawing = false;
@@ -36,7 +36,7 @@ const draw = () => {
 
 const setScore = v => {
     score = v;
-    updateScore(score);
+    gui.updateScore(score);
 }
 
 const mapState = map => map.reduce((res, line) => res + line.join('').replace(/(#|\s)/g, ''), '')
@@ -63,9 +63,9 @@ const restart = () => {
     if (!solutionsCache[mapInitState]) solver.postMessage(map.map(l => l.join('')).join("\n"));
 
     setScore(0);
-    updateTopScore(mapInitState);
+    gui.updateTopScore(mapInitState);
 
-    initPlanes(map);
+    renderer.initPlanes(map);
 }
 
 const checkMapSolved = () => {
@@ -74,14 +74,14 @@ const checkMapSolved = () => {
     if (!isSolved(map)) return;
     
     animStartFrame = frame;
-    showVictoryBox(score-solutionsCache[mapInitState]);
+    gui.showVictoryBox(score-solutionsCache[mapInitState]);
 
     let bestScore = localStorage.getItem(storagePrefix.SCORE + mapInitState);
     
     if (solutionsCache[mapInitState] == score) localStorage.setItem(storagePrefix.LOWEST_REACHED + mapInitState, 1);
     if (score <= bestScore || bestScore == undefined) localStorage.setItem(storagePrefix.SCORE + mapInitState, score);
     
-    updateTopScore(mapInitState);
+    gui.updateTopScore(mapInitState);
 }
 
 const moveStep = (p, target) => {
@@ -141,7 +141,7 @@ const addCustomInput = literal => {
     customInputs[mapState(arr.map(l => l.split('')))] = literal;
     localStorage.setItem(storagePrefix.CUSTOM_INPUTS, JSON.stringify(customInputs));
     initInputs();
-    renderMapsSwitch();
+    gui.renderMapsSwitch();
 }
 
 const getCustomInputs = () => JSON.parse(localStorage.getItem(storagePrefix.CUSTOM_INPUTS)) || {};
@@ -156,8 +156,8 @@ const setInputId = id => inputId = id % inputs.length;
 const init = () => {
     solver.onmessage = e => solutionsCache[e.data[1]] = e.data[0];
     initInputs();
-    initGUI();
-    initRender(() => {
+    gui.init();
+    renderer.init(() => {
         restart();
         setInterval(draw, 10);
     });
