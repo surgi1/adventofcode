@@ -18,7 +18,7 @@
         <div class="left">
             [<span class="selected mode" href="#!">easy</span>·<span class="link mode" href="#!">hard</span>]
         </div>
-            Current cost: <span class="score" id="score">0</span><img src="./energyicon.png"/>
+            Current cost: <span class="score currentscore" id="score">0</span><img src="./energyicon.png"/>
         <div class="right">
             Best effort: <span class="score" id="topscore">N/A</span>
         </div>
@@ -49,7 +49,7 @@
     <div id="message" class="message out">
         <div class="inner">
             <div class="victory" id="victory">GOOD JOB!</div>
-            Final cost: <span class="score" id="mbscore">0</span><img src="./energyicon.png"/><br/>
+            Final cost: <span class="score currentscore" id="mbscore">0</span><img src="./energyicon.png"/><br/>
             <span id="candobetter">Maybe you can do better?</span><br />
             <div class="messagebuttons">
                 <a id="tryagain" href="#!">[Try again]</a>
@@ -86,6 +86,7 @@
     </div>
 
     <script src="input.js"></script>
+    <script src="Gui.js"></script>
     <script src="script.game.js"></script>
 </body>
 </html>

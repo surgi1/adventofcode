@@ -6,11 +6,8 @@
     - maybe impose some code org?
     */
 
-    const cloneMap = source => source.map(row => row.slice())
-    const stateVal = map => map.reduce((res, line) => res + line.join('').replace(/(#|\s)/g, ''), '')
+    const mapState = map => map.reduce((res, line) => res + line.join('').replace(/(#|\s)/g, ''), '')
     const eqVect = (a, b) => a && b && a.x == b.x && a.y == b.y;
-    const id = k => document.getElementById(k);
-    const all = k => document.querySelectorAll(k);
 
     const charVal = {
         A: 0,
@@ -19,6 +16,7 @@
         D: 3
     };
     const solutionsCache = {};
+    const solver = new Worker('./worker.js');
 
     const storagePrefix = {
         SCORE: 'troopahs__best_cost_',
@@ -56,7 +54,7 @@
     const ctx = canvas.getContext('2d');
     const movementSpeed = 100; // ms
 
-    let map, pods, solver, moves, inputs, mapInitState,
+    let map, pods, moves, inputs, mapInitState, gui,
         difficulty = 1,
         inputId = 0,
         score = 0,
@@ -107,15 +105,15 @@
             ctx.beginPath();
             ctx.fillStyle = '#fff';
             if (!hovered && selected && !moves.some(m => eqVect(m, mousePos))) ctx.fillStyle = '#f00';
-            ctx.rect(mousePos.x * cellSize[0], mousePos.y * cellSize[1], cellSize[0], cellSize[1]);
+            ctx.rect(mousePos.x*cellSize[0], mousePos.y*cellSize[1], cellSize[0], cellSize[1]);
             ctx.fill();
             ctx.restore();
         }
 
         pods.sort((a, b) => a.y - b.y).forEach((p, i) => drawPodSprite(p.highlighted ? p.spriteId + 10 : p.spriteId, [p.x, p.y],
-            [0, (animStartFrame !== false) && (animStartFrame + i > 0) ? 10 * Math.sin(i + frame / 10) : 0]));
+            [0, (animStartFrame !== false) && (animStartFrame + i > 0) ? 10*Math.sin(i + frame / 10) : 0]));
 
-        'ABCD'.split('').forEach((v, i) => drawEmblemSprite(spriteIds[v] + 10, [3 + i * 2, map.length - 1]));
+        Object.keys(charVal).forEach((v, i) => drawEmblemSprite(spriteIds[v] + 10, [3 + i*2, map.length - 1]));
 
         frame++;
         drawing = false;
@@ -123,20 +121,18 @@
 
     const setScore = v => {
         score = v;
-        id('score').innerHTML = score;
-        id('mbscore').innerHTML = score;
+        gui.updateScore(score);
     }
 
     const restart = () => {
-        setScore(0);
-
         animStartFrame = false;
-
         pods = [];
+
         let inputArr = inputs[inputId].split("\n");
         if (difficulty == 2) inputArr.splice(3, 0, '  #D#C#B#A#  ', '  #D#B#A#C#  ');
+
         map = inputArr.map((l, y) => l.split('').map((v, x) => {
-            if ('ABCD'.indexOf(v) > -1) pods.push({
+            if (charVal[v] !== undefined) pods.push({
                 type: v,
                 x: x,
                 y: y,
@@ -146,19 +142,23 @@
             return v;
         }));
 
-        mapInitState = stateVal(map);
+        mapInitState = mapState(map);
 
-        if (!solutionsCache[mapInitState]) {
-            solver.postMessage(map.map(l => l.join('')).join("\n"));
-        }
+        if (!solutionsCache[mapInitState]) solver.postMessage(map.map(l => l.join('')).join("\n"));
 
-        let bestScore = localStorage.getItem(storagePrefix.SCORE + mapInitState);
-        let lowestReached = localStorage.getItem(storagePrefix.LOWEST_REACHED + mapInitState);
-        id('topscore').innerHTML = bestScore != undefined ? (bestScore + '' + (lowestReached == 1 ? '*' : '')) : 'N/A';
+        setScore(0);
+        updateTopScore();
 
         canvas.style.height = cellSize[1] * map.length + 'px';
         canvas.setAttribute('height', cellSize[1] * map.length);
+
+        initPlanes();
     }
+
+    const updateTopScore = () => gui.updateTopScore(
+        localStorage.getItem(storagePrefix.SCORE + mapInitState),
+        localStorage.getItem(storagePrefix.LOWEST_REACHED + mapInitState)
+    );
 
     const getCursorPosition = e => {
         const rect = canvas.getBoundingClientRect();
@@ -166,7 +166,7 @@
         mousePos.y = Math.floor((e.clientY - rect.top) / cellSize[1]);
     }
 
-    const distanceMap = (map, {x, y}) => {
+    const distanceMap = (source, {x, y}) => {
         const canSpreadTo = (x, y) => map[y][x] == '.';
         const spread = (x, y, dist) => {
             if (canSpreadTo(x, y)) map[y][x] = dist;
@@ -175,34 +175,25 @@
             if (canSpreadTo(x, y - 1)) spread(x, y - 1, dist + 1);
             if (canSpreadTo(x, y + 1)) spread(x, y + 1, dist + 1);
         }
+        let map = source.map(row => row.slice());
         spread(x, y, 0);
         return map;
     }
 
     const checkMapSolved = () => {
-        const isSolved = map => stateVal(map) === '.'.repeat(11) + 'ABCD'.repeat(map.length - 3);
+        const isSolved = map => mapState(map) === '.'.repeat(11) + Object.keys(charVal).join('').repeat(map.length - 3);
 
         if (!isSolved(map)) return;
         
         animStartFrame = frame;
-        
-        if (solutionsCache[mapInitState] < score) {
-            id('victory').innerHTML = 'GOOD JOB!';
-            id('candobetter').innerHTML = `You can save <b>${score-solutionsCache[mapInitState]}</b> more <img src="energyicon.png">!`;
-        } else {
-            id('victory').innerHTML = 'CONGRATULATIONS!';
-            id('candobetter').innerHTML = 'Lowest <img src="energyicon.png"> cost reached!';
-            localStorage.setItem(storagePrefix.LOWEST_REACHED + mapInitState, 1);
-        }
-        
-        id('message').classList.toggle('out');
-        
+        gui.showVictoryBox(score-solutionsCache[mapInitState]);
+
         let bestScore = localStorage.getItem(storagePrefix.SCORE + mapInitState);
         
-        if (score <= bestScore || bestScore == undefined) {
-            localStorage.setItem(storagePrefix.SCORE + mapInitState, score);
-            id('topscore').innerHTML = score + '' + (solutionsCache[mapInitState] == score ? '*' : '');
-        }
+        if (solutionsCache[mapInitState] == score) localStorage.setItem(storagePrefix.LOWEST_REACHED + mapInitState, 1);
+        if (score <= bestScore || bestScore == undefined) localStorage.setItem(storagePrefix.SCORE + mapInitState, score);
+        
+        updateTopScore();
     }
 
     const doMove = (p, target) => {
@@ -214,7 +205,7 @@
             return;
         }
 
-        let dMapFromTarget = distanceMap(cloneMap(map), target);
+        let dMapFromTarget = distanceMap(map, target);
         let move = dirs.filter(d => !isNaN(dMapFromTarget[p.y + d[1]][p.x + d[0]])).map(d => ({
             x: p.x + d[0],
             y: p.y + d[1]
@@ -237,7 +228,6 @@
 
         const adjacentToCaves = (x, y) => y == 1 && [3, 5, 7, 9].includes(x);
         const isSubjectsHouse = (x, y) => (y > 1) && (x == vHomeX);
-
         const subjectsHouseIsClean = () => {
             for (let y = 2; y < rows - 1; y++) {
                 if (!['.', v].includes(map[y][vHomeX])) return false;
@@ -247,7 +237,7 @@
 
         let cleanHouse = subjectsHouseIsClean(),
             targets = [],
-            dMap = distanceMap(cloneMap(map), from);
+            dMap = distanceMap(map, from);
 
         for (let y = 1; y < rows - 1; y++) {
             if (from.y == 1 && y == 1) continue; // once moved out of cave, has to move only to the cave ..
@@ -291,119 +281,38 @@
         }
 
         if (selected) {
-            if (moves.some(m => eqVect(m, mousePos))) doMove(selected, {
-                ...mousePos
-            });
+            if (moves.some(m => eqVect(m, mousePos))) doMove(selected, {...mousePos});
         }
     }
 
-    const switchDifficulty = () => {
-        all('.mode').forEach(el => {
-            el.classList.toggle('selected');
-            el.classList.toggle('link');
-        })
+    const addCustomInput = literal => {
+        let arr = literal.split("\n"),
+            valid = (arr.length == 5) && Object.keys(charVal).every(k => (literal.match(new RegExp(k, 'g')) || []).length == 2);
 
-        difficulty = (difficulty == 1 ? 2 : 1);
-
-        restart();
-        initPlanes();
-    }
-
-    const renderMapsSwitch = () => {
-        id('maps').innerHTML = '';
-        inputs.forEach((inp, i) => {
-            let el = document.createElement('span');
-
-            if (i == inputId) el.classList.add('selected');
-            else el.classList.add('link');
-            el.innerHTML = i + 1 + ' ';
-            el.addEventListener('click', e => {
-                inputId = i;
-                renderMapsSwitch();
-                restart();
-                initPlanes();
-            })
-            id('maps').appendChild(el);
-        })
-    }
-
-    const initSolver = () => {
-        solver = new Worker('./worker.js');
-        solver.onmessage = e => {
-            solutionsCache[e.data[1]] = e.data[0];
-            console.log(solutionsCache);
-        }
-    }
-
-    const addCustomInput = inputLiteral => {
-        const isValidInput = arr => {
-            if (arr.length != 5) return false;
-            return Object.keys(charVal).every(k => (literal.match(new RegExp(k, 'g')) || []).length == 2);
-        }
-
-        let arr = inputLiteral.split("\n");
-
-        if (!isValidInput(arr)) return;
+        if (!valid) return;
         let customInputs = getCustomInputs();
-        customInputs[stateVal(arr.map(l => l.split('')))] = inputLiteral;
+        customInputs[mapState(arr.map(l => l.split('')))] = literal;
         localStorage.setItem(storagePrefix.CUSTOM_INPUTS, JSON.stringify(customInputs));
         initInputs();
+        gui.renderMapsSwitch();
     }
 
-    const getCustomInputs = () => {
-        let customInputs = JSON.parse(localStorage.getItem(storagePrefix.CUSTOM_INPUTS));
-        if (customInputs) {
-            return customInputs;
-        }
-        return {};
-    }
+    const getCustomInputs = () => JSON.parse(localStorage.getItem(storagePrefix.CUSTOM_INPUTS)) || {};
 
-    const initInputs = () => {
-        inputs = [...baseInputs.slice(), ...Object.values(getCustomInputs())];
-        renderMapsSwitch();
-    }
-
-    const onResize = () => {
-        all('.message').forEach(el => el.style.left = Math.round((document.body.clientWidth - 380) / 2) + 'px')
-    }
+    const initInputs = () => inputs = [...baseInputs.slice(), ...Object.values(getCustomInputs())]
 
     const initUI = () => {
-        id('restart').addEventListener('click', e => {
-            restart();
-            initPlanes();
-        });
-        id('tryagain').addEventListener('click', e => {
-            id('message').classList.toggle('out');
-            restart();
-            initPlanes();
-        });
-        id('nextmap').addEventListener('click', e => {
-            id('message').classList.toggle('out');
-            inputId++;
-            if (inputId == inputs.length) inputId = 0;
-            renderMapsSwitch();
-            restart();
-            initPlanes();
-        });
-        all('.mode').forEach(el => el.addEventListener('click', e => switchDifficulty()));
-
-        id('openloadbox').addEventListener('click', e => id('loadbox').classList.toggle('out'));
-        id('load').addEventListener('click', e => {
-            addCustomInput(document.getElementById('custom').value);
-            id('loadbox').classList.toggle('out');
-        });
-        id('closeloadbox').addEventListener('click', e => id('loadbox').classList.toggle('out'));
-
-        id('openinstructions').addEventListener('click', e => id('instructions').classList.toggle('out'));
-        id('closeinstructions').addEventListener('click', e => id('instructions').classList.toggle('out'));
-
-        renderMapsSwitch();
+        gui = new Gui({
+            restart: () => restart(),
+            switchDifficulty: () => difficulty = (difficulty == 1 ? 2 : 1),
+            getInputs: () => inputs,
+            getInputId: () => inputId,
+            setInputId: id => inputId = id % inputs.length,
+            addCustomInput: s => addCustomInput(s),
+        })
 
         canvas.addEventListener('mousemove', e => getCursorPosition(e))
         canvas.addEventListener('mouseup', e => clickHandle())
-
-        addEventListener("resize", e => onResize());
-        onResize();
     }
 
     const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v => {
@@ -413,14 +322,13 @@
             run();
         }
         v.data.src = v.url;
-    });
+    })
 
     load(() => {
+        solver.onmessage = e => solutionsCache[e.data[1]] = e.data[0];
         initInputs();
-        initSolver();
-        restart();
         initUI();
-        initPlanes();
+        restart();
         setInterval(draw, 10);
     })
 
