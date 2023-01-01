@@ -160,10 +160,10 @@
         canvas.setAttribute('height', cellSize[1] * map.length);
     }
 
-    function getCursorPosition(canvas, event) {
+    const getCursorPosition = e => {
         const rect = canvas.getBoundingClientRect();
-        mousePos.x = Math.floor((event.clientX - rect.left) / cellSize[0]);
-        mousePos.y = Math.floor((event.clientY - rect.top) / cellSize[1]);
+        mousePos.x = Math.floor((e.clientX - rect.left) / cellSize[0]);
+        mousePos.y = Math.floor((e.clientY - rect.top) / cellSize[1]);
     }
 
     const distanceMap = (map, {x, y}) => {
@@ -327,7 +327,6 @@
         })
     }
 
-
     const initSolver = () => {
         solver = new Worker('./worker.js');
         solver.onmessage = e => {
@@ -400,7 +399,7 @@
 
         renderMapsSwitch();
 
-        canvas.addEventListener('mousemove', e => getCursorPosition(canvas, e))
+        canvas.addEventListener('mousemove', e => getCursorPosition(e))
         canvas.addEventListener('mouseup', e => clickHandle())
 
         addEventListener("resize", e => onResize());
