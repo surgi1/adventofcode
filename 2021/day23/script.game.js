@@ -278,7 +278,14 @@ const initSolver = () => {
     }
 }
 
+const isValidInput = literal => {
+    let arr = literal.split("\n");
+    if (arr.length != 5) return false;
+    return Object.keys(charVal).every(k => (literal.match(new RegExp(k, 'g')) || []).length == 2);
+}
+
 const addCustomInput = inputLiteral => {
+    if (!isValidInput(inputLiteral)) return;
     let customInputs = getCustomInputs();
     customInputs[stateVal(inputLiteral.split("\n").map(l => l.split('')))] = inputLiteral;
     localStorage.setItem(storageCustomInputsPrefix, JSON.stringify(customInputs));
