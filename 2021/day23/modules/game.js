@@ -1,18 +1,11 @@
 import { nextMoves, charVal, distanceMap } from './gameLogic.js';
-import { initGUI, showVictoryBox, updateTopScoreGUI, updateScore, renderMapsSwitch } from './gui.js';
-import { initRender, getMousePos, rectOnPos, prepareFrame, initPlanes, drawPodSprite, drawEmblemSprite, setCanvasHeight } from './render.js';
-
-const mapState = map => map.reduce((res, line) => res + line.join('').replace(/(#|\s)/g, ''), '')
-const eqVect = (a, b) => a && b && a.x == b.x && a.y == b.y;
+import { init as initGUI, showVictoryBox, updateTopScore, updateScore, renderMapsSwitch } from './gui.js';
+import { init as initRender, initPlanes, render } from './render.js';
+import { storagePrefix } from './prefix.js';
+import { eqVect } from './vect.js';
 
 const solutionsCache = {};
 const solver = new Worker('./worker.js');
-
-const storagePrefix = {
-    SCORE: 'troopahs__best_cost_',
-    LOWEST_REACHED: 'troopahs__lowest_reached_',
-    CUSTOM_INPUTS: 'troopahs__custom_inputs_'
-}
 
 const dirs = [
     [0, 1],
@@ -35,22 +28,7 @@ const draw = () => {
     if (drawing) return;
     drawing = true;
 
-    prepareFrame();
-
-    let mousePos = getMousePos(),
-        hovered = pods.filter(p => eqVect(p, mousePos))?.[0],
-        selected = pods.filter(p => p.highlighted)?.[0];
-
-    if (map[mousePos.y] && !['#', ' ', undefined].includes(map[mousePos.y]?.[mousePos.x])) {
-        let fillStyle = '#fff';
-        if (!hovered && selected && !moves.some(m => eqVect(m, mousePos))) fillStyle = '#f00';
-        rectOnPos(mousePos, fillStyle, 0.5);
-    }
-
-    pods.sort((a, b) => a.y - b.y).forEach((p, i) => drawPodSprite(p.type, p.highlighted, [p.x, p.y],
-        [0, (animStartFrame !== false) && (animStartFrame + i > 0) ? 10*Math.sin(i + frame / 10) : 0]));
-
-    Object.keys(charVal).forEach((v, i) => drawEmblemSprite(v, [3 + i*2, map.length - 1]));
+    render(pods, animStartFrame, frame, map, moves);
 
     frame++;
     drawing = false;
@@ -60,6 +38,8 @@ const setScore = v => {
     score = v;
     updateScore(score);
 }
+
+const mapState = map => map.reduce((res, line) => res + line.join('').replace(/(#|\s)/g, ''), '')
 
 const restart = () => {
     animStartFrame = false;
@@ -83,16 +63,10 @@ const restart = () => {
     if (!solutionsCache[mapInitState]) solver.postMessage(map.map(l => l.join('')).join("\n"));
 
     setScore(0);
-    updateTopScore();
+    updateTopScore(mapInitState);
 
-    setCanvasHeight(map.length);
     initPlanes(map);
 }
-
-const updateTopScore = () => updateTopScoreGUI(
-    localStorage.getItem(storagePrefix.SCORE + mapInitState),
-    localStorage.getItem(storagePrefix.LOWEST_REACHED + mapInitState)
-);
 
 const checkMapSolved = () => {
     const isSolved = map => mapState(map) === '.'.repeat(11) + Object.keys(charVal).join('').repeat(map.length - 3);
@@ -107,7 +81,7 @@ const checkMapSolved = () => {
     if (solutionsCache[mapInitState] == score) localStorage.setItem(storagePrefix.LOWEST_REACHED + mapInitState, 1);
     if (score <= bestScore || bestScore == undefined) localStorage.setItem(storagePrefix.SCORE + mapInitState, score);
     
-    updateTopScore();
+    updateTopScore(mapInitState);
 }
 
 const moveStep = (p, target) => {
@@ -191,4 +165,4 @@ const init = () => {
 
 init();
 
-export { switchDifficulty, restart, draw, clickHandle, addCustomInput, getInputs, getInputId, setInputId }
+export { switchDifficulty, restart, clickHandle, addCustomInput, getInputs, getInputId, setInputId }

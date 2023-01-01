@@ -1,12 +1,13 @@
-import { switchDifficulty, restart, addCustomInput, getInputs, getInputId, setInputId } from './game.js';
+import { switchDifficulty as switchDifficultyMain, restart, addCustomInput, getInputs, getInputId, setInputId } from './game.js';
 import { id, all } from './baseDOM.js';
+import { storagePrefix } from './prefix.js';
 
-const switchDifficultyGUI = () => {
+const switchDifficulty = () => {
     all('.mode').forEach(el => {
         el.classList.toggle('selected');
         el.classList.toggle('link');
     })
-    switchDifficulty();
+    switchDifficultyMain();
     restart();
 }
 
@@ -30,9 +31,14 @@ const renderMapsSwitch = () => {
 
 const updateScore = score => all('.currentscore').forEach(el => el.innerHTML = score);
 
-const updateTopScoreGUI = (best, lowestReached) => id('topscore').innerHTML = best != undefined ? (best + (lowestReached == 1 ? '*' : '')) : 'N/A';
-
 const onResize = () => all('.message').forEach(el => el.style.left = Math.round((document.body.clientWidth - 380) / 2) + 'px');
+
+const updateTopScore = mapInitState => {
+    let best = localStorage.getItem(storagePrefix.SCORE + mapInitState),
+        lowestReached =  localStorage.getItem(storagePrefix.LOWEST_REACHED + mapInitState);
+
+    id('topscore').innerHTML = best != undefined ? (best + (lowestReached == 1 ? '*' : '')) : 'N/A';
+}
 
 const showVictoryBox = distFromLowest => {
     let title, msg;
@@ -50,7 +56,7 @@ const showVictoryBox = distFromLowest => {
     id('message').classList.toggle('out');
 }
 
-const initGUI = () => {
+const init = () => {
     id('restart').addEventListener('click', e => restart());
     id('tryagain').addEventListener('click', e => {
         id('message').classList.toggle('out');
@@ -62,7 +68,7 @@ const initGUI = () => {
         renderMapsSwitch();
         restart();
     });
-    all('.mode').forEach(el => el.addEventListener('click', e => switchDifficultyGUI()));
+    all('.mode').forEach(el => el.addEventListener('click', e => switchDifficulty()));
 
     id('openloadbox').addEventListener('click', e => id('loadbox').classList.toggle('out'));
     id('load').addEventListener('click', e => {
@@ -80,4 +86,4 @@ const initGUI = () => {
     onResize();
 }
 
-export { initGUI, showVictoryBox, updateTopScoreGUI, updateScore, switchDifficultyGUI, renderMapsSwitch }
+export { init, showVictoryBox, updateTopScore, updateScore, renderMapsSwitch }

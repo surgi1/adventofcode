@@ -1,5 +1,7 @@
 import { clickHandle } from './game.js';
 import { id } from './baseDOM.js';
+import { eqVect } from './vect.js';
+import { charVal } from './gameLogic.js';
 
 const resources = {
     sprites: {
@@ -23,6 +25,8 @@ const spriteIds = {
     wall: 9,
     floor: 8,
 }
+
+let rows;
 
 const createPlane = src => {
     let e = document.createElement('canvas');
@@ -55,7 +59,31 @@ const drawEmblemSprite = (type, [x, y]) => ctx.drawImage(
     spriteSize[0], 48
 );
 
+const render = (pods, animStartFrame, frame, map, moves) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // clear
+    ctx.drawImage(canvas.planes.bg, 0, 0);
+
+    let hovered = pods.filter(p => eqVect(p, mousePos))?.[0],
+        selected = pods.filter(p => p.highlighted)?.[0];
+
+    if (map[mousePos.y] && !['#', ' ', undefined].includes(map[mousePos.y]?.[mousePos.x])) {
+        let fillStyle = '#fff';
+        if (!hovered && selected && !moves.some(m => eqVect(m, mousePos))) fillStyle = '#f00';
+        rectOnPos(mousePos, fillStyle, 0.5);
+    }
+
+    pods.sort((a, b) => a.y - b.y).forEach((p, i) => drawPodSprite(p.type, p.highlighted, [p.x, p.y],
+        [0, (animStartFrame !== false) && (animStartFrame + i > 0) ? 10*Math.sin(i + frame / 10) : 0]));
+
+    Object.keys(charVal).forEach((v, i) => drawEmblemSprite(v, [3 + i*2, rows - 1]));
+}
+
 const initPlanes = map => {
+    rows = map.length;
+
+    canvas.style.height = cellSize[1] * rows + 'px';
+    canvas.setAttribute('height', cellSize[1] * rows);
+
     canvas.planes = {
         bg: createPlane(canvas)
     };
@@ -67,16 +95,6 @@ const initPlanes = map => {
                 spriteId = ['#', ' ', undefined].includes(v) ? (y == 0 ? spriteIds.wallTop : spriteIds.wall) : spriteIds.floor;
             drawBgSprite(target, spriteId, [x, y]);
         }
-}
-
-const prepareFrame = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // clear
-    ctx.drawImage(canvas.planes.bg, 0, 0);
-}
-
-const setCanvasHeight = cells => {
-    canvas.style.height = cellSize[1] * cells + 'px';
-    canvas.setAttribute('height', cellSize[1] * cells);
 }
 
 const rectOnPos = (p, fillStyle, alpha) => {
@@ -109,10 +127,10 @@ const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v =>
     v.data.src = v.url;
 })
 
-const initRender = run => {
+const init = run => {
     canvas.addEventListener('mousemove', e => getCursorPosition(e))
     canvas.addEventListener('mouseup', e => clickHandle(mousePos))
     load(run);
 }
 
-export { initRender, getMousePos, rectOnPos, prepareFrame, initPlanes, drawPodSprite, drawEmblemSprite, setCanvasHeight }
+export { init, initPlanes, render }
