@@ -2,6 +2,7 @@
 
 /*
 todos:
+- maybe make modal available to have arbitrary height?
 - maybe impose some code org?
 */
 
@@ -24,6 +25,7 @@ const charCost = ch => Math.pow(10, charVal[ch]);
 const stateVal = map => map.reduce((res, line) => res+line.join('').replace(/(#|\s)/g, ''), '')
 const isSolved = map => stateVal(map) === '.'.repeat(11)+'ABCD'.repeat(map.length-3);
 const id = k => document.getElementById(k);
+const all = k => document.querySelectorAll(k);
 const eqVect = (a, b) => a && b && a.x == b.x && a.y == b.y;
 const parseInput = input => input.split("\n").map((l => l.split('')));
 
@@ -153,10 +155,10 @@ const doMove = (p, target) => {
             animStartFrame = frame;
             if (solutionsCache[mapInitState] < score) {
                 id('victory').innerHTML = 'GOOD JOB!';
-                id('candobetter').innerHTML = 'Maybe you can do better?';
+                id('candobetter').innerHTML = `You can save <b>${score-solutionsCache[mapInitState]}</b> more <img src="energyicon.png">!`;
             } else {
                 id('victory').innerHTML = 'CONGRATULATIONS!';
-                id('candobetter').innerHTML = 'Lowest cost reached!';
+                id('candobetter').innerHTML = 'Lowest <img src="energyicon.png"> cost reached!';
                 localStorage.setItem(storageLowestReachedPrefix+mapInitState, 1);
             }
             id('message').classList.toggle('out');
@@ -267,6 +269,39 @@ const renderMapsSwitch = () => {
     })
 }
 
+
+const initSolver = () => {
+    solver = new Worker('./worker.js');
+    solver.onmessage = e => {
+        solutionsCache[e.data[1]] = e.data[0];
+        console.log(solutionsCache);
+    }
+}
+
+const addCustomInput = inputLiteral => {
+    let customInputs = getCustomInputs();
+    customInputs[stateVal(inputLiteral.split("\n").map(l => l.split('')))] = inputLiteral;
+    localStorage.setItem(storageCustomInputsPrefix, JSON.stringify(customInputs));
+    initInputs();
+}
+
+const getCustomInputs = () => {
+    let customInputs = JSON.parse(localStorage.getItem(storageCustomInputsPrefix));
+    if (customInputs) {
+        return customInputs;
+    }
+    return {};
+}
+
+const initInputs = () => {
+    inputs = [...baseInputs.slice(), ...Object.values(getCustomInputs())];
+    renderMapsSwitch();
+}
+
+const onResize = () => {
+    all('.message').forEach(el => el.style.left = Math.round((document.body.clientWidth-380)/2) +'px')
+}
+
 const initUI = () => {
     id('restart').addEventListener('click', e => {
         restart();
@@ -302,6 +337,9 @@ const initUI = () => {
 
     canvas.addEventListener('mousemove', e => getCursorPosition(canvas, e))
     canvas.addEventListener('mouseup', e => clickHandle())
+
+    addEventListener("resize", e => onResize());
+    onResize();
 }
 
 const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v => {
@@ -312,34 +350,6 @@ const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v =>
     }
     v.data.src = v.url;
 });
-
-const initSolver = () => {
-    solver = new Worker('./worker.js');
-    solver.onmessage = e => {
-        solutionsCache[e.data[1]] = e.data[0];
-        console.log(solutionsCache);
-    }
-}
-
-const addCustomInput = inputLiteral => {
-    let customInputs = getCustomInputs();
-    customInputs[stateVal(inputLiteral.split("\n").map(l => l.split('')))] = inputLiteral;
-    localStorage.setItem(storageCustomInputsPrefix, JSON.stringify(customInputs));
-    initInputs();
-}
-
-const getCustomInputs = () => {
-    let customInputs = JSON.parse(localStorage.getItem(storageCustomInputsPrefix));
-    if (customInputs) {
-        return customInputs;
-    }
-    return {};
-}
-
-const initInputs = () => {
-    inputs = [...baseInputs.slice(), ...Object.values(getCustomInputs())];
-    renderMapsSwitch();
-}
 
 load(() => {
     initInputs();
