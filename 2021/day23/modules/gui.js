@@ -80,4 +80,4 @@ const initGUI = () => {
     onResize();
 }
 
-export { initGUI, showVictoryBox, updateTopScoreGUI, updateScore, switchDifficultyGUI, renderMapsSwitch, id, all }
+export { initGUI, showVictoryBox, updateTopScoreGUI, updateScore, switchDifficultyGUI, renderMapsSwitch }
