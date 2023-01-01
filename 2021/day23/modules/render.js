@@ -26,7 +26,13 @@ const spriteIds = {
     floor: 8,
 }
 
-let rows;
+let rows,
+    frame = 0,
+    drawing = false,
+    animStartFrame = false;
+
+const animationStart = () => animStartFrame = frame;
+const animationStop = () => animStartFrame = false;
 
 const createPlane = src => {
     let e = document.createElement('canvas');
@@ -59,7 +65,10 @@ const drawEmblemSprite = (type, [x, y]) => ctx.drawImage(
     spriteSize[0], 48
 );
 
-const render = (pods, animStartFrame, frame, map, moves) => {
+const render = (pods, map, moves) => {
+    if (drawing) return;
+    drawing = true;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear
     ctx.drawImage(canvas.planes.bg, 0, 0);
 
@@ -76,6 +85,9 @@ const render = (pods, animStartFrame, frame, map, moves) => {
         [0, (animStartFrame !== false) && (animStartFrame + i > 0) ? 10*Math.sin(i + frame / 10) : 0]));
 
     Object.keys(charVal).forEach((v, i) => drawEmblemSprite(v, [3 + i*2, rows - 1]));
+
+    frame++;
+    drawing = false;
 }
 
 const initPlanes = map => {
@@ -133,4 +145,4 @@ const init = run => {
     load(run);
 }
 
-export { init, initPlanes, render }
+export { init, initPlanes, render, animationStart, animationStop }

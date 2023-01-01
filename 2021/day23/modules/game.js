@@ -19,20 +19,9 @@ let map, pods, moves, inputs, mapInitState,
     difficulty = 1,
     inputId = 0,
     score = 0,
-    frame = 0,
-    drawing = false,
-    animStartFrame = false,
     moveInProgress = false;
 
-const draw = () => {
-    if (drawing) return;
-    drawing = true;
-
-    renderer.render(pods, animStartFrame, frame, map, moves);
-
-    frame++;
-    drawing = false;
-}
+const draw = () => renderer.render(pods, map, moves)
 
 const setScore = v => {
     score = v;
@@ -42,7 +31,7 @@ const setScore = v => {
 const mapState = map => map.reduce((res, line) => res + line.join('').replace(/(#|\s)/g, ''), '')
 
 const restart = () => {
-    animStartFrame = false;
+    renderer.animationStop();
     pods = [];
 
     let inputArr = inputs[inputId].split("\n");
@@ -73,7 +62,7 @@ const checkMapSolved = () => {
 
     if (!isSolved(map)) return;
     
-    animStartFrame = frame;
+    renderer.animationStart();
     gui.showVictoryBox(score-solutionsCache[mapInitState]);
 
     let bestScore = localStorage.getItem(storagePrefix.SCORE + mapInitState);
@@ -132,6 +121,8 @@ const clickHandle = mousePos => {
     }
 }
 
+const switchDifficulty = () => difficulty = (difficulty == 1 ? 2 : 1);
+
 const addCustomInput = literal => {
     let arr = literal.split("\n"),
         valid = (arr.length == 5) && Object.keys(charVal).every(k => (literal.match(new RegExp(k, 'g')) || []).length == 2);
@@ -145,10 +136,7 @@ const addCustomInput = literal => {
 }
 
 const getCustomInputs = () => JSON.parse(localStorage.getItem(storagePrefix.CUSTOM_INPUTS)) || {};
-
 const initInputs = () => inputs = [...baseInputs.slice(), ...Object.values(getCustomInputs())]
-
-const switchDifficulty = () => difficulty = (difficulty == 1 ? 2 : 1);
 const getInputs = () => inputs;
 const getInputId = () => inputId;
 const setInputId = id => inputId = id % inputs.length;
