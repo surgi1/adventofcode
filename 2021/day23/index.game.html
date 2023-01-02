@@ -49,6 +49,7 @@
     </div>
 
     <div id="message" class="message out">
+        <div class="top"></div>
         <div class="inner">
             <div class="victory" id="victory">GOOD JOB!</div>
             Final cost: <span class="score currentscore" id="mbscore">0</span><img src="./resources/energyicon.png"/><br/>
@@ -58,21 +59,26 @@
                 <a id="nextmap" href="#!">[Next map]</a>
             </div>
         </div>
+        <div class="bottom"></div>
     </div>
 
     <div id="loadbox" class="message out">
+        <div class="top"></div>
         <div class="inner">
-            Load your own input!
+            <div class="messagetitle">Load your own input!</div>
             <textarea onclick="this.select()" id="custom">paste here</textarea>
-            <div>
+            <div class="messagebuttons">
                 <a id="load" href="#!">[Load]</a>
                 <a id="closeloadbox" href="#!">[Close]</a>
             </div>
         </div>
+        <div class="bottom"></div>
     </div>
 
     <div id="instructions" class="message out">
+        <div class="top"></div>
         <div class="inner">
+            <div class="messagetitle">How to play?</div>
             <ol>
                 <li>Help troopahs get to their cells!</li>
                 <li>Moving each unit type costs different energy.</li>
@@ -81,10 +87,11 @@
                 <li>Once out of cell, troopah can only go to his own cell.</li>
                 <li>Lowest overall cost the better!<img src="./resources/energyicon.png"/></li>
             </ol>
-            <div>
+            <div class="messagebuttons">
                 <a id="closeinstructions" href="#!">[Close]</a>
             </div>
         </div>
+        <div class="bottom"></div>
     </div>
 
     <script src="input.js"></script>

@@ -80,8 +80,8 @@ canvas {
 a:link, a:visited, a:active, .link { color:lightblue;text-decoration:none; }
 a:hover, .link:hover { color:#99ff99;text-decoration:none; }        
 textarea {
-    height:76px;
-    width:180px;
+    height:96px;
+    width:200px;
 }
 .right {
     float:right;
@@ -93,8 +93,8 @@ textarea {
 }
 .inner ol {
     text-align: left;
-    font-size: 18px;
-    line-height:18px;
+    font-size: 22px;
+    line-height: 22px;
     margin-bottom: 4px;
     margin-top: 0px;
 }
@@ -117,26 +117,40 @@ textarea {
     border-bottom: white solid 2px;
     margin-bottom:6px;
 }
+
 .message {
     position:absolute;
     top:58px;
     width: 380px;
-    height:180px;
-    background-image: url('./resources/messagebox2.png');
-    background-repeat: no-repeat;
+    /*height:180px;*/
+    background-image: url('./resources/mb-body.png');
+    background-repeat: repeat-y;
     box-shadow: inset 0 -0em 3em rgb(0 0 0 / 10%), 0.93em 0.93em 0em rgb(0 0 0 / 30%);
     transition: all 0.5s ease;
 }
+
+.message .top {
+    background-image: url('./resources/mb-top.png');
+    width: 380px;
+    height: 8px;
+}
+.message .bottom {
+    background-image: url('./resources/mb-bottom.png');
+    width: 380px;
+    height: 8px;
+}
+
 .message.out {
-    top:-250px;
+    top:-350px;
 }
 .inner {
-    /*margin-left:20px;*/
-    padding-top: 12px;
+    margin-left:8px;
+    margin-right:8px;
+    padding-top: 6px;
     color:azure;
     text-align: center;
     font-size: 24px;
-    width:100%;
+    /*width:100%;*/
     line-height:34px;
 }
 .victory {
@@ -160,6 +174,12 @@ textarea {
 }
 .messagebuttons {
     margin-top:12px;
+    margin-bottom: 6px;
+}
+
+.messagetitle {
+    font-size:24px;
+    margin-bottom: 8px;
 }
 
 .message a:link, .message a:visited, .message a:active { color:white;text-decoration:none; }
