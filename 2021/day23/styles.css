@@ -140,10 +140,19 @@ textarea {
     line-height:34px;
 }
 .victory {
-     animation: Color 4s linear infinite;
-    -webkit-animation: Color 4s ease-in-out infinite;
+    background: url('./resources/stripebg.png') repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    text-fill-color: transparent;
+    animation: movebg 15s ease-in-out infinite;
+    color: transparent;
+
+    transform: translate3d(0,0,0);
+    backface-visibility: hidden;
+
     font-size:30px;
-    /*font-weight:bold;*/
+    font-weight:bold;
     margin-bottom:6px;
 }
 .messagebuttons {
@@ -153,28 +162,8 @@ textarea {
 .message a:link, .message a:visited, .message a:active { color:white;text-decoration:none; }
 .message a:hover { color:#99ff99;text-decoration:none; }    
 
-@keyframes Color{
-  0%{
-    color:#fff;
-  }
-  
-  20%{
-    color:yellow;
-  }
-  
-  40%{
-    color:#000;
-  }
-  
-  60%{
-    color:lightblue;
-  }
-  /*
-  80%{
-    color:#ED5565;
-  }
-  
-  100%{
-    color:#AC92EC;
-  }*/
+@keyframes movebg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
