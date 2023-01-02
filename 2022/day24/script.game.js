@@ -28,7 +28,7 @@ const keyMap = {
     Space: 'wait'
 };
 
-let map = [], blizMaps = [], graves = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
+let map = [], blizMaps = [], graves = [], grues = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
     autoRun = false, elf = {}, step = 0, steps, start, end,
     canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'), spriteSize = 32,
     drawing = false, frame = 0, stepStartFrame = false, keysPressed = {},
@@ -51,6 +51,8 @@ const getBlizMap = t => {
 
     return blizMaps[t] = bmap;
 }
+
+// idea: skeletons (maybe resurrected from the grave?) that would attract the grues in the area
 
 const findBestPath = (start, end, t0) => {
     const key = p => p.x+'_'+p.y+'_'+ p.t;
@@ -140,12 +142,48 @@ const drawBlizzards = animFrame => {
     //if (animFrame > 0) ctx.restore();
 }
 
+const drawGrues = animFrame => {
+    ctx.save();
+    ctx.globalAlpha = 0.6;
+    grues.forEach(g => {
+        let spriteId = 6 + '<v^>'.indexOf(g.t), animAdj = [0,1].map(d => adjust(d, animFrame, g.t));
+        drawSprite(spriteId, [g.x, g.y], animAdj);
+    })
+    ctx.restore();
+}
+
+const determineGrueAction = ({x, y}, blzs) => {
+    let defaultMove = '';
+    if (Math.abs(elf.x-x)+Math.abs(elf.y-y) < 13) {
+        if (Math.abs(elf.x-x) > Math.abs(elf.y-y)) {
+            // left or right
+            defaultMove = (elf.x > x) ? '>' : '<';
+        } else {
+            defaultMove = (elf.y > y) ? 'v' : '^';
+        }
+    } else defaultMove = '<>^v'.charAt(Math.floor(4*Math.random()));
+
+    if (blzs.length > 0) {
+        if (blzs.filter(b => b.t == defaultMove).length > 0) return defaultMove;
+        return blzs[Math.floor(blzs.length*Math.random())].t;
+    }
+    return defaultMove;
+}
+
 const finishStep = () => {
     blizs = advanceBlizzards(blizs);
 
     // finish moving elf
     elf.x += moves[elf.action][0];
     elf.y += moves[elf.action][1];
+
+    // finish moving grues
+    grues.forEach(g => {
+        g.x += moves[g.t][0];
+        g.y += moves[g.t][1];
+        let blzs = blizs.filter(b => b.x == g.x && b.y == g.y);
+        g.t = determineGrueAction(g, blzs);
+    })
 
     elf.hp -= blizs.filter(b => b.x == elf.x && b.y == elf.y).length;
     if ((elf.y == 0 || elf.y == map.length-1) && elf.hp < 50) elf.hp++;
@@ -174,6 +212,7 @@ const draw = () => {
     ctx.drawImage(canvas.planes.ground, 0, 0);
     graves.forEach(g => drawSprite(5, [g.x, g.y]));
     drawElf(animFrame);
+    drawGrues(animFrame);
     drawBlizzards(animFrame);
     ctx.drawImage(canvas.planes.walls, 0, 0);
 
@@ -210,6 +249,12 @@ const restart = () => {
         if ('<>^v'.indexOf(v) == -1) return true;
         blizs.push({x:x, y:y, t:v})
     }));
+
+    for (let i = 0; i < 20; i++) grues.push({
+        x: Math.floor(map[0].length*Math.random()),
+        y: Math.floor(map.length*Math.random()),
+        t: 'v'
+    })
 }
 
 const initUI = () => {
