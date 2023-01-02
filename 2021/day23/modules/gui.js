@@ -40,14 +40,14 @@ const updateTopScore = mapInitState => {
     id('topscore').innerHTML = best != undefined ? (best + (lowestReached == 1 ? '*' : '')) : 'N/A';
 }
 
-const showVictoryBox = distFromLowest => {
+const showVictoryBox = (distFromLowest, newBest = false) => {
     let title, msg;
 
     if (distFromLowest == 0) {
         title = 'CONGRATULATIONS!';
         msg = 'Lowest <img src="./resources/energyicon.png"> cost reached!';
     } else {
-        title = 'GOOD JOB!';
+        title = newBest ? 'NEW RECORD!' : 'GOOD JOB!';
         msg = `You can save <b>${distFromLowest}</b><img src="./resources/energyicon.png"> more!`;
     }
 

@@ -72,16 +72,16 @@ const checkMapSolved = () => {
     const isSolved = map => mapState(map) === '.'.repeat(11) + Object.keys(charVal).join('').repeat(map.length - 3);
 
     if (!isSolved(map)) return;
-    
+
+    let bestScore = localStorage.getItem(storagePrefix.SCORE + mapInitState);
+        
     renderer.animationStart();
-    gui.showVictoryBox(score-solutionsCache[mapInitState]);
+    gui.showVictoryBox(score-solutionsCache[mapInitState], score < bestScore || bestScore == undefined);
 
     if (playSound) applauses[Math.sign(score-solutionsCache[mapInitState])].play();
 
-    let bestScore = localStorage.getItem(storagePrefix.SCORE + mapInitState);
-    
     if (solutionsCache[mapInitState] == score) localStorage.setItem(storagePrefix.LOWEST_REACHED + mapInitState, 1);
-    if (score <= bestScore || bestScore == undefined) localStorage.setItem(storagePrefix.SCORE + mapInitState, score);
+    if (score < bestScore || bestScore == undefined) localStorage.setItem(storagePrefix.SCORE + mapInitState, score);
     
     gui.updateTopScore(mapInitState);
 }
