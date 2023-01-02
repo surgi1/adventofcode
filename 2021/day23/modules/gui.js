@@ -72,7 +72,7 @@ const init = () => {
 
     id('openloadbox').addEventListener('click', e => id('loadbox').classList.toggle('out'));
     id('load').addEventListener('click', e => {
-        game.addCustomInput(id('custom').value);
+        game.addCustomInput(id('custom').value.trim());
         id('loadbox').classList.toggle('out');
     });
     id('closeloadbox').addEventListener('click', e => id('loadbox').classList.toggle('out'));
