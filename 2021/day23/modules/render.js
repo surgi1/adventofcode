@@ -141,7 +141,9 @@ const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v =>
 
 const init = run => {
     canvas.addEventListener('mousemove', e => getCursorPosition(e))
-    canvas.addEventListener('mouseup', e => clickHandle(mousePos))
+    canvas.addEventListener('mouseup', e => {
+        if (animStartFrame === false) clickHandle(mousePos)
+    })
     load(run);
 }
 
