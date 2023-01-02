@@ -56,9 +56,10 @@ const showVictoryBox = distFromLowest => {
     id('message').classList.toggle('out');
 }
 
+const hideAllPopups = () => all('.message').forEach(el => el.classList.add('out'));
+
 const init = () => {
     id('restart').addEventListener('click', e => {
-        all('.message').forEach(el => el.classList.add('out'));
         game.restart();
     });
     id('tryagain').addEventListener('click', e => {
@@ -94,4 +95,4 @@ const init = () => {
     onResize();
 }
 
-export { init, showVictoryBox, updateTopScore, updateScore, renderMapsSwitch }
+export { init, showVictoryBox, updateTopScore, updateScore, renderMapsSwitch, hideAllPopups }

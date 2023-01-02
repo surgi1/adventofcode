@@ -42,6 +42,7 @@ const mapState = map => map.reduce((res, line) => res + line.join('').replace(/(
 
 const restart = () => {
     renderer.animationStop();
+    gui.hideAllPopups();
     pods = [];
 
     let inputArr = inputs[inputId].split("\n");
