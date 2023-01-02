@@ -57,7 +57,10 @@ const showVictoryBox = distFromLowest => {
 }
 
 const init = () => {
-    id('restart').addEventListener('click', e => game.restart());
+    id('restart').addEventListener('click', e => {
+        all('.message').forEach(el => el.classList.add('out'));
+        game.restart();
+    });
     id('tryagain').addEventListener('click', e => {
         id('message').classList.toggle('out');
         game.restart();
