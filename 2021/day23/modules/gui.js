@@ -80,6 +80,11 @@ const init = () => {
     id('openinstructions').addEventListener('click', e => id('instructions').classList.toggle('out'));
     id('closeinstructions').addEventListener('click', e => id('instructions').classList.toggle('out'));
 
+    id('sound_switch').addEventListener('click', e => {
+        id('sound_switch').classList.toggle('off');
+        game.toggleSound();
+    });
+
     renderMapsSwitch();
 
     addEventListener("resize", e => onResize());

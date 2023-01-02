@@ -26,6 +26,7 @@ const movementSpeed = 100; // ms
 
 let map, pods, moves, inputs, mapInitState,
     difficulty = 1,
+    playSound = true,
     inputId = 0,
     score = 0,
     moveInProgress = false;
@@ -74,7 +75,7 @@ const checkMapSolved = () => {
     renderer.animationStart();
     gui.showVictoryBox(score-solutionsCache[mapInitState]);
 
-    applauses[Math.sign(score-solutionsCache[mapInitState])].play();
+    if (playSound) applauses[Math.sign(score-solutionsCache[mapInitState])].play();
 
     let bestScore = localStorage.getItem(storagePrefix.SCORE + mapInitState);
     
@@ -130,13 +131,14 @@ const clickHandle = mousePos => {
 
     if (selected) {
         if (moves.some(m => eqVect(m, mousePos))) {
-            stepSoundEffect.play();
+            if (playSound) stepSoundEffect.play();
             moveStep(selected, {...mousePos});
         }
     }
 }
 
 const switchDifficulty = () => difficulty = (difficulty == 1 ? 2 : 1);
+const toggleSound = () => playSound = !playSound;
 
 const addCustomInput = literal => {
     let arr = literal.split("\n"),
@@ -168,4 +170,4 @@ const init = () => {
 
 init();
 
-export { switchDifficulty, restart, clickHandle, addCustomInput, getInputs, getInputId, setInputId }
+export { switchDifficulty, restart, clickHandle, addCustomInput, getInputs, getInputId, setInputId, toggleSound }

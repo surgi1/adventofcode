@@ -33,6 +33,21 @@ canvas {
     position:relative;
     top:-20px;
 }
+.sound_switch {
+    background-image: url('./resources/sndonoff.png');
+    width:16px;
+    height:16px;
+    background-repeat:no-repeat;
+    background-position: right top;
+    float: right;
+    margin-top:12px;
+    cursor: pointer;
+}
+
+.sound_switch.off {
+    background-position:left top;
+}
+
 .costs {
     padding-left: 0;
     padding-right: 0;
