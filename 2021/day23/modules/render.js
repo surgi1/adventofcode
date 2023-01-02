@@ -5,7 +5,7 @@ import { charVal } from './gameLogic.js';
 
 const resources = {
     sprites: {
-        url: './spritesheet.png'
+        url: './resources/spritesheet.png'
     }
 };
 

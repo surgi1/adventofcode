@@ -45,10 +45,10 @@ const showVictoryBox = distFromLowest => {
 
     if (distFromLowest == 0) {
         title = 'CONGRATULATIONS!';
-        msg = 'Lowest <img src="energyicon.png"> cost reached!';
+        msg = 'Lowest <img src="./resources/energyicon.png"> cost reached!';
     } else {
         title = 'GOOD JOB!';
-        msg = `You can save <b>${distFromLowest}</b> more <img src="energyicon.png">!`;
+        msg = `You can save <b>${distFromLowest}</b><img src="./resources/energyicon.png"> more!`;
     }
 
     id('victory').innerHTML = title;

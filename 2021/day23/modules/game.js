@@ -7,6 +7,15 @@ import { eqVect } from './vect.js';
 const solutionsCache = {};
 const solver = new Worker('./worker.js');
 
+let stepSoundEffect = new Audio('./resources/steps.mp3');
+stepSoundEffect.playbackRate=4;
+stepSoundEffect.loop=true;
+
+let applauses = [
+    new Audio('./resources/bigApplause.mp3'),
+    new Audio('./resources/applause.mp3')
+]
+
 const dirs = [
     [0, 1],
     [0, -1],
@@ -65,6 +74,8 @@ const checkMapSolved = () => {
     renderer.animationStart();
     gui.showVictoryBox(score-solutionsCache[mapInitState]);
 
+    applauses[Math.sign(score-solutionsCache[mapInitState])].play();
+
     let bestScore = localStorage.getItem(storagePrefix.SCORE + mapInitState);
     
     if (solutionsCache[mapInitState] == score) localStorage.setItem(storagePrefix.LOWEST_REACHED + mapInitState, 1);
@@ -80,6 +91,7 @@ const moveStep = (p, target) => {
         p.highlighted = false;
         moveInProgress = false;
         checkMapSolved();
+        stepSoundEffect.pause();
         return;
     }
 
@@ -117,7 +129,10 @@ const clickHandle = mousePos => {
     }
 
     if (selected) {
-        if (moves.some(m => eqVect(m, mousePos))) moveStep(selected, {...mousePos});
+        if (moves.some(m => eqVect(m, mousePos))) {
+            stepSoundEffect.play();
+            moveStep(selected, {...mousePos});
+        }
     }
 }
 
