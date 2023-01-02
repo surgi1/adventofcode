@@ -8,9 +8,6 @@ const solutionsCache = {};
 const solver = new Worker('./worker.js');
 
 let stepSoundEffect = new Audio('./resources/steps.mp3');
-stepSoundEffect.playbackRate=4;
-stepSoundEffect.loop=true;
-
 let applauses = [
     new Audio('./resources/bigApplause.mp3'),
     new Audio('./resources/applause.mp3')
@@ -141,6 +138,11 @@ const clickHandle = mousePos => {
 const switchDifficulty = () => difficulty = (difficulty == 1 ? 2 : 1);
 const toggleSound = () => playSound = !playSound;
 
+const initSound = () => {
+    stepSoundEffect.playbackRate = 4;
+    stepSoundEffect.loop = true;
+}
+
 const addCustomInput = literal => {
     let arr = literal.split("\n"),
         valid = (arr.length == 5) && Object.keys(charVal).every(k => (literal.match(new RegExp(k, 'g')) || []).length == 2);
@@ -163,6 +165,7 @@ const init = () => {
     solver.onmessage = e => solutionsCache[e.data[1]] = e.data[0];
     initInputs();
     gui.init();
+    initSound();
     renderer.init(() => {
         restart();
         setInterval(draw, 10);
