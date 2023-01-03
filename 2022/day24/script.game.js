@@ -50,6 +50,11 @@ const createPlane = src => {
 
 const drawTerrainSprite = (ctx, spriteId, [x, y]) => ctx.drawImage(resources.terrain.data, spriteId[0]*spriteSize, spriteId[1]*spriteSize, spriteSize, spriteSize, x*spriteSize, y*spriteSize, spriteSize, spriteSize);
 
+const gmap = (y, x) => {
+    if (x >= 0 && y >= 0 && x < map[0].length && y < map.length) return map[y][x];
+    return '#'; // outside the map are only walls
+}
+
 const initPlanes = () => {
     canvas.planes = {
         walls: createPlane(canvas),
@@ -60,38 +65,49 @@ const initPlanes = () => {
         let v = map[y][x];
         // allways draw ground
         drawTerrainSprite(canvas.planes.ground.getContext('2d'), [ Math.random() < 0.05 ? 28 : 24+((x*y) % 4), 18], [x, y]);
-        //drawTerrainSprite(canvas.planes.ground.getContext('2d'), [ 24+Math.floor(5*Math.random()), 15+Math.floor(4*Math.random())], [x, y]);
+
         if (v == '#') {
-            let shiftX = 6;// 6
-            let shiftY = 0; // 0
-            if (y == 0) {
-                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 3+shiftY*6], [x, y]);
-                if (x == 2) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 4+shiftY*6], [x, y]);
-                if (x > 2 && x < mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 4+shiftY*6], [x, y]);
-                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 0+shiftY*6], [x, y]);
-            } else if (y == map.length-1) {
-                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 1+shiftY*6], [x, y]);
-                if (x > 0 && x < mapSize-3) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 2+shiftY*6], [x, y]);
-                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 3+shiftY*6], [x, y]);
-                if (x == mapSize-3) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 2+shiftY*6], [x, y]);
+            let mat = [6, 0]; // coordinates of the material in the terrain png; x, y
+            let pos = [0, 0]; // sprite position relative to the material; x, y
+
+            if (x > 0 && y > 0 && x < map[0].length-1 && y < map.length-1) mat = [5, 2]; // inner wall material
+
+            if (![gmap(y-1, x-1), gmap(y-1, x), gmap(y-1, x+1), gmap(y, x-1), gmap(y, x+1), gmap(y+1, x-1), gmap(y+1, x), gmap(y+1, x+1)].includes('#')) {
+                // sole hole
+                drawTerrainSprite(canvas.planes.walls.getContext('2d'), [mat[0]*3, Math.round(mat[1]*6+Math.random())], [x, y]);
             } else {
-                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 3+shiftY*6], [x, y]);
-                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 3+shiftY*6], [x, y]);
+
+                if (gmap(y-1, x) != '#') pos[1] = 2;
+                else if (gmap(y+1, x) != '#') pos[1] = 4;
+                else pos[1] = 3;
+
+                if (gmap(y, x-1) != '#') pos[0] = 0;
+                else if (gmap(y, x+1) != '#') pos[0] = 2;
+                else pos[0] = 1;
+
+                if (pos[0] == 1 && pos[1] == 3) {
+                    // this might be a middle sprite
+                    if (gmap(y-1, x-1) != '#') pos = [2, 1];
+                    else if (gmap(y-1, x+1) != '#') pos = [1, 1];
+                    else if (gmap(y+1, x-1) != '#') pos = [2, 0];
+                    else if (gmap(y+1, x+1) != '#') pos = [1, 0];
+                    else {
+                        // it is a middle sprite
+                        if (Math.random() < 0.2) {
+                            drawTerrainSprite(canvas.planes.walls.getContext('2d'), [mat[0]*3+pos[0], mat[1]*6+pos[1]], [x, y]);
+                            pos = [Math.floor(3*Math.random()), 5]; // extra graphics for breaking the still
+                        }
+                    }
+                }
+
+                drawTerrainSprite(canvas.planes.walls.getContext('2d'), [mat[0]*3+pos[0], mat[1]*6+pos[1]], [x, y]);
             }
         } else {
             // randoms
             if (Math.random() < 0.005)
                 drawTerrainSprite(canvas.planes.ground.getContext('2d'), [30, 15], [x, y]);
-            /*if (Math.random() < 0.005)
-                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [30, 16], [x, y]);
-            if (Math.random() < 0.005)
-                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [29, 19], [x, y]);*/
-            /*if (Math.random() < 0.005)
-                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [23, 5], [x, y]);
-            if (Math.random() < 0.005)
-                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [22, 5], [x, y]);*/
-            if (Math.random() < 0.05)
-                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [21, 5], [x, y]);
+            if (Math.random() < 0.01)
+                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [22, 5], [x, y]);
         }
     }
 }
@@ -182,7 +198,7 @@ const finishStep = () => {
         if (Math.abs(elf.x-g.x)+Math.abs(elf.y-g.y) <= 1) elf.hp -= 5;
     })
 
-    elf.hp -= blizs.filter(b => b.x == elf.x && b.y == elf.y).length;
+    //elf.hp -= blizs.filter(b => b.x == elf.x && b.y == elf.y).length;
     stepStartFrame = false;
     step++;
 }
@@ -210,17 +226,13 @@ const draw = () => {
     ctx.drawImage(canvas.planes.ground, 0, 0);
     graves.forEach(g => drawSprite(5, [g.x, g.y]));
     drawElf(animFrame);
-    drawBlizzards(animFrame);
     ctx.drawImage(canvas.planes.walls, 0, 0);
+    drawBlizzards(animFrame);
     drawGrues(animFrame);
 
     // apply controls
-    if (autoRun) {
-        if (step < steps.length) action(steps[step]); else autoRun = false;
-    } else {
-        let keys = Object.entries(keysPressed).filter(([k, v]) => v === true);
-        if (keys.length > 0) action(keyMap[keys[0][0]]);
-    }
+    let keys = Object.entries(keysPressed).filter(([k, v]) => v === true);
+    if (keys.length > 0) action(keyMap[keys[0][0]]); // else action('wait');
 
     frame++;
     drawing = false;
@@ -236,7 +248,7 @@ const action = v => {
 }
 
 const restart = () => {
-    map = input.split("\n").map(l => [...l.split('').slice(0, mapSize-2), ...l.split('').slice(-2)]);
+    map = inputGame.split("\n").map(l => [...l.split('').slice(0, mapSize-2), ...l.split('').slice(-2)]);
     start = {x: map[0].indexOf('.'), y: 0};
     end = {x: map[map.length-1].indexOf('.'), y: map.length-1};
     step = 0;
