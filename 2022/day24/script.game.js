@@ -70,7 +70,7 @@ const initPlanes = () => {
             let mat = [6, 0]; // coordinates of the material in the terrain png; x, y
             let pos = [0, 0]; // sprite position relative to the material; x, y
 
-            if (x > 0 && y > 0 && x < map[0].length-1 && y < map.length-1) mat = [5, 2]; // inner wall material
+            if (x > 0 && y > 0 && x < map[0].length-1 && y < map.length-1) mat = [5, 0]; // inner wall material
 
             if (![gmap(y-1, x-1), gmap(y-1, x), gmap(y-1, x+1), gmap(y, x-1), gmap(y, x+1), gmap(y+1, x-1), gmap(y+1, x), gmap(y+1, x+1)].includes('#')) {
                 // sole hole
@@ -232,7 +232,7 @@ const draw = () => {
 
     // apply controls
     let keys = Object.entries(keysPressed).filter(([k, v]) => v === true);
-    if (keys.length > 0) action(keyMap[keys[0][0]]); // else action('wait');
+    if (keys.length > 0) action(keyMap[keys[0][0]]); //else action('wait');
 
     frame++;
     drawing = false;
