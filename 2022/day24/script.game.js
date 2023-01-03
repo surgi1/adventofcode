@@ -59,23 +59,39 @@ const initPlanes = () => {
     for (let y = 0; y < map.length; y++) for (let x = 0; x < map[0].length; x++) {
         let v = map[y][x];
         // allways draw ground
-        drawTerrainSprite(canvas.planes.ground.getContext('2d'), [ Math.random() < 0.05 ? 28 : 24+((x+y) % 4), 18], [x, y]);
+        drawTerrainSprite(canvas.planes.ground.getContext('2d'), [ Math.random() < 0.05 ? 28 : 24+((x*y) % 4), 18], [x, y]);
+        //drawTerrainSprite(canvas.planes.ground.getContext('2d'), [ 24+Math.floor(5*Math.random()), 15+Math.floor(4*Math.random())], [x, y]);
         if (v == '#') {
-            let shiftX = 6;
+            let shiftX = 6;// 6
+            let shiftY = 0; // 0
             if (y == 0) {
-                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 3], [x, y]);
-                if (x == 2) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 4], [x, y]);
-                if (x > 2 && x < mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 4], [x, y]);
-                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 0], [x, y]);
+                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 3+shiftY*6], [x, y]);
+                if (x == 2) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 4+shiftY*6], [x, y]);
+                if (x > 2 && x < mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 4+shiftY*6], [x, y]);
+                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 0+shiftY*6], [x, y]);
             } else if (y == map.length-1) {
-                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 1], [x, y]);
-                if (x > 0 && x < mapSize-3) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 2], [x, y]);
-                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 3], [x, y]);
-                if (x == mapSize-3) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 2], [x, y]);
+                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 1+shiftY*6], [x, y]);
+                if (x > 0 && x < mapSize-3) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 2+shiftY*6], [x, y]);
+                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 3+shiftY*6], [x, y]);
+                if (x == mapSize-3) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 2+shiftY*6], [x, y]);
             } else {
-                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 3], [x, y]);
-                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 3], [x, y]);
+                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 3+shiftY*6], [x, y]);
+                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 3+shiftY*6], [x, y]);
             }
+        } else {
+            // randoms
+            if (Math.random() < 0.005)
+                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [30, 15], [x, y]);
+            /*if (Math.random() < 0.005)
+                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [30, 16], [x, y]);
+            if (Math.random() < 0.005)
+                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [29, 19], [x, y]);*/
+            /*if (Math.random() < 0.005)
+                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [23, 5], [x, y]);
+            if (Math.random() < 0.005)
+                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [22, 5], [x, y]);*/
+            if (Math.random() < 0.05)
+                drawTerrainSprite(canvas.planes.ground.getContext('2d'), [21, 5], [x, y]);
         }
     }
 }
@@ -228,7 +244,7 @@ const restart = () => {
     blizs = [];
     map.forEach((row, y) => row.forEach((v, x) => {
         if ('<>^v'.indexOf(v) == -1) return true;
-        blizs.push({x:x, y:y, t:v})
+        if ((x*y) % 5 == Math.floor(5*Math.random())) blizs.push({x:x, y:y, t:v});
     }));
 
     grues = [];
