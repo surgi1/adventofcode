@@ -226,13 +226,19 @@ const draw = () => {
 
         elf.spriteId = elfSpriteIds[v];
         let mapY = Math.round((elf.y+move[1])/32),
-            mapX = Math.round((elf.x+move[0])/32);
-        
-        if (gmap(mapY, mapX) != '#') {
+            mapX = Math.round((elf.x+move[0])/32),
+            mapYo = Math.round(elf.y/32),
+            mapXo = Math.round(elf.x/32);
+
+        if (gmap(mapYo, mapX) != '#') {
             elf.x += move[0];
+            elf.action = v;
+        }
+        if (gmap(mapY, mapXo) != '#') {
             elf.y += move[1];
             elf.action = v;
         }
+
     } else elf.action = 'wait';
 
     frame++;
