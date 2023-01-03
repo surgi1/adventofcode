@@ -208,13 +208,23 @@ const draw = () => {
     let keys = Object.entries(keysPressed).filter(([k, v]) => v === true);
     if (keys.length > 0) {
         let v = keyMap[keys[0][0]];
+        let move = [0, 0];
+        keys.forEach(k => {
+            let v = keyMap[k[0]];
+            move[0] += moves[v][0];
+            move[1] += moves[v][1];
+        })
+        let moveNorm = Math.sqrt(move[0]*move[0]+move[1]*move[1]);
+        move[0] = move[0]/moveNorm;
+        move[1] = move[1]/moveNorm;
+
         elf.spriteId = elfSpriteIds[v];
-        let mapY = Math.round((elf.y+moves[v][1])/32),
-            mapX = Math.round((elf.x+moves[v][0])/32);
+        let mapY = Math.round((elf.y+move[1])/32),
+            mapX = Math.round((elf.x+move[0])/32);
         
         if (gmap(mapY, mapX) != '#') {
-            elf.x += moves[v][0];
-            elf.y += moves[v][1];
+            elf.x += move[0];
+            elf.y += move[1];
             elf.action = v;
         }
     } else elf.action = 'wait';
