@@ -168,10 +168,16 @@ const determineGrueAction = ({x, y, t}, blzs) => {
         else defaultMove = t;
     }
 
+    if (x < 32) defaultMove = '>';
+    if (y < 32) defaultMove = 'v';
+    if (y > 32*(map.length-2)) defaultMove = '^';
+    if (x > 32*(map[0].length-2)) defaultMove = '<';
+
     if (blzs.length > 0) {
         if (blzs.filter(b => b.t == defaultMove).length > 0) return defaultMove;
         return blzs[Math.floor(blzs.length*Math.random())].t;
     }
+
     return defaultMove;
 }
 
@@ -182,8 +188,8 @@ const draw = () => {
     blizs = advanceBlizzards(blizs);
 
     grues.forEach(g => {
-        g.x += moves[g.t][0];
-        g.y += moves[g.t][1];
+        g.x += moves[g.t][0]*1.1;
+        g.y += moves[g.t][1]*1.1;
         let blzs = blizs.filter(b => Math.abs(b.x-g.x) <= 12 && Math.abs(b.y-g.y) <= 12);
         g.t = determineGrueAction(g, blzs);
         if (Math.abs(elf.x-g.x)+Math.abs(elf.y-g.y) <= 8) if (frame % 10 == 0) elf.hp -= 1;
