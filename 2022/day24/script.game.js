@@ -1,5 +1,3 @@
-// the speed-up: do not compute blizzard map for each minute repeatedly
-// simple bfs with tracing visited triplets of x, y and time
 const wallColors = ['#2f3f63', '#1f1f53'];
 const grndColors = ['#e0e6f4', '#eee', '#eee', '#eee'];
 const moves = {
@@ -35,7 +33,11 @@ let map = [], graves = [], grues = [], dirs = Object.values(moves), movesEntries
     autoRun = false, elf = {}, step = 0, steps, start, end,
     canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'), spriteSize = 32,
     drawing = false, frame = 0, stepStartFrame = false, keysPressed = {},
-    resources = {elfSprites: {url: './elf.png'}, sprites: {url: './spritesheet.png'}};
+    resources = {
+        elfSprites: {url: './elf.png'},
+        sprites: {url: './spritesheet.png'},
+        terrain: {url: './terrain_3.png'}
+    };
 
 // idea: skeletons (maybe resurrected from the grave?) that would attract the grues in the area
 
@@ -46,6 +48,8 @@ const createPlane = src => {
     return e;
 }
 
+const drawTerrainSprite = (ctx, spriteId, [x, y]) => ctx.drawImage(resources.terrain.data, spriteId[0]*spriteSize, spriteId[1]*spriteSize, spriteSize, spriteSize, x*spriteSize, y*spriteSize, spriteSize, spriteSize);
+
 const initPlanes = () => {
     canvas.planes = {
         walls: createPlane(canvas),
@@ -53,12 +57,26 @@ const initPlanes = () => {
     };
     
     for (let y = 0; y < map.length; y++) for (let x = 0; x < map[0].length; x++) {
-        let v = map[y][x], target = canvas.planes[v == '#' ? 'walls' : 'ground'].getContext('2d'),
-            bgColor = v == '#' ? wallColors[Math.floor(Math.random()*wallColors.length)] : grndColors[Math.floor(Math.random()*grndColors.length)];
-        target.beginPath();
-        target.fillStyle = bgColor;
-        target.rect(x*32, y*32, 32, 32);
-        target.fill();
+        let v = map[y][x];
+        // allways draw ground
+        drawTerrainSprite(canvas.planes.ground.getContext('2d'), [ Math.random() < 0.05 ? 28 : 24+((x+y) % 4), 18], [x, y]);
+        if (v == '#') {
+            let shiftX = 6;
+            if (y == 0) {
+                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 3], [x, y]);
+                if (x == 2) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 4], [x, y]);
+                if (x > 2 && x < mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 4], [x, y]);
+                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 0], [x, y]);
+            } else if (y == map.length-1) {
+                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 1], [x, y]);
+                if (x > 0 && x < mapSize-3) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+1, 2], [x, y]);
+                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 3], [x, y]);
+                if (x == mapSize-3) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 2], [x, y]);
+            } else {
+                if (x == 0) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3+2, 3], [x, y]);
+                if (x == mapSize-1) drawTerrainSprite(canvas.planes.walls.getContext('2d'), [shiftX*3, 3], [x, y]);
+            }
+        }
     }
 }
 
@@ -176,9 +194,9 @@ const draw = () => {
     ctx.drawImage(canvas.planes.ground, 0, 0);
     graves.forEach(g => drawSprite(5, [g.x, g.y]));
     drawElf(animFrame);
-    drawGrues(animFrame);
     drawBlizzards(animFrame);
     ctx.drawImage(canvas.planes.walls, 0, 0);
+    drawGrues(animFrame);
 
     // apply controls
     if (autoRun) {
