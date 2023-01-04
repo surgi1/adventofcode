@@ -81,13 +81,14 @@ const drawPlayer = (spriteId, [_x, _y]) => {
 
 
     // full metal
-    /*ctx.drawImage(resources.human.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+/*    ctx.drawImage(resources.human.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
     ctx.drawImage(resources.helm_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
     ctx.drawImage(resources.shoes_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
     ctx.drawImage(resources.legs_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
     ctx.drawImage(resources.torso_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
     ctx.drawImage(resources.shoulders_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
     ctx.drawImage(resources.gloves_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);*/
+
 
 }
 
@@ -210,7 +211,7 @@ const drawGrues = animFrame => {
 
 const determineGrueAction = ({x, y, t}, blzs) => {
     let moves = [];
-    if (Math.abs(elf.x-x)+Math.abs(elf.y-y) < 200) {
+    if (Math.abs(elf.x-x)+Math.abs(elf.y-y) < 1000) {
         if (Math.abs(elf.x-x) > 5) moves.push(elf.x > x ? '>' : '<');
         if (Math.abs(elf.y-y) > 5) moves.push(elf.y > y ? 'v' : '^');
     } else {
@@ -256,7 +257,7 @@ const draw = () => {
         g.x += move[0];
         g.y += move[1];
 
-        let blzs = blizs.filter(b => Math.abs(b.x-g.x+10) <= 12 && Math.abs(b.y-g.y+20) <= 12);
+        let blzs = blizs.filter(b => Math.abs(b.x+16-(g.x+28)) <= 28 && Math.abs(b.y+16-(g.y+35)) <= 35);
         g.t = determineGrueAction(g, blzs);
         if (Math.abs(elf.x-g.x)+Math.abs(elf.y-g.y) <= 12) if (frame % 10 == 0) elf.hp -= 1;
     })
