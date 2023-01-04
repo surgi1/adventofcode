@@ -1,5 +1,3 @@
-const wallColors = ['#2f3f63', '#1f1f53'];
-const grndColors = ['#e0e6f4', '#eee', '#eee', '#eee'];
 const moves = {
     '<': [-1, 0],
     '^': [0, -1],
@@ -26,12 +24,12 @@ const keyMap = {
     Space: 'wait'
 };
 
-const gruesCount = 20;
+const gruesCount = 5;
 const mapSize = 50;
 
 let map = [], graves = [], grues = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
     autoRun = false, elf = {}, step = 0, steps, start, end,
-    canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'), spriteSize = 32,
+    canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'),
     drawing = false, frame = 0, stepStartFrame = false, keysPressed = {},
     resources = {
         grue: {url: './resources/Grue.png'},
@@ -100,7 +98,7 @@ const createPlane = src => {
     return e;
 }
 
-const drawTerrainSprite = (ctx, spriteId, [x, y]) => ctx.drawImage(resources.terrain.data, spriteId[0]*spriteSize, spriteId[1]*spriteSize, spriteSize, spriteSize, x*spriteSize, y*spriteSize, spriteSize, spriteSize);
+const drawTerrainSprite = (ctx, spriteId, [x, y]) => ctx.drawImage(resources.terrain.data, spriteId[0]*32, spriteId[1]*32, 32, 32, x*32, y*32, 32, 32);
 
 const gmap = (y, x) => {
     if (x >= 0 && y >= 0 && x < map[0].length && y < map.length) return map[y][x];
@@ -174,7 +172,7 @@ const advanceBlizzards = blizs => blizs.map(b => {
     return b;
 })
 
-const drawSprite = (spriteId, [x, y]) => ctx.drawImage(resources.sprites.data, spriteId*spriteSize, 0, spriteSize, spriteSize, x, y, spriteSize, spriteSize);
+const drawSprite = (spriteId, [x, y]) => ctx.drawImage(resources.sprites.data, spriteId*32, 0, 32, 32, x, y, 32, 32);
 //const drawElfSprite = (spriteId, [x, y]) => ctx.drawImage(resources.elfSprites.data, spriteId[0]*24, spriteId[1]*32, 24, 32, x+4, y, 24, 32);
 
 const drawElf = () => {
@@ -203,37 +201,37 @@ const drawGrues = animFrame => {
     ctx.save();
     ctx.globalAlpha = 0.6;
     grues.forEach(g => {
-        let spriteId = '>^<v'.indexOf(g.t);
+        let spriteId = '>^<v'.indexOf(g.t[0]);
+        if (spriteId == -1) spriteId = 3;
         drawGrue(spriteId, [g.x, g.y]);
     })
     ctx.restore();
 }
 
 const determineGrueAction = ({x, y, t}, blzs) => {
-    let defaultMove = '';
-    if (Math.abs(elf.x-x)+Math.abs(elf.y-y) < 50) {
-        if (Math.abs(elf.x-x) > Math.abs(elf.y-y)) {
-            // left or right
-            defaultMove = (elf.x > x) ? '>' : '<';
-        } else {
-            defaultMove = (elf.y > y) ? 'v' : '^';
-        }
+    let moves = [];
+    if (Math.abs(elf.x-x)+Math.abs(elf.y-y) < 200) {
+        if (Math.abs(elf.x-x) > 5) moves.push(elf.x > x ? '>' : '<');
+        if (Math.abs(elf.y-y) > 5) moves.push(elf.y > y ? 'v' : '^');
     } else {
-        if (frame % 64 == Math.floor(32*Math.random())) defaultMove = '<>^v'.charAt(Math.floor(4*Math.random()));
-        else defaultMove = t;
+        if (frame % 64 == Math.floor(32*Math.random())) moves = ['<>^v'.charAt(Math.floor(4*Math.random()))];
+        else moves = t;
     }
 
-    if (x < 32) defaultMove = '>';
-    if (y < 32) defaultMove = 'v';
-    if (y > 32*(map.length-2)) defaultMove = '^';
-    if (x > 32*(map[0].length-2)) defaultMove = '<';
+    if (x < 32) moves = ['>'];
+    if (y < 32) moves = ['v'];
+    if (y > 32*(map.length-2)) moves = ['^'];
+    if (x > 32*(map[0].length-2)) moves = ['<'];
 
     if (blzs.length > 0) {
-        if (blzs.filter(b => b.t == defaultMove).length > 0) return defaultMove;
-        return blzs[Math.floor(blzs.length*Math.random())].t;
+        if (blzs.filter(b => b.t == moves[0]).length > 0) return [moves[0]];
+        if (moves[1] && blzs.filter(b => b.t == moves[1]).length > 0) return [moves[1]];
+        return [blzs[Math.floor(blzs.length*Math.random())].t];
     }
 
-    return defaultMove;
+    if (moves.length == 0) moves = ['wait'];
+
+    return moves;
 }
 
 const draw = () => {
@@ -243,11 +241,24 @@ const draw = () => {
     blizs = advanceBlizzards(blizs);
 
     grues.forEach(g => {
-        g.x += moves[g.t][0]*1.1;
-        g.y += moves[g.t][1]*1.1;
-        let blzs = blizs.filter(b => Math.abs(b.x-g.x) <= 12 && Math.abs(b.y-g.y) <= 12);
+        let move = [0, 0];
+        g.t.forEach(k => {
+            move[0] += moves[k][0];
+            move[1] += moves[k][1];
+        })
+        let moveNorm = Math.sqrt(move[0]*move[0]+move[1]*move[1]);
+
+        if (moveNorm > 0) {
+            move[0] = 1.5*move[0]/moveNorm;
+            move[1] = 1.5*move[1]/moveNorm;
+        }
+
+        g.x += move[0];
+        g.y += move[1];
+
+        let blzs = blizs.filter(b => Math.abs(b.x-g.x+10) <= 12 && Math.abs(b.y-g.y+20) <= 12);
         g.t = determineGrueAction(g, blzs);
-        if (Math.abs(elf.x-g.x)+Math.abs(elf.y-g.y) <= 8) if (frame % 10 == 0) elf.hp -= 1;
+        if (Math.abs(elf.x-g.x)+Math.abs(elf.y-g.y) <= 12) if (frame % 10 == 0) elf.hp -= 1;
     })
 
     if ((elf.y < 32 || elf.y > 32*(map.length-1)) && elf.hp < 100) if (frame % 3 == 0) elf.hp++;
@@ -316,7 +327,7 @@ const restart = () => {
     for (let i = 0; i < gruesCount; i++) grues.push({
         x: Math.floor(32*map[0].length*Math.random()),
         y: Math.floor(32*map.length*Math.random()),
-        t: 'v'
+        t: ['v']
     })
 }
 
