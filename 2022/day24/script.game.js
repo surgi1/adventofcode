@@ -377,7 +377,7 @@ const restart = () => {
     blizs = [];
     map.forEach((row, y) => row.forEach((v, x) => {
         if ('<>^v'.indexOf(v) == -1) return true;
-        if ((x*y) % 5 == Math.floor(5*Math.random())) blizs.push({x:x*32, y:y*32, t:v});
+        if ((x*y) % 50 == Math.floor(50*Math.random())) blizs.push({x:x*32, y:y*32, t:v});
     }));
 
     grues = [];
@@ -403,24 +403,22 @@ const initUI = () => {
 let totalResources = Object.keys(resources).length + Object.values(resources).filter(r => r.actionable === true).length*(actionParams.length-1);
 
 const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v => {
+    const onload = () => {
+        if (++resourcesLoaded < totalResources) return;
+        run();
+    }
     if (v.actionable === true) {
         v.action = [];
         actionParams.forEach(action => {
             let tmp = {};
             tmp.data = new Image();
-            tmp.data.onload = () => {
-                if (++resourcesLoaded < totalResources) return;
-                run();
-            }
+            tmp.data.onload = onload;
             tmp.data.src = './resources/'+action.name+'/'+v.url;
             v.action.push(tmp);
         })
     } else {
         v.data = new Image();
-        v.data.onload = () => {
-            if (++resourcesLoaded < totalResources) return;
-            run();
-        }
+        v.data.onload = onload;
         v.data.src = v.url;
     }
 });
