@@ -309,6 +309,13 @@ const draw = () => {
         }
     }
 
+    if (elf.animationId == ACTION.SPELLCAST && frame-elf.animationStart == 50) {
+        blizs.push({x: elf.x-16, y: elf.y, t: '>'});
+        blizs.push({x: elf.x-16, y: elf.y, t: '<'});
+        blizs.push({x: elf.x-16, y: elf.y, t: '^'});
+        blizs.push({x: elf.x-16, y: elf.y, t: 'v'});
+    }
+
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear
     ctx.drawImage(canvas.planes.ground, 0, 0);
     ctx.drawImage(canvas.planes.walls, 0, 0);
