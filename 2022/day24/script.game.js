@@ -12,6 +12,13 @@ const elfSpriteIds = {
     'wait': 2,
     '>': 3
 }
+
+const ACTION = {
+    WALK: 0,
+    SPELLCAST: 1,
+    HURT: 2,
+}
+
 const keyMap = {
     ArrowLeft: '<',
     ArrowRight: '>',
@@ -21,44 +28,61 @@ const keyMap = {
     KeyD: '>',
     KeyW: '^',
     KeyS: 'v',
-    Space: 'wait'
+    Space: ACTION.SPELLCAST,
+    KeyQ: ACTION.HURT
 };
 
 const gruesCount = 5;
 const mapSize = 50;
 
 let map = [], graves = [], grues = [], dirs = Object.values(moves), movesEntries = Object.entries(moves),
-    autoRun = false, elf = {}, step = 0, steps, start, end,
+    autoRun = false, elf = {}, start, end,
     canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d'),
-    drawing = false, frame = 0, stepStartFrame = false, keysPressed = {},
+    drawing = false, frame = 0, keysPressed = {},
+    actionParams = [{
+        name: 'walk',
+        frames: 8,
+        speed: 0.25
+    }, {
+        name: 'spellcast',
+        frames: 6,
+        speed: 0.05,
+        mustFinish: true
+    }, {
+        name: 'hurt',
+        frames: 5,
+        speed: 0.05,
+        mustFinish: true,
+        oneD: true
+    }],
     resources = {
-        grue: {url: './resources/Grue.png'},
+        human: {actionable: true, url: 'BODY_male.png'},
+        skeleton: {actionable: true, url: 'BODY_skeleton.png'},
+        hood: {actionable: true, url: 'HEAD_robe_hood.png'},
+        hood_chain: {actionable: true, url: 'HEAD_chain_armor_hood.png'},
+        hair: {actionable: true, url: 'HEAD_hair_blonde.png'},
+        hat: {actionable: true, url: 'HEAD_leather_armor_hat.png'},
+        helm_chain: {actionable: true, url: 'HEAD_chain_armor_helmet.png'},
+        helm_plate: {actionable: true, url: 'HEAD_plate_armor_helmet.png'},
+        torso_robe: {actionable: true, url: 'TORSO_robe_shirt_brown.png'},
+        torso_plate: {actionable: true, url: 'TORSO_plate_armor_torso.png'},
+        torso_leather: {actionable: true, url: 'TORSO_leather_armor_torso.png'},
+        torso_chain: {actionable: true, url: 'TORSO_chain_armor_torso.png'},
+        torso_purple_jacket: {actionable: true, url: 'TORSO_chain_armor_jacket_purple.png'},
+        torso_shirt: {actionable: true, url: 'TORSO_leather_armor_shirt_white.png'},
+        shoulders_plate: {actionable: true, url: 'TORSO_plate_armor_arms_shoulders.png'},
+        shoulders_leather: {actionable: true, url: 'TORSO_leather_armor_shoulders.png'},
+        bracers: {actionable: true, url: 'TORSO_leather_armor_bracers.png'},
+        legs_robe: {actionable: true, url: 'LEGS_robe_skirt.png'},
+        legs_leather: {actionable: true, url: 'LEGS_pants_greenish.png'},
+        legs_plate: {actionable: true, url: 'LEGS_plate_armor_pants.png'},
+        gloves_plate: {actionable: true, url: 'HANDS_plate_armor_gloves.png'},
+        shoes: {actionable: true, url: 'FEET_shoes_brown.png'},
+        shoes_plate: {actionable: true, url: 'FEET_plate_armor_shoes.png'},
+        belt: {actionable: true, url: 'BELT_leather.png'},
+        belt_rope: {actionable: true, url: 'BELT_rope.png'},
 
-        human: {url: './resources/BODY_male.png'},
-        skeleton: {url: './resources/BODY_skeleton.png'},
-        hood: {url: './resources/HEAD_robe_hood.png'},
-        hood_chain: {url: './resources/HEAD_chain_armor_hood.png'},
-        hair: {url: './resources/HEAD_hair_blonde.png'},
-        hat: {url: './resources/HEAD_leather_armor_hat.png'},
-        helm_chain: {url: './resources/HEAD_chain_armor_helmet.png'},
-        helm_plate: {url: './resources/HEAD_plate_armor_helmet.png'},
-        torso_robe: {url: './resources/TORSO_robe_shirt_brown.png'},
-        torso_plate: {url: './resources/TORSO_plate_armor_torso.png'},
-        torso_leather: {url: './resources/TORSO_leather_armor_torso.png'},
-        torso_chain: {url: './resources/TORSO_chain_armor_torso.png'},
-        torso_purple_jacket: {url: './resources/TORSO_chain_armor_jacket_purple.png'},
-        torso_shirt: {url: './resources/TORSO_leather_armor_shirt_white.png'},
-        shoulders_plate: {url: './resources/TORSO_plate_armor_arms_shoulders.png'},
-        shoulders_leather: {url: './resources/TORSO_leather_armor_shoulders.png'},
-        bracers: {url: './resources/TORSO_leather_armor_bracers.png'},
-        legs_robe: {url: './resources/LEGS_robe_skirt.png'},
-        legs_leather: {url: './resources/LEGS_pants_greenish.png'},
-        legs_plate: {url: './resources/LEGS_plate_armor_pants.png'},
-        gloves_plate: {url: './resources/HANDS_plate_armor_gloves.png'},
-        shoes: {url: './resources/FEET_shoes_brown.png'},
-        shoes_plate: {url: './resources/FEET_plate_armor_shoes.png'},
-        belt: {url: './resources/BELT_leather.png'},
-        belt_rope: {url: './resources/BELT_rope.png'},
+        grue: {url: './resources/Grue.png'},
         sprites: {url: './resources/spritesheet.png'},
         terrain: {url: './resources/terrain_3.png'}
     };
@@ -66,30 +90,51 @@ let map = [], graves = [], grues = [], dirs = Object.values(moves), movesEntries
 // idea: skeletons (maybe resurrected from the grave?) that would attract the grues in the area
 
 const drawPlayer = (spriteId, [_x, _y]) => {
-    let x = _x -32, y = _y-32;
-    ctx.drawImage(resources.human.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.hair.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    let x = _x - 32, y = _y - 32;
+    let animId = elf.animationId === false ? ACTION.WALK : elf.animationId;
 
-    ctx.drawImage(resources.shoes.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.legs_leather.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.human.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.hair.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
 
-    ctx.drawImage(resources.torso_chain.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    //ctx.drawImage(resources.torso_purple_jacket.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.shoulders_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.belt.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.shoes.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.legs_leather.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+
+    ctx.drawImage(resources.torso_chain.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    //ctx.drawImage(resources.torso_purple_jacket.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.shoulders_plate.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.belt.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
 
 
 
     // full metal
-/*    ctx.drawImage(resources.human.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.helm_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.shoes_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.legs_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.torso_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.shoulders_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
-    ctx.drawImage(resources.gloves_plate.data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);*/
+/*    ctx.drawImage(resources.human.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.helm_plate.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.shoes_plate.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.legs_plate.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.torso_plate.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.shoulders_plate.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);
+    ctx.drawImage(resources.gloves_plate.action[animId].data, spriteId[0]*64, spriteId[1]*64, 64, 64, x, y, 64, 64);*/
 
 
+}
+
+const drawElf = () => {
+    let animId = elf.animationId === false ? ACTION.WALK : elf.animationId;
+    let actParams = actionParams[animId];
+    //drawElfSprite([elf.action == 'wait' ? 0 : Math.round(frame/4) % 8, elf.spriteId], [elf.x, elf.y]);
+    drawPlayer([(elf.action == 'wait' && animId == ACTION.WALK) ? 0 : 1+Math.floor((frame-elf.animationStart)*actParams.speed) % actParams.frames, actParams.oneD ? 0 : elf.spriteId], [elf.x, elf.y]);
+
+    if (elf.animationId !== false && ( 1+Math.round((frame-elf.animationStart)*actParams.speed) ) > actParams.frames ) {
+        elf.animationId = false;
+    }
+    
+    // scroll page into elf view, update hp
+    const params = {behavior: 'smooth', inline: 'center', block: 'center'};
+    let el = document.getElementById('elf');
+    el.style.left = (elf.x - 128)+'px';
+    el.style.top = (elf.y - 90)+'px';
+    el.innerHTML = '❤'+elf.hp;//❤★
+    if (el.scrollIntoViewIfNeeded) el.scrollIntoViewIfNeeded(params); else el.scrollIntoView(params);
 }
 
 const createPlane = src => {
@@ -176,19 +221,6 @@ const advanceBlizzards = blizs => blizs.map(b => {
 const drawSprite = (spriteId, [x, y]) => ctx.drawImage(resources.sprites.data, spriteId*32, 0, 32, 32, x, y, 32, 32);
 //const drawElfSprite = (spriteId, [x, y]) => ctx.drawImage(resources.elfSprites.data, spriteId[0]*24, spriteId[1]*32, 24, 32, x+4, y, 24, 32);
 
-const drawElf = () => {
-    //drawElfSprite([elf.action == 'wait' ? 0 : Math.round(frame/4) % 8, elf.spriteId], [elf.x, elf.y]);
-    drawPlayer([elf.action == 'wait' ? 0 : 1+Math.round(frame/4) % 8, elf.spriteId], [elf.x, elf.y]);
-    
-    // scroll page into elf view, update hp
-    const params = {behavior: 'smooth', inline: 'center', block: 'center'};
-    let el = document.getElementById('elf');
-    el.style.left = (elf.x - 128)+'px';
-    el.style.top = (elf.y - 90)+'px';
-    el.innerHTML = '❤'+elf.hp;//❤★
-    if (el.scrollIntoViewIfNeeded) el.scrollIntoViewIfNeeded(params); else el.scrollIntoView(params);
-}
-
 const drawBlizzards = () => {
     blizs.forEach(b => {
         let spriteId = '<^v>'.indexOf(b.t);
@@ -265,8 +297,16 @@ const draw = () => {
     if ((elf.y < 32 || elf.y > 32*(map.length-1)) && elf.hp < 100) if (frame % 3 == 0) elf.hp++;
     
     if (elf.hp <= 0) {
-        graves.push({...elf})
-        restart();
+        elf.hp = 0;
+        if (elf.animationId !== ACTION.HURT && !elf.dying) {
+            elf.dying = true;
+            elf.animationId = ACTION.HURT;
+            elf.animationStart = frame;
+        }
+        if (elf.animationId === false && elf.dying) {
+            graves.push({...elf})
+            restart();
+        }
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear
@@ -281,32 +321,42 @@ const draw = () => {
     let keys = Object.entries(keysPressed).filter(([k, v]) => v === true);
     if (keys.length > 0) {
         let v = keyMap[keys[0][0]];
-        let move = [0, 0];
-        keys.forEach(k => {
-            let v = keyMap[k[0]];
-            move[0] += moves[v][0];
-            move[1] += moves[v][1];
-        })
-        let moveNorm = Math.sqrt(move[0]*move[0]+move[1]*move[1]);
-        move[0] = 1.3*move[0]/moveNorm;
-        move[1] = 1.3*move[1]/moveNorm;
 
-        elf.spriteId = elfSpriteIds[v];
-        let mapY = Math.round((elf.y+move[1])/32),
-            mapX = Math.round((elf.x+move[0])/32),
-            mapYo = Math.round(elf.y/32),
-            mapXo = Math.round(elf.x/32);
+        if (!isNaN(v)) {
+            if (elf.animationId === false || actionParams[elf.animationId].mustFinish !== true) {
+                elf.animationId = v;
+                elf.animationStart = frame;
+            }
+        } else if (elf.animationId === false) {
+            // move
+            let move = [0, 0];
+            keys.forEach(k => {
+                let w = keyMap[k[0]];
+                if (actionParams[w]) return true;
+                move[0] += moves[w][0];
+                move[1] += moves[w][1];
+            })
+            let moveNorm = Math.sqrt(move[0]*move[0]+move[1]*move[1]);
+            move[0] = 1.3*move[0]/moveNorm;
+            move[1] = 1.3*move[1]/moveNorm;
 
-        if (gmap(mapYo, mapX) != '#') {
-            elf.x += move[0];
-            elf.action = v;
+            elf.spriteId = elfSpriteIds[v];
+            let mapY = Math.round((elf.y+move[1])/32),
+                mapX = Math.round((elf.x+move[0])/32),
+                mapYo = Math.round(elf.y/32),
+                mapXo = Math.round(elf.x/32);
+
+            if (gmap(mapYo, mapX) != '#') {
+                elf.x += move[0];
+                elf.action = v;
+            }
+            if (gmap(mapY, mapXo) != '#') {
+                elf.y += move[1];
+                elf.action = v;
+            }
         }
-        if (gmap(mapY, mapXo) != '#') {
-            elf.y += move[1];
-            elf.action = v;
-        }
 
-    } else elf.action = 'wait';
+    } else elf.action = 'wait'; // idle
 
     frame++;
     drawing = false;
@@ -316,8 +366,7 @@ const restart = () => {
     map = inputGame.split("\n").map(l => [...l.split('').slice(0, mapSize-2), ...l.split('').slice(-2)]);
     start = {x: map[0].indexOf('.'), y: 0};
     end = {x: map[map.length-1].indexOf('.'), y: map.length-1};
-    step = 0;
-    elf = {x: 32+start.x*32, y: 32+start.y*32, spriteId: 2, action: 'wait', hp: 100}
+    elf = {x: 32+start.x*32, y: 32+start.y*32, spriteId: 2, action: 'wait', animationId: ACTION.SPELLCAST, animationStart: frame, hp: 100}
     blizs = [];
     map.forEach((row, y) => row.forEach((v, x) => {
         if ('<>^v'.indexOf(v) == -1) return true;
@@ -344,13 +393,29 @@ const initUI = () => {
     });
 }
 
+let totalResources = Object.keys(resources).length + Object.values(resources).filter(r => r.actionable === true).length*(actionParams.length-1);
+
 const load = (run, resourcesLoaded = 0) => Object.values(resources).forEach(v => {
-    v.data = new Image();
-    v.data.onload = () => {
-        if (++resourcesLoaded < Object.keys(resources).length) return;
-        run();
+    if (v.actionable === true) {
+        v.action = [];
+        actionParams.forEach(action => {
+            let tmp = {};
+            tmp.data = new Image();
+            tmp.data.onload = () => {
+                if (++resourcesLoaded < totalResources) return;
+                run();
+            }
+            tmp.data.src = './resources/'+action.name+'/'+v.url;
+            v.action.push(tmp);
+        })
+    } else {
+        v.data = new Image();
+        v.data.onload = () => {
+            if (++resourcesLoaded < totalResources) return;
+            run();
+        }
+        v.data.src = v.url;
     }
-    v.data.src = v.url;
 });
 
 load(() => {
