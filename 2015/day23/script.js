@@ -1,14 +1,4 @@
-let regs = {a:0,b:0}, pointer = 0, program = [];
-
-const readInput = () => {
-    input.map(line => {
-        let arr = line.split(' ');
-        program.push({
-            instruction: arr[0],
-            pars: arr[1].split(',').map(p => !isNaN(p) ? parseInt(p) : p)
-        })
-    })
-}
+let regs = {a: 0, b: 0}, pointer = 0, program;
 
 const runInstruction = line => {
     switch (line.instruction) {
@@ -27,6 +17,10 @@ const run = (regsSet = {}) => {
     console.log('regs.b', regs.b);
 }
 
-readInput();
+program = input.map(line => ({
+    instruction: line.split(' ')[0],
+    pars: line.split(' ')[1].split(',').map(p => !isNaN(p) ? Number(p) : p)
+}));
+
 run();
 run({a: 1});
