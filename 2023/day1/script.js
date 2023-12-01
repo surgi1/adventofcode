@@ -19,11 +19,11 @@ const matchOverlap = (input, reg) => {
     return res;
 }
 
-const findDigits = (v, reg, replaceLiterals = false) => matchOverlap(v, reg).map(e => literals[e] !== undefined ? literals[e] + '' : e);
-
 const run = replaceLiterals => {
-    let reg = new RegExp("\\d" + (replaceLiterals ? '|' + Object.keys(literals).join('|') : ''), 'g');
-    return input.split("\n").map(v => findDigits(v, reg, replaceLiterals)).map(p => Number(p[0] + p.pop())).reduce((sum, v, i) => sum+v, 0);
+    let reg = new RegExp('\\d' + (replaceLiterals ? '|' + Object.keys(literals).join('|') : ''), 'g');
+    return input.split("\n").map(v => matchOverlap(v, reg).map(e => literals[e] || e))
+                            .map(p => Number(p[0] + '' + p.pop()))
+                            .reduce((a, v, i) => a+v, 0);
 }
 
 console.log('p1', run(false));
