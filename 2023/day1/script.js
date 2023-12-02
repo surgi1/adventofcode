@@ -22,7 +22,7 @@ const matchOverlap = (input, reg) => {
 const run = replaceLiterals => {
     let reg = new RegExp('\\d' + (replaceLiterals ? '|' + Object.keys(literals).join('|') : ''), 'g');
     return input.split("\n").map(v => matchOverlap(v, reg).map(e => literals[e] || e))
-                            .map(p => Number(p[0] + '' + p.pop()))
+                            .map(p => 10*p[0] + 1*p.pop())
                             .reduce((a, v, i) => a+v, 0);
 }
 
