@@ -32,7 +32,7 @@ console.log(p1);
 
 map.forEach((line, y) => line.split('').forEach((v, x) => {
     if (v !== '*') return true;
-    let found = parts.filter(p => p.y >= y-1 && p.y <= y+1 && x >= p.x.from-1 && x <= p.x.from+1);
+    let found = parts.filter(p => p.y >= y-1 && p.y <= y+1 && x >= p.x.from-1 && x <= p.x.to+1);
     if (found.length == 2) p2 += found[0].v * found[1].v;
 }))
 
