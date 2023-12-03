@@ -3,16 +3,14 @@ let map = input.split("\n"),
 
 map.forEach((row, y) => {
     for (let x = 0; x < row.length; x++) {
-        if (!isNaN(row[x])) {
-            let s = row[x];
-            let startId = x;
-            while (++x < row.length && !isNaN(row[x])) s += row[x];
-            parts.push({
-                v: Number(s),
-                y: y,
-                x: {from: startId, to: x-1}
-            })
-        }
+        if (isNaN(row[x])) continue;
+        let s = row[x], startId = x;
+        while (++x < row.length && !isNaN(row[x])) s += row[x];
+        parts.push({
+            v: Number(s),
+            y: y,
+            x: {from: startId, to: x-1}
+        })
     }
 })
 
