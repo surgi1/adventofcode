@@ -1,7 +1,7 @@
-const getHands = (jokers = false) => input.split("\n").map(line => {
+const getHands = jokers => input.split("\n").map(line => {
     let tmp = line.split(' ');
     let vals = tmp[0].split('');
-    let groups = [], str;
+    let groups = [], str = 1;
     
     vals.forEach(v => {
         let g = groups.filter(g => g.val == v)?.[0];
@@ -10,13 +10,13 @@ const getHands = (jokers = false) => input.split("\n").map(line => {
 
     groups.sort((a, b) => b.cnt - a.cnt);
 
-    if (jokers) {
+    if (jokers && groups.length > 1) {
         // add J group to strongest group
         let jId = groups.findIndex(grp => grp.val == 'J');
 
-        if (jId > -1 && groups.length > 1) {
+        if (jId > -1) {
             groups[jId === 0 ? 1 : 0].cnt += groups[jId].cnt;
-            groups.splice(jId, 1);
+            groups.splice(jId, 1); // and remove it
         }
     }
 
@@ -25,7 +25,6 @@ const getHands = (jokers = false) => input.split("\n").map(line => {
         case 2: str = (groups[0].cnt == 4 ? 6 : 5); break;
         case 3: str = (groups[0].cnt == 3 ? 4 : 3); break;
         case 4: str = 2; break;
-        case 5: str = 1; break;
     }
 
     return {
@@ -42,4 +41,4 @@ const solve = cardStr => getHands(cardStr.J === 1).sort((a, b) => {
 }).reduce((a, v, i) => a + (i+1)*v.bid, 0)
 
 console.log('p1', solve({A: 14, K: 13, Q: 12, J:11, T: 10, 9: 9, 8: 8, 7: 7, 6: 6, 5: 5, 4: 4, 3: 3, 2: 2}));
-console.log('p1', solve({A: 14, K: 13, Q: 12, J:1, T: 10, 9: 9, 8: 8, 7: 7, 6: 6, 5: 5, 4: 4, 3: 3, 2: 2}));
+console.log('p2', solve({A: 14, K: 13, Q: 12, J:1, T: 10, 9: 9, 8: 8, 7: 7, 6: 6, 5: 5, 4: 4, 3: 3, 2: 2}));
