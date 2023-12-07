@@ -31,4 +31,5 @@ moveStars(-1);
 
 console.log('p2', t-1);
 
-document.getElementById('root').innerHTML = stars.reduce((a, v) => a + '<div class="star" style="left:' + v.p.x + 'px;top:' + v.p.y + 'px;"></div>', ''); // p1 is readable on screen
+let shift = {x: Math.min(...stars.map(star => star.p.x)), y: Math.min(...stars.map(star => star.p.y))};
+document.getElementById('root').innerHTML = stars.reduce((a, v) => a + '<div class="star" style="left:' + (v.p.x-shift.x)*3 + 'px;top:' + (v.p.y-shift.y)*3 + 'px;"></div>', ''); // p1 is readable on screen
