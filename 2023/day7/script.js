@@ -1,4 +1,3 @@
-// p2
 const getHands = (jokers = false) => input.split("\n").map(line => {
     let tmp = line.split(' ');
     let vals = tmp[0].split('');
