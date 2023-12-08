@@ -1,11 +1,11 @@
 let tmp = input.split("\n"),
     dirs = tmp.shift().split(''),
-    nodes = {}, currents = [];
+    nodes = {}, starts = [];
 
 tmp.splice(1).forEach(line => {
     let arr = line.split(/ =|\(|\)|\,/g);
     nodes[arr[0]] = {L: arr[2], R: arr[3].trim()}
-    if (arr[0][2] == 'A') currents.push(arr[0]);
+    if (arr[0][2] == 'A') starts.push(arr[0]);
 })
 
 const gcd = (a, b) => b == 0 ? a : gcd(b, a % b);
@@ -22,4 +22,4 @@ const getSteps = current => {
 }
 
 console.log('p1', getSteps('AAA'));
-console.log('p2', lcmAll(currents.map(getSteps)));
+console.log('p2', lcmAll(starts.map(getSteps)));
