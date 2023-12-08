@@ -1,11 +1,8 @@
-let tmp = input.split("\n");
-let dirs = tmp.shift().split('');
+let tmp = input.split("\n"),
+    dirs = tmp.shift().split(''),
+    nodes = {}, currents = [];
 
-tmp.shift();
-
-let nodes = {}, currents = [];
-
-tmp.forEach(line => {
+tmp.splice(1).forEach(line => {
     let arr = line.split(/ =|\(|\)|\,/g);
     nodes[arr[0]] = {L: arr[2], R: arr[3].trim()}
     if (arr[0][2] == 'A') currents.push(arr[0]);
@@ -17,7 +14,7 @@ const lcmAll = arr => arr.reduce(lcm, 1);
 
 const getSteps = current => {
     let steps = 0;
-    while (steps < 100000 && current[2] !== 'Z') {
+    while (current[2] !== 'Z') {
         current = nodes[current][dirs[steps % dirs.length]];
         steps++;
     }
