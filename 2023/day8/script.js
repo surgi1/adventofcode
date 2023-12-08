@@ -24,7 +24,5 @@ const getSteps = current => {
     return steps;
 }
 
-const part2 = () => lcmAll(currents.map(getSteps))
-
 console.log('p1', getSteps('AAA'));
-console.log('p2', part2());
+console.log('p2', lcmAll(currents.map(getSteps)));
