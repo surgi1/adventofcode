@@ -3,7 +3,7 @@ let tmp = input.split("\n"),
     nodes = {}, starts = [];
 
 tmp.splice(1).forEach(line => {
-    let arr = line.split(/ =|\(|\)|\,/g);
+    let arr = line.split(/ =|\(|\)|,/g);
     nodes[arr[0]] = {L: arr[2], R: arr[3].trim()}
     if (arr[0][2] == 'A') starts.push(arr[0]);
 })
