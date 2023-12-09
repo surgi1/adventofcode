@@ -1,27 +1,15 @@
-let arr = input.split("\n").map(line => [line.split(' ').map(Number)]);
+const parseInput = () => input.split("\n").map(l => [l.split(' ').map(Number)]);
 
-const diffs = row => {
-    let res = [];
-    for (let i = 1; i < row.length; i++) res[i-1] = row[i] - row[i - 1];
-    return res;
-}
+const diffs = row => row.map((v, i) => v - row[i - 1]).slice(1);
 
-arr.forEach((row, i) => {
-    let step = row[0].slice();
+const run = arr => arr.reduce((res, [step], i) => {
     while (step.some(v => v !== 0)) {
         step = diffs(step);
         arr[i].push(step);
     }
 
-    row[row.length-1].unshift(0); // p2
-    row[row.length-1].push(0);
+    return res + arr[i].reduce((a, v) => a+v.pop(), 0)
+}, 0)
 
-    for (let i = row.length-2; i >= 0; i--) {
-        row[i].unshift(row[i][0] - row[i+1][0]); // p2
-        lastId = row[i].length-1;
-        row[i].push(row[i][lastId] + row[i+1][lastId]);
-    }
-})
-
-console.log('p1', arr.reduce((a, v) => a + v[0].pop(), 0));
-console.log('p2', arr.reduce((a, v) => a + v[0][0], 0) );
+console.log('p1', run(parseInput()));
+console.log('p2', run(parseInput().map(([row]) => [row.reverse()])));
