@@ -1,13 +1,13 @@
-let s = {x: 0, y: 0};
+let s = {};
 
-let D = {
+const D = {
     N: 0,
     S: 1,
     E: 2,
     W: 3
 }
 
-let dir = [
+const dir = [
     {x: 0, y: -1},
     {x: 0, y: 1},
     {x: 1, y: 0},
@@ -58,6 +58,7 @@ map[s.y][s.x].links = allowed;
 let stack = [];
 stack.push({p: s, dist: 0});
 
+// flood fill along the pipe
 while (stack.length) {
     let n = stack.shift();
     if (map[n.p.y][n.p.x].dist === undefined || map[n.p.y][n.p.x].dist > n.dist) {
@@ -73,7 +74,7 @@ while (stack.length) {
 
 console.log('p1', Math.max(...map.flat().map(p => p.dist === undefined ? 0 : p.dist)));
 
-// p2 construct a bigger map
+// p2: construct a real maze, where pipes are walls
 let maze = Array(map.length*3);
 let mazeDist = Array(map.length*3);
 
@@ -134,16 +135,17 @@ map.forEach((row, y) => row.forEach((v, x) => {
 console.log('p2', sum);
 
 // let's draw the thing
+const canvas = document.getElementById('root');
+const ctx = canvas.getContext('2d');
 
-const canvas = document.getElementById("root");
-const ctx = canvas.getContext("2d");
+const zoom = 2;
 
-canvas.width = maze[0].length;
-canvas.height = maze.length;
+canvas.width = maze[0].length*zoom;
+canvas.height = maze.length*zoom;
 
 maze.forEach((row, y) => row.forEach((v, x) => {
     if (v == 0) return true;
     ctx.fillStyle = (v == 1 ? '#000' : (mazeDist[y][x] === undefined ? '#f00' : '#00f' ));
-    ctx.fillRect(x*1, y*1, 1, 1);
+    ctx.fillRect(x*zoom, y*zoom, zoom, zoom);
 }))
 
