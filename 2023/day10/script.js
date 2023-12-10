@@ -26,19 +26,6 @@ const getLinks = v => {
     return [];
 }
 
-const pipes = v => {
-    switch (v) {
-        case '|': return '│';
-        case '-': return '─';
-        case 'L': return '└';
-        case 'J': return '┘';
-        case '7': return '┐';
-        case 'F': return '┌';
-        case '.': return '.';
-    }
-    return 'S';
-}
-
 let map = input.split("\n").map((line, y) => line.split('').map((v, x) => {
     if (v == 'S') s = {x: x, y: y}
     return {
