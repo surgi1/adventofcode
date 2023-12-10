@@ -6,7 +6,7 @@ This particular event was full of great and innovative puzzles, which correspond
 
 [JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2018)
 
-Solutions for days 1-5 and 11 are missing; were solved and lost after submission.
+Solutions for days 1-5 are missing; lost after submission.
 
 ## Highlights
 
