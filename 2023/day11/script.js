@@ -4,10 +4,7 @@ const mdist = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1])
 
 const gdist = (g1, g2, mult) => [0, 1].reduce((a, c) => a + exp[c].filter(o => o > Math.min(g1[c], g2[c]) && o < Math.max(g1[c], g2[c])).length * (mult-1), mdist(g1, g2))
 
-const dists = (mult, sum = 0) => {
-    for (let i = 0; i < gals.length-1; i++) for (let j = i+1; j < gals.length; j++) sum += gdist(gals[i], gals[j], mult);
-    return sum;
-}
+const dists = (mult) => gals.map((g1, i) => gals.map((g2, j) => (j > i) * gdist(g1, g2, mult))).flat().reduce((a, v) => a+v, 0)
 
 let map = input.split("\n").map((line, y) => line.split('').map((v, x) => {
     if (v == '#') gals.push([x, y]);
