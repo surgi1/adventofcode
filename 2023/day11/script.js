@@ -9,9 +9,8 @@ let map = input.split("\n").map((line, y) => line.split('').map((v, x) => {
     return v;
 }))
 
-for (let y = 0; y < map.length; y++) if (!map[y].includes('#')) exp[1].push(y);
-
-for (let x = 0; x < map[0].length; x++) if (!map.map(v => v[x]).includes('#')) exp[0].push(x);
+map.forEach((row, y) => (!row.includes('#')) && exp[1].push(y))
+map[0].forEach((o, x) =>  (!map.map(v => v[x]).includes('#')) && exp[0].push(x))
 
 console.log('p1', dists(2));
 console.log('p2', dists(1000000));
