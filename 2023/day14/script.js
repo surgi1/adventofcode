@@ -1,4 +1,4 @@
-// p2 solved by hand after getting the cycle in cycles, programatic solution tbd
+// p2 is slow
 
 let rocks = [];
 input.split("\n").forEach((row, y) => row.split('').map((v, x) => {
@@ -11,14 +11,20 @@ let height = Math.max(...rocks.map(o => o.y))+1,
     width = Math.max(...rocks.map(o => o.x))+1;
 
 const load = rocks => rocks.filter(o => o.v == 'O').reduce((a, o) => a + (height - o.y), 0)
-
 const hash = rocks => rocks.filter(o => o.v == 'O').reduce((a, o) => a + (o.y+1)*width + o.x+1, 0)
 
-console.log(rocks, load(rocks));
-
 const tilt = dir => {
-    let initLoad = 0, i = 0;
-    while (i < 10000 && initLoad != hash(rocks)) {
+    let initLoad = 0;
+    rocks.sort((a, b) => {
+        switch (dir) {
+            case 'north': return a.y - b.y;
+            case 'south': return b.y - a.y;
+            case 'west': return a.x - b.x;
+            case 'east': return b.x - a.x;
+        }
+    })
+
+    while (initLoad != hash(rocks)) {
         initLoad = hash(rocks);
         rocks.forEach(o => {
             if (o.v !== 'O') return true;
@@ -42,7 +48,6 @@ const tilt = dir => {
             }
 
         })
-        i++
     }
 }
 
@@ -52,13 +57,25 @@ const draw = () => {
     console.log(map.map(r => r.join('')));
 }
 
-for (let i = 0; i < 200; i++) {
+let loads = [], i = 0;
+
+while (true) {
     tilt('north');
     if (i == 0) console.log('p1', load(rocks));
     tilt('west');
     tilt('south');
     tilt('east');
-    console.log(i+1, load(rocks));
+    let l = load(rocks);
+    console.log(i+1, l);
+    loads.push(l);
+    if (i > 10 && loads.filter(n => n == l).length > 1) {
+        let id = loads.indexOf(l);
+        if (id > 0 && loads[loads.length-2] == loads[id-1]) {
+            let step = loads.length-1-id;
+            console.log('we have a cycle! [init, step] = ', id, step);
+            console.log('p2 res', loads[id + ((1000000000 - id - 1) % step)]);
+            break;
+        }
+    }
+    i++;
 }
-
-// now it is necessary to identify the cycle that should be visible. For my case it was 92 init length and then step of 35
