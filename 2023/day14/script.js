@@ -1,9 +1,7 @@
 let rocks = [], loads = [], p1 = true;
 
 input.split("\n").forEach((row, y) => row.split('').map((v, x) => {
-    if (v !== '.') rocks.push({
-        x:x, y:y, v:v
-    })
+    if (v !== '.') rocks.push({ x:x, y:y, v:v })
 }))
 
 let height = Math.max(...rocks.map(o => o.y))+1,
@@ -14,30 +12,30 @@ const load = () => rocks.filter(o => o.v == 'O').reduce((a, o) => a + (height - 
 const tilt = dir => {
     rocks.sort((a, b) => {
         switch (dir) {
-            case 'north': return a.x == b.x ? a.y - b.y : a.x - b.x;
-            case 'south': return a.x == b.x ? b.y - a.y : b.x - a.x;
-            case 'west': return a.y == b.y ? a.x - b.x : a.y - b.y;
-            case 'east': return a.y == b.y ? b.x - a.x : b.y - a.y;
+            case 'n': return a.x == b.x ? a.y - b.y : a.x - b.x;
+            case 's': return a.x == b.x ? b.y - a.y : b.x - a.x;
+            case 'w': return a.y == b.y ? a.x - b.x : a.y - b.y;
+            case 'e': return a.y == b.y ? b.x - a.x : b.y - a.y;
         }
     })
 
     rocks.forEach((o, i) => {
         if (o.v != 'O') return true;
         switch (dir) {
-            case 'north': o.y = i > 0 && rocks[i-1].x == o.x ? rocks[i-1].y+1 : 0; break
-            case 'south': o.y = i > 0 && rocks[i-1].x == o.x ? rocks[i-1].y-1 : height-1; break
-            case 'west': o.x = i > 0 && rocks[i-1].y == o.y ? rocks[i-1].x+1 : 0; break
-            case 'east': o.x = i > 0 && rocks[i-1].y == o.y ? rocks[i-1].x-1 : width-1; break;
+            case 'n': o.y = i > 0 && rocks[i-1].x == o.x ? rocks[i-1].y+1 : 0; break;
+            case 's': o.y = i > 0 && rocks[i-1].x == o.x ? rocks[i-1].y-1 : height-1; break;
+            case 'w': o.x = i > 0 && rocks[i-1].y == o.y ? rocks[i-1].x+1 : 0; break;
+            case 'e': o.x = i > 0 && rocks[i-1].y == o.y ? rocks[i-1].x-1 : width-1; break;
         }
     })
 }
 
 while (true) {
-    tilt('north');
+    tilt('n');
     if (p1) p1 = console.log('p1', load());
-    tilt('west');
-    tilt('south');
-    tilt('east');
+    tilt('w');
+    tilt('s');
+    tilt('e');
     let l = load();
     loads.push(l);
     if (loads.filter(n => n == l).length > 1) {
