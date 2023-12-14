@@ -1,5 +1,3 @@
-// p2 runs around 8s for my input
-
 let rocks = [];
 input.split("\n").forEach((row, y) => row.split('').map((v, x) => {
     if (v !== '.') rocks.push({
@@ -15,45 +13,25 @@ const load = rocks => rocks.filter(o => o.v == 'O').reduce((a, o) => a + (height
 const tilt = dir => {
     rocks.sort((a, b) => {
         switch (dir) {
-            case 'north': return a.y - b.y;
-            case 'south': return b.y - a.y;
-            case 'west': return a.x - b.x;
-            case 'east': return b.x - a.x;
+            case 'north': return a.x == b.x ? a.y - b.y : a.x - b.x;
+            case 'south': return a.x == b.x ? b.y - a.y : b.x - a.x;
+            case 'west': return a.y == b.y ? a.x - b.x : a.y - b.y;
+            case 'east': return a.y == b.y ? b.x - a.x : b.y - a.y;
         }
     })
 
-    // The code below was initially in while cycle and run till there was no further change. By sorting the rocks accordingly to direction we do no need that anymore.
-    // Since the rocks are sorted accordingly, we also do not need to find respective mins and maxes of the rocksAbove. The last rock in that array is the one we're looking for.
-    rocks.filter(o => o.v == 'O').forEach(o => {
-        if (dir == 'north') {
-            let rocksAbove = rocks.filter(r => r.x == o.x && r.y < o.y);
-            let tiltTo = (rocksAbove.length > 0) ? rocksAbove[rocksAbove.length-1].y+1 : 0;
-            o.y = tiltTo;
-        } else if (dir == 'south') {
-            let rocksAbove = rocks.filter(r => r.x == o.x && r.y > o.y);
-            let tiltTo = (rocksAbove.length > 0) ? rocksAbove[rocksAbove.length-1].y-1 : height-1;
-            o.y = tiltTo;
-        } else if (dir == 'west') {
-            let rocksAbove = rocks.filter(r => r.y == o.y && r.x < o.x);
-            let tiltTo = (rocksAbove.length > 0) ? rocksAbove[rocksAbove.length-1].x+1 : 0;
-            o.x = tiltTo;
-        } else if (dir == 'east') {
-            let rocksAbove = rocks.filter(r => r.y == o.y && r.x > o.x);
-            let tiltTo = (rocksAbove.length > 0) ? rocksAbove[rocksAbove.length-1].x-1 : width-1;
-            o.x = tiltTo;
+    rocks.forEach((o, i) => {
+        if (o.v != 'O') return true;
+        switch (dir) {
+            case 'north': o.y = i > 0 && rocks[i-1].x == o.x ? rocks[i-1].y+1 : 0; break
+            case 'south': o.y = i > 0 && rocks[i-1].x == o.x ? rocks[i-1].y-1 : height-1; break
+            case 'west': o.x = i > 0 && rocks[i-1].y == o.y ? rocks[i-1].x+1 : 0; break
+            case 'east': o.x = i > 0 && rocks[i-1].y == o.y ? rocks[i-1].x-1 : width-1; break;
         }
     })
-}
-
-const draw = () => {
-    let map = Array.from({length: height}, () => Array(width).fill('.'));
-    rocks.forEach(r => map[r.y][r.x] = r.v);
-    console.log(map.map(r => r.join('')));
 }
 
 let loads = [], i = 0;
-
-console.time('p2');
 
 while (true) {
     tilt('north');
@@ -62,18 +40,14 @@ while (true) {
     tilt('south');
     tilt('east');
     let l = load(rocks);
-    console.log(i+1, l);
     loads.push(l);
     if (i > 10 && loads.filter(n => n == l).length > 1) {
         let id = loads.indexOf(l);
         if (id > 0 && loads[loads.length-2] == loads[id-1]) {
             let step = loads.length-1-id;
-            console.log('we have a cycle! [init, step] = ', id, step);
-            console.log('p2 res', loads[id + ((1000000000 - id - 1) % step)]);
+            console.log('p2', loads[id + ((1000000000 - id - 1) % step)]);
             break;
         }
     }
     i++;
 }
-
-console.timeEnd('p2');
