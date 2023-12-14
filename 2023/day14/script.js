@@ -1,4 +1,5 @@
-let rocks = [];
+let rocks = [], loads = [], p1 = true;
+
 input.split("\n").forEach((row, y) => row.split('').map((v, x) => {
     if (v !== '.') rocks.push({
         x:x, y:y, v:v
@@ -8,7 +9,7 @@ input.split("\n").forEach((row, y) => row.split('').map((v, x) => {
 let height = Math.max(...rocks.map(o => o.y))+1,
     width = Math.max(...rocks.map(o => o.x))+1;
 
-const load = rocks => rocks.filter(o => o.v == 'O').reduce((a, o) => a + (height - o.y), 0)
+const load = () => rocks.filter(o => o.v == 'O').reduce((a, o) => a + (height - o.y), 0)
 
 const tilt = dir => {
     rocks.sort((a, b) => {
@@ -31,23 +32,20 @@ const tilt = dir => {
     })
 }
 
-let loads = [], i = 0;
-
 while (true) {
     tilt('north');
-    if (i == 0) console.log('p1', load(rocks));
+    if (p1) p1 = console.log('p1', load());
     tilt('west');
     tilt('south');
     tilt('east');
-    let l = load(rocks);
+    let l = load();
     loads.push(l);
-    if (i > 10 && loads.filter(n => n == l).length > 1) {
+    if (loads.filter(n => n == l).length > 1) {
         let id = loads.indexOf(l);
         if (id > 0 && loads[loads.length-2] == loads[id-1]) {
-            let step = loads.length-1-id;
-            console.log('p2', loads[id + ((1000000000 - id - 1) % step)]);
+            let step = loads.length - id - 1;
+            console.log('p2', loads[id + ((1_000_000_000 - id - 1) % step)]);
             break;
         }
     }
-    i++;
 }
