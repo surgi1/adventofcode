@@ -1,4 +1,4 @@
-// p2 is slow
+// p2 runs around 8s for my input
 
 let rocks = [];
 input.split("\n").forEach((row, y) => row.split('').map((v, x) => {
@@ -11,10 +11,8 @@ let height = Math.max(...rocks.map(o => o.y))+1,
     width = Math.max(...rocks.map(o => o.x))+1;
 
 const load = rocks => rocks.filter(o => o.v == 'O').reduce((a, o) => a + (height - o.y), 0)
-const hash = rocks => rocks.filter(o => o.v == 'O').reduce((a, o) => a + (o.y+1)*width + o.x+1, 0)
 
 const tilt = dir => {
-    let initLoad = 0;
     rocks.sort((a, b) => {
         switch (dir) {
             case 'north': return a.y - b.y;
@@ -24,31 +22,27 @@ const tilt = dir => {
         }
     })
 
-    while (initLoad != hash(rocks)) {
-        initLoad = hash(rocks);
-        rocks.forEach(o => {
-            if (o.v !== 'O') return true;
-            // get closest rocks above
-            if (dir == 'north') {
-                let rocksAbove = rocks.filter(r => r.x == o.x && r.y < o.y);
-                let tiltTo = (rocksAbove.length > 0) ? Math.max(...rocksAbove.map(r => r.y))+1 : 0;
-                o.y = tiltTo;
-            } else if (dir == 'south') {
-                let rocksAbove = rocks.filter(r => r.x == o.x && r.y > o.y);
-                let tiltTo = (rocksAbove.length > 0) ? Math.min(...rocksAbove.map(r => r.y))-1 : height-1;
-                o.y = tiltTo;
-            } else if (dir == 'west') {
-                let rocksAbove = rocks.filter(r => r.y == o.y && r.x < o.x);
-                let tiltTo = (rocksAbove.length > 0) ? Math.max(...rocksAbove.map(r => r.x))+1 : 0;
-                o.x = tiltTo;
-            } else if (dir == 'east') {
-                let rocksAbove = rocks.filter(r => r.y == o.y && r.x > o.x);
-                let tiltTo = (rocksAbove.length > 0) ? Math.min(...rocksAbove.map(r => r.x))-1 : width-1;
-                o.x = tiltTo;
-            }
-
-        })
-    }
+    // The code below was initially in while cycle and run till there was no further change. By sorting the rocks accordingly to direction we do no need that anymore.
+    // Since the rocks are sorted accordingly, we also do not need to find respective mins and maxes of the rocksAbove. The last rock in that array is the one we're looking for.
+    rocks.filter(o => o.v == 'O').forEach(o => {
+        if (dir == 'north') {
+            let rocksAbove = rocks.filter(r => r.x == o.x && r.y < o.y);
+            let tiltTo = (rocksAbove.length > 0) ? rocksAbove[rocksAbove.length-1].y+1 : 0;
+            o.y = tiltTo;
+        } else if (dir == 'south') {
+            let rocksAbove = rocks.filter(r => r.x == o.x && r.y > o.y);
+            let tiltTo = (rocksAbove.length > 0) ? rocksAbove[rocksAbove.length-1].y-1 : height-1;
+            o.y = tiltTo;
+        } else if (dir == 'west') {
+            let rocksAbove = rocks.filter(r => r.y == o.y && r.x < o.x);
+            let tiltTo = (rocksAbove.length > 0) ? rocksAbove[rocksAbove.length-1].x+1 : 0;
+            o.x = tiltTo;
+        } else if (dir == 'east') {
+            let rocksAbove = rocks.filter(r => r.y == o.y && r.x > o.x);
+            let tiltTo = (rocksAbove.length > 0) ? rocksAbove[rocksAbove.length-1].x-1 : width-1;
+            o.x = tiltTo;
+        }
+    })
 }
 
 const draw = () => {
@@ -58,6 +52,8 @@ const draw = () => {
 }
 
 let loads = [], i = 0;
+
+console.time('p2');
 
 while (true) {
     tilt('north');
@@ -79,3 +75,5 @@ while (true) {
     }
     i++;
 }
+
+console.timeEnd('p2');
