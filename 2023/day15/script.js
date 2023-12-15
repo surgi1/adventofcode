@@ -5,7 +5,7 @@ const hash = (word, cur = 0) => word.split('').reduce((a, s) => 17*(a + s.charCo
 console.log('p1', input.split(',').reduce((res, word) => res + hash(word), 0))
 
 input.split(',').forEach(cmd => {
-    let [lab, val] = cmd.split(/-|=/g),
+    let [lab, val] = cmd.split(/-|=/g);
     if (val == '') 
         boxes[hash(lab)].delete(lab);
     else 
