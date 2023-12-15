@@ -1,7 +1,7 @@
-let rocks = [], loads = [], p1 = true;
+let rocks = [], loads = [], p1 = true, step = false, id = -1;
 
-input.split("\n").forEach((row, y) => row.split('').map((v, x) => {
-    if (v !== '.') rocks.push({ x:x, y:y, v:v })
+input.split("\n").forEach((row, y) => row.split('').forEach((v, x) => {
+    if (v !== '.') rocks.push({ x: x, y: y, v: v })
 }))
 
 let height = Math.max(...rocks.map(o => o.y))+1,
@@ -30,20 +30,15 @@ const tilt = dir => {
     })
 }
 
-while (true) {
+while (!step) {
     tilt('n');
     if (p1) p1 = console.log('p1', load());
     tilt('w');
     tilt('s');
     tilt('e');
-    let l = load();
+    id = loads.indexOf(l = load());
+    if (id > 0 && loads[loads.length-1] == loads[id-1]) step = loads.length - id;
     loads.push(l);
-    if (loads.filter(n => n == l).length > 1) {
-        let id = loads.indexOf(l);
-        if (id > 0 && loads[loads.length-2] == loads[id-1]) {
-            let step = loads.length - id - 1;
-            console.log('p2', loads[id + ((1_000_000_000 - id - 1) % step)]);
-            break;
-        }
-    }
 }
+
+console.log('p2', loads[id + ((1_000_000_000 - id - 1) % step)]);
