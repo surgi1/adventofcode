@@ -12,8 +12,4 @@ input.split(',').forEach(cmd => {
         boxes[hash(lab)].set(lab, Number(val))
 })
 
-console.log('p2', boxes.reduce((res, box, i) => {
-    let j = 1, sum = res;
-    for (let [lab, val] of box) sum += (i+1)*(j++)*val;
-    return sum;
-}, 0))
+console.log('p2', boxes.reduce((res, box, i) => res + [...box.entries()].reduce((sum, [lab, val], j) => sum + (i+1) * (j+1) * val, 0), 0))
