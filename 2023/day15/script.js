@@ -1,12 +1,6 @@
 let boxes = Array.from({length: 256}, () => []);
 
-const hash = (word, cur = 0) => {
-    word.split('').forEach(s => {
-        cur += s.charCodeAt(0)
-        cur = (cur*17) % 256;
-    })
-    return cur;
-}
+const hash = (word, cur = 0) => word.split('').reduce((a, s) => 17*(a + s.charCodeAt(0)) % 256, 0)
 
 console.log('p1', input.split(',').reduce((res, word) => res + hash(word), 0))
 
