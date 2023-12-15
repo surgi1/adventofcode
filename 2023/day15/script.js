@@ -1,19 +1,20 @@
-let boxes = Array.from({length: 256}, () => []);
+let boxes = Array.from({length: 256}, () => new Map());
 
 const hash = (word, cur = 0) => word.split('').reduce((a, s) => 17*(a + s.charCodeAt(0)) % 256, 0)
 
 console.log('p1', input.split(',').reduce((res, word) => res + hash(word), 0))
 
 input.split(',').forEach(cmd => {
-    let [label, val] = cmd.split(/-|=/g);
-    let boxNr = hash(label);
+    let [lab, val] = cmd.split(/-|=/g),
+        id = hash(lab);
     if (val == '') 
-        boxes[boxNr] = boxes[boxNr].filter(o => o.label !== label); // minus op
-    else {
-        // equals op
-        let len = boxes[boxNr].filter(o => o.label == label)?.[0];
-        if (len) len.val = Number(val); else boxes[boxNr].push({ label: label, val: Number(val) })
-    }
+        boxes[id].delete(lab);
+    else 
+        boxes[id].set(lab, Number(val))
 })
 
-console.log('p2', boxes.reduce((res, box, i) => res + box.reduce((a, len, j) => a + (i+1)*(j+1)*len.val, 0), 0));
+console.log('p2', boxes.reduce((res, box, i) => {
+    let j = 1, sum = res;
+    for (let [lab, val] of box) sum += (i+1)*(j++)*val;
+    return sum;
+}, 0))
