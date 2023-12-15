@@ -6,11 +6,10 @@ console.log('p1', input.split(',').reduce((res, word) => res + hash(word), 0))
 
 input.split(',').forEach(cmd => {
     let [lab, val] = cmd.split(/-|=/g),
-        id = hash(lab);
     if (val == '') 
-        boxes[id].delete(lab);
+        boxes[hash(lab)].delete(lab);
     else 
-        boxes[id].set(lab, Number(val))
+        boxes[hash(lab)].set(lab, Number(val))
 })
 
 console.log('p2', boxes.reduce((res, box, i) => {
