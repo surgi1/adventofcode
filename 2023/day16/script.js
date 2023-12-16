@@ -36,7 +36,7 @@ const getMoves = (dir, v) => {
 }
 
 const run = (startPos, startDir) => {
-    let stack = [{pos: [...startPos], dir: startDir}],
+    let stack = [{pos: startPos, dir: startDir}],
         energized = {}, seen = {};
 
     while (cur = stack.pop()) {
