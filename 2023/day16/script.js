@@ -60,7 +60,7 @@ const run = (startPos, startDir) => {
                 pos: addVect(cur.pos, dirs[D.RIGHT]),
                 dir: D.RIGHT
             })
-        } else if (mapVal == '/') { // / - rotate left, but in my notation it is facepalm
+        } else if (mapVal == '/') { // / - rotate left
             let newDir;
             switch (cur.dir) {
                 case D.RIGHT: newDir = D.UP; break;
@@ -72,7 +72,7 @@ const run = (startPos, startDir) => {
                 pos: addVect(cur.pos, dirs[newDir]),
                 dir: newDir
             })
-        } else if (mapVal == '7') { // \  - rotate right, facepalm
+        } else if (mapVal == '\\') { // \  - rotate right
             let newDir;
             switch (cur.dir) {
                 case D.RIGHT: newDir = D.DOWN; break;
