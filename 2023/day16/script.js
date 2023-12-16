@@ -15,7 +15,25 @@ const dirs = [
 const addVect = (a, b) => a.map((v, c) => v+b[c]);
 const key = v => [...v.pos, v.dir].join('_');
 
-let map = input.split("\n").map(line => line.split(''))
+const getMoves = (dir, v) => {
+    switch (v) {
+        case '.': return [dir];
+        case '-':  return [D.LEFT, D.RIGHT].includes(dir) ? [dir] : [D.LEFT, D.RIGHT];
+        case '|':  return [D.LEFT, D.RIGHT].includes(dir) ? [D.UP, D.DOWN] : [dir];
+        case '/': switch (dir) {
+                case D.RIGHT: return [D.UP];
+                case D.LEFT: return [D.DOWN];
+                case D.UP: return [D.RIGHT];
+                case D.DOWN: return [D.LEFT];
+            }
+        case '\\': switch (dir) {
+                case D.RIGHT: return [D.DOWN];
+                case D.LEFT: return [D.UP];
+                case D.UP: return [D.LEFT];
+                case D.DOWN: return [D.RIGHT];
+            }
+    }
+}
 
 const run = (startPos, startDir) => {
     let stack = [{pos: [...startPos], dir: startDir}],
@@ -37,58 +55,16 @@ const run = (startPos, startDir) => {
         seen[k] = 1;
         energized[cur.pos.join('_')] = 1;
 
-        let mapVal = map[cur.pos[1]][cur.pos[0]];
-
-        if ( (mapVal == '.') || ((mapVal == '-') && [D.RIGHT, D.LEFT].includes(cur.dir)) || ((mapVal == '|') && [D.UP, D.DOWN].includes(cur.dir)) ) {
-            stack.push({
-                pos: addVect(cur.pos, dirs[cur.dir]),
-                dir: cur.dir
-            })
-        } else if (mapVal == '|') {
-            stack.push({
-                pos: addVect(cur.pos, dirs[D.UP]),
-                dir: D.UP
-            }, {
-                pos: addVect(cur.pos, dirs[D.DOWN]),
-                dir: D.DOWN
-            })
-        } else if (mapVal == '-') {
-            stack.push({
-                pos: addVect(cur.pos, dirs[D.LEFT]),
-                dir: D.LEFT
-            }, {
-                pos: addVect(cur.pos, dirs[D.RIGHT]),
-                dir: D.RIGHT
-            })
-        } else if (mapVal == '/') { // / - rotate left
-            let newDir;
-            switch (cur.dir) {
-                case D.RIGHT: newDir = D.UP; break;
-                case D.LEFT: newDir = D.DOWN; break;
-                case D.UP: newDir = D.RIGHT; break;
-                case D.DOWN: newDir = D.LEFT; break;
-            }
-            stack.push({
-                pos: addVect(cur.pos, dirs[newDir]),
-                dir: newDir
-            })
-        } else if (mapVal == '\\') { // \  - rotate right
-            let newDir;
-            switch (cur.dir) {
-                case D.RIGHT: newDir = D.DOWN; break;
-                case D.LEFT: newDir = D.UP; break;
-                case D.UP: newDir = D.LEFT; break;
-                case D.DOWN: newDir = D.RIGHT; break;
-            }
-            stack.push({
-                pos: addVect(cur.pos, dirs[newDir]),
-                dir: newDir
-            })
-        }
+        getMoves(cur.dir, map[cur.pos[1]][cur.pos[0]]).forEach(dir => stack.push({
+            dir: dir,
+            pos: addVect(cur.pos, dirs[dir]),
+        }))
     }
 
     return Object.keys(energized).length;
 }
+
+let map = input.split("\n").map(line => line.split(''));
 
 console.log('p1', run([0,0], D.RIGHT));
 
