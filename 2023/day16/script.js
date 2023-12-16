@@ -42,18 +42,12 @@ const run = (startPos, startDir) => {
     while (cur = stack.pop()) {
         let k = key(cur);
 
-        let onMap = true;
-        cur.pos.forEach((v, c) => {
-            if (v < 0) onMap = false;
-            if (v > map.length-1) onMap = false;
-        })
-
-        if (!onMap) continue;
-
         if (seen[k] !== undefined) continue;
 
+        if (!map[cur.pos[1]] || !map[cur.pos[1]][cur.pos[0]]) continue; // out of map
+
         seen[k] = 1;
-        energized[cur.pos.join('_')] = 1;
+        energized[cur.pos] = 1;
 
         getMoves(cur.dir, map[cur.pos[1]][cur.pos[0]]).forEach(dir => stack.push({
             dir: dir,
@@ -64,11 +58,10 @@ const run = (startPos, startDir) => {
     return Object.keys(energized).length;
 }
 
-let map = input.split("\n").map(line => line.split(''));
+let map = input.split("\n").map(line => line.split('')),
+    max = 0;
 
 console.log('p1', run([0,0], D.RIGHT));
-
-let max = 0;
 
 for (let i = 0; i < map.length; i++) {
     max = Math.max(max,
@@ -79,4 +72,4 @@ for (let i = 0; i < map.length; i++) {
     )
 }
 
-console.log('p2', max); // does not cover for extra directions cast from corners, was not needed for me
+console.log('p2', max);
