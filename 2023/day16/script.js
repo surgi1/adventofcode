@@ -18,8 +18,8 @@ const key = v => [...v.pos, v.dir].join('_');
 const getMoves = (dir, v) => {
     switch (v) {
         case '.': return [dir];
-        case '-':  return [D.LEFT, D.RIGHT].includes(dir) ? [dir] : [D.LEFT, D.RIGHT];
-        case '|':  return [D.LEFT, D.RIGHT].includes(dir) ? [D.UP, D.DOWN] : [dir];
+        case '-': return [D.LEFT, D.RIGHT].includes(dir) ? [dir] : [D.LEFT, D.RIGHT];
+        case '|': return [D.LEFT, D.RIGHT].includes(dir) ? [D.UP, D.DOWN] : [dir];
         case '/': switch (dir) {
                 case D.RIGHT: return [D.UP];
                 case D.LEFT: return [D.DOWN];
