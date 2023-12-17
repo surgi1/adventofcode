@@ -1,4 +1,5 @@
-// DFS with priority queue sorted by loss desc, very slow
+// DFS with priority queue sorted by loss desc
+// runs fast only because of heap based fast priority queue taken from https://github.com/lemire/FastPriorityQueue.js/
 
 const D = {
     UP: 0,
@@ -33,15 +34,17 @@ let map = input.split("\n").map(line => line.split('').map(Number));
 let key = o => [...o.pos, o.dir, o.stepsInDir].join('_');
 
 const run = (part2 = false) => {
-    let queue = [{
+    let queue = new FastPriorityQueue((a, b) => b.loss > a.loss), seen = {};
+
+    queue.add({
         pos: [0, 0],
         dir: undefined,
         loss: 0,
         stepsInDir: 0,
-    }], seen = {};
+    })
 
-    while (queue.length > 0) {
-        let cur = queue.sort((a, b) => b.loss - a.loss).pop();
+    while (!queue.isEmpty()) {
+        let cur = queue.poll();
 
         if (cur.pos[0] == map.length-1 && cur.pos[1] == map[0].length-1 && ((part2 && cur.stepsInDir >= 4 ) || !part2)) return cur.loss;
 
@@ -54,30 +57,24 @@ const run = (part2 = false) => {
         // continued move in the same direction
         if ((cur.dir !== undefined) && (cur.stepsInDir < (part2 ? 10 : 3))) {
             let pos = addVect(cur.pos, DS[cur.dir]);
-            if (onMap(pos)) {
-                let newO = {
-                    pos: pos,
-                    loss: cur.loss + mapVal(pos),
-                    dir: cur.dir,
-                    stepsInDir: cur.stepsInDir+1
-                }
-                if (seen[key(newO)] === undefined) queue.push(newO);
-            }
+            if (onMap(pos)) queue.add({
+                pos: pos,
+                loss: cur.loss + mapVal(pos),
+                dir: cur.dir,
+                stepsInDir: cur.stepsInDir+1
+            });
         }
 
         // move in another direction
         if ((part2 && cur.stepsInDir >= 4) || !part2 || cur.dir == undefined) {
             getMoves(cur.dir).forEach(dir => {
                 let pos = addVect(cur.pos, DS[dir]);
-                if (onMap(pos)) {
-                    let newO = {
-                        pos: pos,
-                        loss: cur.loss + mapVal(pos),
-                        dir: dir,
-                        stepsInDir: 1
-                    }
-                    if (seen[key(newO)] === undefined) queue.push(newO);
-                }
+                if (onMap(pos)) queue.add({
+                    pos: pos,
+                    loss: cur.loss + mapVal(pos),
+                    dir: dir,
+                    stepsInDir: 1
+                });
             })
         }
     }
