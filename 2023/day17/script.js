@@ -1,5 +1,4 @@
 // DFS with priority queue sorted by loss desc, very slow
-// todo: reimplement using Dijkstra + prio queue
 
 const D = {
     UP: 0,
