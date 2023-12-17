@@ -18,6 +18,7 @@ const DS = [
 const addVect = (a, b) => a.map((v, c) => v+b[c]);
 const onMap = pos => !(pos[0] < 0 || pos[1] < 0 || pos[0] > map[0].length-1 || pos[1] > map.length-1);
 const mapVal = pos => map[pos[1]][pos[0]];
+const key = o => [...o.pos, o.dir, o.stepsInDir].join('_');
 
 const getMoves = dir => {
     if (dir === undefined) return [D.RIGHT, D.DOWN]; // from 0,0 we can only these
@@ -31,10 +32,19 @@ const getMoves = dir => {
 
 let map = input.split("\n").map(line => line.split('').map(Number));
 
-let key = o => [...o.pos, o.dir, o.stepsInDir].join('_');
-
 const run = (part2 = false) => {
-    let queue = new FastPriorityQueue((a, b) => b.loss > a.loss), seen = {};
+    let queue = new FastPriorityQueue((a, b) => b.loss > a.loss),
+        seen = {};
+
+    const addMove = (oldPos, dir, loss, steps = 1) => {
+        let pos = addVect(oldPos, DS[dir]);
+        if (onMap(pos)) queue.add({
+            pos: pos,
+            loss: loss + mapVal(pos),
+            dir: dir,
+            stepsInDir: steps
+        });
+    }
 
     queue.add({
         pos: [0, 0],
@@ -54,29 +64,13 @@ const run = (part2 = false) => {
 
         seen[k] = 1;
 
-        // continued move in the same direction
-        if ((cur.dir !== undefined) && (cur.stepsInDir < (part2 ? 10 : 3))) {
-            let pos = addVect(cur.pos, DS[cur.dir]);
-            if (onMap(pos)) queue.add({
-                pos: pos,
-                loss: cur.loss + mapVal(pos),
-                dir: cur.dir,
-                stepsInDir: cur.stepsInDir+1
-            });
-        }
+        // continue in the same direction
+        if ((cur.dir !== undefined) && (cur.stepsInDir < (part2 ? 10 : 3)))
+            addMove(cur.pos, cur.dir, cur.loss, cur.stepsInDir+1);
 
-        // move in another direction
-        if ((part2 && cur.stepsInDir >= 4) || !part2 || cur.dir == undefined) {
-            getMoves(cur.dir).forEach(dir => {
-                let pos = addVect(cur.pos, DS[dir]);
-                if (onMap(pos)) queue.add({
-                    pos: pos,
-                    loss: cur.loss + mapVal(pos),
-                    dir: dir,
-                    stepsInDir: 1
-                });
-            })
-        }
+        // turn
+        if ((part2 && cur.stepsInDir >= 4) || !part2 || cur.dir == undefined)
+            getMoves(cur.dir).forEach(dir => addMove(cur.pos, dir, cur.loss))
     }
     return false;
 }
