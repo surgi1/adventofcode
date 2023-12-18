@@ -12,7 +12,7 @@ const parseInputPart1 = (pos = [0, 0]) => input.split("\n").map(line => {
     pos = addVect(mulVect(Number(len), DS[D[dir]]), pos);
 
     return {
-        dir: D[dir],
+        dir: D[dir], len: Number(len),
         min: [0, 1].map(c => Math.min(posFrom[c], pos[c])),
         max: [0, 1].map(c => Math.max(posFrom[c], pos[c])),
     }
@@ -26,22 +26,22 @@ const parseInputPart2 = (pos = [0, 0]) => input.split("\n").map(line => {
     pos = addVect(mulVect(len, DS[dir]), pos);
 
     return {
-        dir: dir,
+        dir: dir, len: len,
         min: [0, 1].map(c => Math.min(posFrom[c], pos[c])),
         max: [0, 1].map(c => Math.max(posFrom[c], pos[c])),
     }
 })
 
 const run = (digs, canvas) => {
-    let max = [0, 0], min = [0, 0],
+    let max = [0, 0], min = [0, 0], // need these for the visuals
         squares = [], grid = [[], []],
         volume = 0, trench = 0;
 
-    digs.forEach(dig => {
-        dig.min.forEach((v, c) => (!grid[c].includes(v)) && grid[c].push(v));
-        max = max.map((v, c) => Math.max(v, dig.max[c]));
-        min = min.map((v, c) => Math.min(v, dig.min[c]));
-        trench += dig.max.reduce((a, v, c) => a+(v-dig.min[c]), 0);
+    digs.forEach(o => {
+        o.min.forEach((v, c) => (!grid[c].includes(v)) && grid[c].push(v));
+        max = max.map((v, c) => Math.max(v, o.max[c]));
+        min = min.map((v, c) => Math.min(v, o.min[c]));
+        trench += o.len;
     })
 
     grid.forEach(c => c.sort((a, b) => a-b));
