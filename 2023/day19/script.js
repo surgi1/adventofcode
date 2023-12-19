@@ -111,6 +111,10 @@ const draw = () => {
         )
         camera.setPosition(new BABYLON.Vector3(0, 0, -30));
 
+        var mat1 = new BABYLON.StandardMaterial("texture1", scene);
+        
+        mat1.alpha = 0.3; // value of 0.3 is ap
+
         hyperboxes.forEach(b => {
             let box = BABYLON.MeshBuilder.CreateBox(
                 'box', {
@@ -121,6 +125,7 @@ const draw = () => {
                 },
                 scene,
             )
+            box.material = mat1;
             box.position.x = b.x[0] / 400;
             box.position.y = b.m[0] / 400;
             box.position.z = b.a[0] / 400;
