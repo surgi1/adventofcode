@@ -1,4 +1,6 @@
 // idea for part 2: adaptive grid in x and y, works for part 1 as well
+// however, much more efficient way for computing of volume of irregular polygon is Shoelace formula, see https://www.themathdoctors.org/polygon-coordinates-and-areas/
+// let's use that one next time :shrug:
 
 const DS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const  D = { R: 0,   D: 1,   L: 2,    U: 3 };
