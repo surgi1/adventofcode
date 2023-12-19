@@ -86,7 +86,7 @@ backtrack('A');
 
 console.log('p2', sum);
 
-let boxes = [], text1;
+let boxes = [], text1, mat1;
 
 const draw = () => {
     var canvas = document.getElementById('renderCanvas')
@@ -104,16 +104,17 @@ const draw = () => {
 
         const camera = new BABYLON.ArcRotateCamera('Camera', 3 * Math.PI / 4, Math.PI / 4, 4, BABYLON.Vector3.Zero(), scene)
         camera.attachControl()
-        const light = new BABYLON.HemisphericLight(
-            'light',
-            new BABYLON.Vector3(1, 1, 0),
-            scene, // Always pass this argument explicitly
-        )
+
+        const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(1, 1, 0), scene,)
+        const light2 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(1, 10, 1), scene);
+        const light4 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
+        light.intensity = 0.5;
+
         camera.setPosition(new BABYLON.Vector3(30, 30, -30));
 
-        var mat1 = new BABYLON.StandardMaterial("texture1", scene);
+        mat1 = new BABYLON.StandardMaterial("texture1", scene);
         
-        mat1.alpha = 0.3; // value of 0.3 is ap
+        mat1.alpha = 1.0;
 
         hyperboxes.forEach(b => {
             let box = BABYLON.MeshBuilder.CreateBox(
@@ -185,7 +186,10 @@ const draw = () => {
         })
         sval++;
         text1.text = 'X, M, A used as 3D coords, S = '+ sval;
-        if (sval > 4000) sval = 0;
+        if (sval > 4000) {
+            sval = 0;
+            if (mat1.alpha == 1) mat1.alpha = 0.3; else mat1.alpha = 1;
+        }
     }, 10)
 
 }
