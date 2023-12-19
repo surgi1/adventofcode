@@ -53,8 +53,10 @@ console.log('p1', part1());
 // part 2 backtracks from 'A' all the way back to 'in' flow, while refining ranges along the way
 let sum = 0;
 
+let ents = Object.entries(flows);
+
 const backtrack = (resultId, b = {x: [1, 4000], m: [1, 4000], a: [1, 4000], s: [1, 4000]}) => {
-    Object.entries(flows).forEach(([id, flow]) => {
+    ents.forEach(([id, flow]) => {
         for (let condId = 0; condId < flow.length; condId++) {
             if (flow[condId][flow[condId].length-1] == resultId) {
                 let i = condId;
