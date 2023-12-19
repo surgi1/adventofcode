@@ -109,7 +109,7 @@ const draw = () => {
             new BABYLON.Vector3(1, 1, 0),
             scene, // Always pass this argument explicitly
         )
-        camera.setPosition(new BABYLON.Vector3(0, 0, -30));
+        camera.setPosition(new BABYLON.Vector3(30, 30, -30));
 
         var mat1 = new BABYLON.StandardMaterial("texture1", scene);
         
@@ -186,7 +186,7 @@ const draw = () => {
         sval++;
         text1.text = 'X, M, A used as 3D coords, S = '+ sval;
         if (sval > 4000) sval = 0;
-    }, 5)
+    }, 10)
 
 }
 
