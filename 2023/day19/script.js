@@ -185,7 +185,7 @@ const draw = () => {
             else box.setEnabled(false);
         })
         sval++;
-        text1.text = 'X, M, A used as 3D coords, S = '+ sval;
+        text1.text = 'Move around with mouse or arrows\nX, M, A used as 3D coords\nS = '+ sval;
         if (sval > 4000) {
             sval = 0;
             if (mat1.alpha == 1) mat1.alpha = 0.3; else mat1.alpha = 1;
