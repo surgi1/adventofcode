@@ -106,7 +106,7 @@ const draw = () => {
         camera.attachControl()
 
         const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(1, 1, 0), scene,)
-        const light2 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(1, 10, 1), scene);
+        const light2 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(1, 20, 1), scene);
         const light4 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.5;
 
@@ -188,20 +188,24 @@ const draw = () => {
         engine.resize()
     })
 
-    let time = 1;
+    let time = 1, variableTransparency = false;
 
     setInterval(() => {
         boxes.forEach(box => {
-            if (time >= box.time[0] && time <= box.time[1]) box.setEnabled(true);
-            else box.setEnabled(false);
+            if (time >= box.time[0] && time <= box.time[1]) {
+                box.setEnabled(true);
+                if (variableTransparency) box.material.alpha = 1 - Math.pow((time - (box.time[1] + box.time[0])/2)/((box.time[1] - box.time[0])/2), 4);
+                else box.material.alpha = 1;
+            } else box.setEnabled(false);
         })
         time++;
-        text1.text = 'Move around with mouse or arrows\nX, M, A used as 3D coords\nS = '+ time;
+        text1.text = 'Move around with mouse or arrows\nX, M, A used as 3D coords\nS = '+ time+'\nalpha = '+ (variableTransparency ? 'f(S)' : '1');
         if (time > 4000) {
             time = 0;
-            boxes.forEach((box, i) => {
+            variableTransparency = !variableTransparency;
+            /*boxes.forEach((box, i) => {
                 if (box.material.alpha == 1) box.material.alpha = 0.3; else box.material.alpha = 1;
-            })
+            })*/
         }
     }, 10)
 
