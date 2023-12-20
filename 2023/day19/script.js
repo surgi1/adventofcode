@@ -73,7 +73,7 @@ const backtrack = (resultId, b = {x: [1, 4000], m: [1, 4000], a: [1, 4000], s: [
             }
 
             if (id == 'in') {
-                if (bounds.x[1] >= bounds.x[0] && bounds.m[1] >= bounds.m[0] && bounds.a[1] >= bounds.a[0] && bounds.s[1] >= bounds.s[0]) {
+                if (bounds.x[1] > bounds.x[0] && bounds.m[1] > bounds.m[0] && bounds.a[1] > bounds.a[0] && bounds.s[1] > bounds.s[0]) {
                     sum += (bounds.x[1] - bounds.x[0]+1) * (bounds.m[1] - bounds.m[0]+1) * (bounds.a[1] - bounds.a[0]+1) * (bounds.s[1] - bounds.s[0]+1);
                     hyperboxes.push(bounds);
                 }
@@ -112,6 +112,8 @@ const draw = () => {
 
         camera.setPosition(new BABYLON.Vector3(30, 30, -30));
 
+        let scale = 1/400;
+
         hyperboxes.forEach(b => {
 
             let mat = new BABYLON.StandardMaterial("texture1", scene);
@@ -120,22 +122,48 @@ const draw = () => {
             
             mat.alpha = 1.0;
 
+            let h = scale*b.x[1] - scale*b.x[0],
+                w = scale*b.m[1] - scale*b.m[0],
+                d = scale*b.a[1] - scale*b.a[0];
 
             let box = BABYLON.MeshBuilder.CreateBox(
                 'box', {
-                    height: (b.x[1] - b.x[0]) / 400,
-                    width: (b.m[1] - b.m[0]) / 400,
-                    depth: (b.a[1] - b.a[0]) / 400,
+                    height: h,
+                    width: w,
+                    depth: d,
                     updatable: true
                 },
                 scene,
             )
+            box.time = [...b.s];
+            //box.showBoundingBox = true;
             box.material = mat;
-            box.position.x = b.x[0] / 400;
-            box.position.y = b.m[0] / 400;
-            box.position.z = b.a[0] / 400;
+            box.position.y = h/2 + scale*b.x[0];
+            box.position.x = w/2 +scale*b.m[0];
+            box.position.z = d/2 +scale*b.a[0];
             boxes.push(box);
         })
+
+        /*let mat = new BABYLON.StandardMaterial("texture1", scene);
+
+        mat.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+        
+        mat.alpha = 1.0;
+
+        let box = BABYLON.MeshBuilder.CreateBox(
+            'box', {
+                height: 10,
+                width: 20,
+                depth: 30,
+                updatable: true
+            },
+            scene,
+        )
+        box.material = mat;
+        box.position.y = 0;
+        box.position.x = 0;
+        box.position.z = 0;*/
+
 
         // GUI
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
@@ -181,17 +209,17 @@ const draw = () => {
         engine.resize()
     })
 
-    let sval = 1;
+    let time = 1;
 
     setInterval(() => {
-        boxes.forEach((box, i) => {
-            if (sval > hyperboxes[i].s[0] && sval < hyperboxes[i].s[1]) box.setEnabled(true);
+        boxes.forEach(box => {
+            if (time >= box.time[0] && time <= box.time[1]) box.setEnabled(true);
             else box.setEnabled(false);
         })
-        sval++;
-        text1.text = 'Move around with mouse or arrows\nX, M, A used as 3D coords\nS = '+ sval;
-        if (sval > 4000) {
-            sval = 0;
+        time++;
+        text1.text = 'Move around with mouse or arrows\nX, M, A used as 3D coords\nS = '+ time;
+        if (time > 4000) {
+            time = 0;
             boxes.forEach((box, i) => {
                 if (box.material.alpha == 1) box.material.alpha = 0.3; else box.material.alpha = 1;
             })
