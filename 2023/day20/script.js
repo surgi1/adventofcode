@@ -75,12 +75,7 @@ let stack = [];
 
 const sendPulse = ({targetId, senderId, pulseType}) => {
     //console.log('sending', targetId, senderId, pulseType);
-
-    //if (targetId === 'rx' && pulseType === PULSE_TYPE.LOW) rxTargeted = true;
-    //if (targetId === 'vr' && pulseType === PULSE_TYPE.HIGH && senderId === 'pq') rxTargeted = true;
-    //if (targetId === 'vr' && pulseType === PULSE_TYPE.HIGH && senderId === 'fg') rxTargeted = true;
-    //if (targetId === 'vr' && pulseType === PULSE_TYPE.HIGH && senderId === 'dk') rxTargeted = true;
-    if (targetId === sends2rxId && pulseType === PULSE_TYPE.HIGH && senderId === satisfyFromId) satisfied = true;
+    if (targetId === sends2rxId && pulseType === PULSE_TYPE.HIGH && senderId === satisfyFromId) satisfied = true; // this is just for part2
 
     pulses[pulseType]++;
 
@@ -138,20 +133,18 @@ const part1 = () => {
 part1();
 
 
-// we are looking for number of button pushes required to send high pulses to modules.rx.inputs[0] from each of its inputs, the result will be lcm of the pushes
 /*
-in my case:
+in my case, we are looking for number of button pushes required to send high pulses to modules.rx.inputs[0] from each of its inputs, the result will be lcm of the pushes
+
 &pq -> vr
 &fg -> vr
 &dk -> vr
 &fm -> vr
 
 &vr -> rx
-*/
 
-// lcm of all times btn push is required to send high to the vr, which sends to rx
-// 4001 3929 3793 4007
-// 238920142622879
+lcm of all times btn push is required to send high to the vr, which sends to rx
+*/
 
 const part2 = () => {
     modules = init();

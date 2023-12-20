@@ -51,7 +51,7 @@ const backtrack = (resultId, b = {x: [1, 4000], m: [1, 4000], a: [1, 4000], s: [
                 if (flow[i].length == 1) {i--; continue;}
                 let [par, op, val] = flow[i];
                 if (i == condId) {
-                    //flow[j] was satisfied
+                    //flow[i] was satisfied
                     if (op == '>') {
                         // x > 5 was satisfied
                         if (bounds[par][0] <= val) bounds[par][0] = val+1;
@@ -60,7 +60,7 @@ const backtrack = (resultId, b = {x: [1, 4000], m: [1, 4000], a: [1, 4000], s: [
                         if (bounds[par][1] >= val) bounds[par][1] = val-1;
                     }
                 } else {
-                    //flow[j] was not satisfied
+                    //flow[i] was not satisfied
                     if (op == '>') {
                         // x > 5 was not satisfied
                         if (bounds[par][1] > val) bounds[par][1] = val;
