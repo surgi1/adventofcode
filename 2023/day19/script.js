@@ -86,7 +86,7 @@ backtrack('A');
 
 console.log('p2', sum);
 
-let boxes = [], text1, mat1;
+let boxes = [], text1;
 
 const draw = () => {
     var canvas = document.getElementById('renderCanvas')
@@ -112,11 +112,15 @@ const draw = () => {
 
         camera.setPosition(new BABYLON.Vector3(30, 30, -30));
 
-        mat1 = new BABYLON.StandardMaterial("texture1", scene);
-        
-        mat1.alpha = 1.0;
-
         hyperboxes.forEach(b => {
+
+            let mat = new BABYLON.StandardMaterial("texture1", scene);
+
+            mat.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+            
+            mat.alpha = 1.0;
+
+
             let box = BABYLON.MeshBuilder.CreateBox(
                 'box', {
                     height: (b.x[1] - b.x[0]) / 400,
@@ -126,7 +130,7 @@ const draw = () => {
                 },
                 scene,
             )
-            box.material = mat1;
+            box.material = mat;
             box.position.x = b.x[0] / 400;
             box.position.y = b.m[0] / 400;
             box.position.z = b.a[0] / 400;
@@ -188,7 +192,9 @@ const draw = () => {
         text1.text = 'Move around with mouse or arrows\nX, M, A used as 3D coords\nS = '+ sval;
         if (sval > 4000) {
             sval = 0;
-            if (mat1.alpha == 1) mat1.alpha = 0.3; else mat1.alpha = 1;
+            boxes.forEach((box, i) => {
+                if (box.material.alpha == 1) box.material.alpha = 0.3; else box.material.alpha = 1;
+            })
         }
     }, 10)
 
