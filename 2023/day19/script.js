@@ -110,7 +110,7 @@ const draw = () => {
         const light4 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), scene);
         light.intensity = 0.5;
 
-        camera.setPosition(new BABYLON.Vector3(30, 30, -30));
+        camera.setPosition(new BABYLON.Vector3(0, 0, 20));
 
         let scale = 1/400;
 
@@ -138,9 +138,9 @@ const draw = () => {
             box.time = [...b.s];
             //box.showBoundingBox = true;
             box.material = mat;
-            box.position.y = h/2 + scale*b.x[0];
-            box.position.x = w/2 +scale*b.m[0];
-            box.position.z = d/2 +scale*b.a[0];
+            box.position.y = h/2 + scale*b.x[0] - 5;
+            box.position.x = w/2 + scale*b.m[0] - 5;
+            box.position.z = d/2 + scale*b.a[0] - 5;
             boxes.push(box);
         })
 
@@ -188,24 +188,21 @@ const draw = () => {
         engine.resize()
     })
 
-    let time = 1, variableTransparency = false;
+    let time = 1, variableTransparency = true;
 
     setInterval(() => {
         boxes.forEach(box => {
             if (time >= box.time[0] && time <= box.time[1]) {
                 box.setEnabled(true);
-                if (variableTransparency) box.material.alpha = 1 - Math.pow((time - (box.time[1] + box.time[0])/2)/((box.time[1] - box.time[0])/2), 4);
+                if (variableTransparency) box.material.alpha = Math.max(0, 0.7 - 0.7*Math.pow((time - (box.time[1] + box.time[0])/2)/((box.time[1] - box.time[0])/2), 2));
                 else box.material.alpha = 1;
             } else box.setEnabled(false);
         })
         time++;
-        text1.text = 'Move around with mouse or arrows\nX, M, A used as 3D coords\nS = '+ time+'\nalpha = '+ (variableTransparency ? 'f(S)' : '1');
+        text1.text = 'Move around with mouse or arrows\nX, M, A used as 3D coords\nalpha = '+ (variableTransparency ? '𝑓(S)' : '1') + '\nS = '+ time;
         if (time > 4000) {
             time = 0;
             variableTransparency = !variableTransparency;
-            /*boxes.forEach((box, i) => {
-                if (box.material.alpha == 1) box.material.alpha = 0.3; else box.material.alpha = 1;
-            })*/
         }
     }, 10)
 
