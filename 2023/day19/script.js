@@ -144,27 +144,6 @@ const draw = () => {
             boxes.push(box);
         })
 
-        /*let mat = new BABYLON.StandardMaterial("texture1", scene);
-
-        mat.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
-        
-        mat.alpha = 1.0;
-
-        let box = BABYLON.MeshBuilder.CreateBox(
-            'box', {
-                height: 10,
-                width: 20,
-                depth: 30,
-                updatable: true
-            },
-            scene,
-        )
-        box.material = mat;
-        box.position.y = 0;
-        box.position.x = 0;
-        box.position.z = 0;*/
-
-
         // GUI
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
