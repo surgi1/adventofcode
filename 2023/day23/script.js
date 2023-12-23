@@ -1,4 +1,5 @@
-// just p2 here, for part1 see script.part1.js
+// p1: brute force dfs with remembering seen fields on path, sped up by traversing the narrow paths quickly
+// p2: convert map to graph and dfs again
 
 const DS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const D =  {'>': 0, 'v': 1, '<': 2,  '^': 3 };
