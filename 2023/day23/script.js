@@ -4,60 +4,48 @@
 const DS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const D =  {'>': 0, 'v': 1, '<': 2,  '^': 3 };
 
-let map = input.split("\n").map((line, y) => line.split('').map((v, x) => {
-    return v;
-}))
+let map = input.split("\n").map((line, y) => line.split('')),
+    startPos = [1, 0],
+    endPos = [map[0].length-2, map.length-1];
 
 const key = p => p[0] + '_' + p[1];
-const addVect = (a, b) => [a[0]+b[0], a[1]+b[1]];
+const addVect = (a, b) => a.map((v, c) => v+b[c]);
+const validPos = p => map[p[1]] !== undefined && map[p[1]][p[0]] !== undefined && map[p[1]][p[0]] !== '#';
 
 const getGraph = () => {
-    const getMoves = cur => DS.map(d => addVect(cur.p, d)).filter(np => {
-        if (map[np[1]] === undefined || map[np[1]][np[0]] === undefined || map[np[1]][np[0]] === '#') return false;
-        return true;
-    })
-
     const addConnectNode = cur => {
         // try to locate existing one
-        let newJunctionId = nodes.findIndex(n => n.p[0] == cur.p[0] && n.p[1] == cur.p[1]);
+        let newJuncId = nodes.findIndex(n => n.p[0] == cur.p[0] && n.p[1] == cur.p[1]);
 
-        if (newJunctionId === -1) {
-            newJunctionId = nodes.length;
-            nodes.push({p: cur.p.slice(), connections: []});
-        }
+        if (newJuncId == cur.lastJuncId) return newJuncId;
 
-        if (newJunctionId === cur.lastJunctionId) return newJunctionId;
+        if (newJuncId == -1) newJuncId = nodes.push({p: cur.p.slice(), connections: []})-1;
 
-        // we need to connect cur.lastJunctionId and newJunctionId
-        if (nodes[cur.lastJunctionId].connections.findIndex(conn => conn.id === newJunctionId) === -1) nodes[cur.lastJunctionId].connections.push({
-            id: newJunctionId,
-            distance: cur.steps - cur.stepsToLastJunction
+        // we need to connect cur.lastJuncId and newJuncId
+        if (nodes[cur.lastJuncId].connections.findIndex(conn => conn.id == newJuncId) == -1) nodes[cur.lastJuncId].connections.push({
+            id: newJuncId,
+            distance: cur.steps - cur.stepsToLastJunc
         })
 
-        if (nodes[newJunctionId].connections.findIndex(conn => conn.id === cur.lastJunctionId) === -1) nodes[newJunctionId].connections.push({
-            id: cur.lastJunctionId,
-            distance: cur.steps - cur.stepsToLastJunction
+        if (nodes[newJuncId].connections.findIndex(conn => conn.id == cur.lastJuncId) == -1) nodes[newJuncId].connections.push({
+            id: cur.lastJuncId,
+            distance: cur.steps - cur.stepsToLastJunc
         })
 
-        return newJunctionId;
+        return newJuncId;
     }
 
-    let stack = [{p: [1, 0], steps: 0, lastJunctionId: 0, stepsToLastJunction: 0}], seen = {},
-        endPos = [map[0].length-2, map.length-1],
-        maxSteps = 0;
-
-    let nodes = [{p: [1,0], connections: []}];
+    let stack = [{p: startPos.slice(), steps: 0, lastJuncId: 0, stepsToLastJunc: 0}],
+        nodes = [{p: [1,0], connections: []}], seen = {};
 
     while (stack.length) {
-        let cur = stack.pop();
-
-        let k = key(cur.p);
-
-        let moves = getMoves(cur);
+        let cur = stack.pop(),
+            k = key(cur.p),
+            moves = DS.map(d => addVect(cur.p, d)).filter(validPos);
 
         if (moves.length > 2) {
-            cur.lastJunctionId = addConnectNode(cur);
-            cur.stepsToLastJunction = cur.steps;
+            cur.lastJuncId = addConnectNode(cur);
+            cur.stepsToLastJunc = cur.steps;
         }
 
         if (seen[k] !== undefined) continue;
@@ -71,11 +59,12 @@ const getGraph = () => {
         moves.forEach(np => stack.push({
             p: np,
             steps: cur.steps+1,
-            lastJunctionId: cur.lastJunctionId,
-            stepsToLastJunction: cur.stepsToLastJunction,
+            lastJuncId: cur.lastJuncId,
+            stepsToLastJunc: cur.stepsToLastJunc,
         }))
 
     }
+
     return nodes;
 }
 
@@ -83,7 +72,7 @@ const part2 = () => {
     let nodes = getGraph();
 
     let stack = [{p: 0, steps: 0, seen: {}}],
-        endPos = nodes.length-1,
+        endNodeId = nodes.length-1,
         maxSteps = 0;
 
     while (stack.length) {
@@ -92,7 +81,7 @@ const part2 = () => {
         let k = cur.p;
         cur.seen[k] = 1;
 
-        if (cur.p == endPos) {
+        if (cur.p == endNodeId) {
             maxSteps = Math.max(cur.steps, maxSteps);
             continue;
         }
@@ -109,22 +98,15 @@ const part2 = () => {
 
 const part1 = () => {
     const getMoves = cur => {
-        let moves = [];
-
-        let v = map[cur.p[1]][cur.p[0]];
+        let moves = [], v = map[cur.p[1]][cur.p[0]];
 
         if (D[v] !== undefined) moves.push(addVect(cur.p, DS[D[v]]));
         else DS.forEach(d => moves.push(addVect(cur.p, d)) );
 
-        return moves.filter(np => {
-            if (map[np[1]] === undefined || map[np[1]][np[0]] === undefined || map[np[1]][np[0]] === '#') return false;
-            if (cur.seen[key(np)] !== undefined) return false;
-            return true;
-        })
+        return moves.filter(p => validPos(p) && cur.seen[key(p)] === undefined)
     }
 
-    let stack = [{p: [1, 0], steps: 0, seen: {}}],
-        endPos = [map[0].length-2, map.length-1],
+    let stack = [{p: startPos.slice(), steps: 0, seen: {}}],
         maxSteps = 0;
 
     while (stack.length) {
@@ -152,6 +134,7 @@ const part1 = () => {
             seen: {...cur.seen}
         }))
     }
+    
     return maxSteps;
 }
 
