@@ -10,7 +10,7 @@ const intersect = (a, b, shift = [0, 0], coords = [0, 1]) => {
     let x1 = a.p[coords[0]], y1 = a.p[coords[1]], x2 = a.p[coords[0]] + a.v[coords[0]] - shift[0], y2 = a.p[coords[1]] + a.v[coords[1]] - shift[1];
     let x3 = b.p[coords[0]], y3 = b.p[coords[1]], x4 = b.p[coords[0]] + b.v[coords[0]] - shift[0], y4 = b.p[coords[1]] + b.v[coords[1]] - shift[1];
 
-    var ua, ub, denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+    let ua, ub, denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
     if (denom == 0) return false;
     ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
     ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
