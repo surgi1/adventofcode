@@ -1,5 +1,5 @@
-// this is not technically a solution (yet), it just generates input to graphviz (even online one works, here: https://dreampuf.github.io/GraphvizOnline - FDP engine)
-// generate the svg (see graphviz.svg), figure out which 3 connections to cut, and use run(pairs)
+// this is not technically a solution (yet), it just generates input to graphviz (see input.dot, then even online version works, here: https://dreampuf.github.io/GraphvizOnline)
+// generate the svg (see output.svg), figure out which 3 connections to cut, and use run(pairs)
 // programatic solution (minimum cut?) TBD after xmas
 
 let nodes = {};
@@ -17,9 +17,7 @@ input.split("\n").forEach(line => {
     to.forEach(n => addNode(n, [from]))
 })
 
-let ents = Object.entries(nodes);
-
-console.log(nodes, ents.length);
+console.log(nodes);
 
 const sumReachableNodes = nodes => {
     let ents = Object.entries(nodes);
@@ -55,5 +53,8 @@ run([['txf', 'xnn'], ['tmc', 'lms'], ['jjn', 'nhg']]);
 //run([['hfx', 'pzl'], ['bvb', 'cmg'], ['nvd', 'jqt']]);
 
 let s = '';
-ents.forEach(([k, v]) => v.forEach(c => s += k + ' -> ' +  c + ';\n'));
+input.split("\n").forEach(line => {
+    let [from, toLit] = line.split(': ');
+    s += from + ' -- {' + toLit + '};\n';
+})
 console.log(s);
