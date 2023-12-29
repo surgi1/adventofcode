@@ -78,15 +78,14 @@ const part2 = () => {
     while (stack.length) {
         let cur = stack.pop();
 
-        let k = cur.p;
-        cur.seen[k] = 1;
+        cur.seen[cur.p] = 1;
 
         if (cur.p == endNodeId) {
             maxSteps = Math.max(cur.steps, maxSteps);
             continue;
         }
 
-        nodes[k].connections.filter(n => cur.seen[n.id] === undefined).forEach(n => stack.push({
+        nodes[cur.p].connections.filter(n => cur.seen[n.id] === undefined).forEach(n => stack.push({
             p: n.id,
             steps: cur.steps + n.distance,
             seen: {...cur.seen}
