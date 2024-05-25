@@ -1,9 +1,8 @@
-// This is one of my most loved puzzles from whole AOC. Solved with good old brute force.
-// Despite possible the AOC site not validating solutions correctly - see comments at the bottom of this file.
+// Solved with good old brute force.
 
 let stack = []; // begining of turn effects stack, ex. {turn: 123, effect: () => {player.mana += 120;}}
 let verboseBattle = false, lowestManaSpentOnWin = 9001, variant = 0,
-    applyCurse = true; // part 2 setting
+    applyCurse = false; // part 2 setting
 
 let playerBase = {
     mana: 500,
@@ -13,16 +12,16 @@ let playerBase = {
     spellChain: [],
     fizzled: false,
     spells: [
-        {name: 'Magic Missile', cost: 53, effect: (turn) => {boss.hp -= 4;}},
-        {name: 'Drain', cost: 73, effect: (turn) => {boss.hp -= 2; player.hp += 2;}},
-        {name: 'Shield', cost: 113, effect: (turn) => {
+        {name: 'Magic Missile', cost: 53, lasting: 0, effect: (turn) => {boss.hp -= 4;}},
+        {name: 'Drain', cost: 73, lasting: 0, effect: (turn) => {boss.hp -= 2; player.hp += 2;}},
+        {name: 'Shield', cost: 113, lasting: 6, effect: (turn) => {
             player.armor += 7;
             stack.push({
                 turn: turn+7,
                 effect: () => {player.armor -= 7;}
             })
         }},
-        {name: 'Poison', cost: 173, effect: (turn) => {
+        {name: 'Poison', cost: 173, lasting: 6, effect: (turn) => {
             for (let i=1; i<=6; i++) stack.push({
                 turn: turn+i,
                 effect: () => {
@@ -31,7 +30,7 @@ let playerBase = {
                 }
             })
         }},
-        {name: 'Recharge', cost: 229, effect: (turn) => {
+        {name: 'Recharge', cost: 229, lasting: 5, effect: (turn) => {
             for (let i=1; i<=5; i++) stack.push({
                 turn: turn+i,
                 effect: () => {
@@ -48,7 +47,22 @@ let playerBase = {
         } else {
             spell = player.spells[spellIdentifier];
         }
-        if (player.mana >= spell.cost) {
+
+        let effectAlreadyActive = false;
+
+        if (spell.lasting !== 0) {
+            let lastSpellIndex = player.spellChain.lastIndexOf(spell.name);
+            if (lastSpellIndex > -1) {
+                if ((player.spellChain.length - lastSpellIndex)*2 < spell.lasting) effectAlreadyActive = true;
+            }
+        }
+
+        if (effectAlreadyActive) {
+           if (verboseBattle) console.log('Effect already active', spell.name, '!');
+           player.spellChain.push('CANNOT CAST; EFFECT ACTIVE '+spell.name);
+           player.fizzled = true;
+           return false;
+       } else if (player.mana >= spell.cost) {
             if (verboseBattle) console.log('Player casts', spell.name, '.');
             player.mana -= spell.cost;
             player.manaSpent += spell.cost;
@@ -141,7 +155,7 @@ const battle = (playerStrategy, setVerboseTo, applyCurse) => {
     }
 
     if ((boss.hp <= 0) && (!player.fizzled)) {
-        if (lowestManaSpentOnWin > player.manaSpent/* && player.manaSpent > 1200*/) {
+        if (lowestManaSpentOnWin > player.manaSpent) {
             lowestManaSpentOnWin = player.manaSpent;
             console.log('Stats', 'Player', {...player});
             console.log('Stats', 'Boss', {...boss});
@@ -154,20 +168,16 @@ const playBattle = (chain, applyCurse) => battle(turn => chain[(turn-1)/2], true
 
 const solve = () => {
     while (true) {
-        let s = variant.toString(5);
-        while (s.length < 24+1) s = '0'+s;
+        let s = variant.toString(5).padStart(25, '0');
 
         battle(turn => parseInt(s[24-(turn-1)/2]), false, applyCurse);
 
         variant++;
         if (variant % 100000 == 0) console.log('Checked', variant, 'possible realities. Lowest mana needed to win is so far', lowestManaSpentOnWin, '. Last used spellchain', s);
-        if (variant % 10000000 == 0) break;
+        if (variant % 100000 == 0) break;
     }
 
     console.log('Finished cycle. Checked', variant, 'possible realities. Lowest mana needed to win is', lowestManaSpentOnWin);
 }
 
 solve(); // comment this out to replay battles using playBattle()
-
-//playBattle(["Recharge", "Poison", "Poison", "Poison", "Magic Missile", "Magic Missile"], false); // part 1 real solution with 854 mana (site wants 900)
-//playBattle(["Recharge", "Poison", "Poison", "Poison", "Drain", "Magic Missile"], true); // part 2 real solution with 874 mana (site wants 1216)
