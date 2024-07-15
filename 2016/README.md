@@ -6,7 +6,7 @@ Set of 2016 was also a great one, with a number of tasks residing around graph t
 
 [JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2016)
 
-Solutions for days 1-3 and 5-7 not archived.
+Solutions for days 1 and 2 were not archived.
 
 ## Highlights
 

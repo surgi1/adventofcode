@@ -4,7 +4,7 @@
 
 [JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2015)
 
-Solutions for days 1-6, 8, 11, 12 not archived.
+Solutions for days 1-6 and 8 were not archived.
 
 ## Highlights
 
