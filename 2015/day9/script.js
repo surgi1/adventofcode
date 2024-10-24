@@ -1,42 +1,29 @@
 // this is a traveling salesman problem
-// still used brute-force, as was quicker to implement and runs in no time
+// still used brute-force BFS, as was quicker to implement and runs in no time
+let locs = {}, longest = 0, shortest = Number.MAX_SAFE_INTEGER, p;
 
-let points = [], paths = [], minFound = false, maxFound = false
-
-const dist = (a,b) => {
-    return input.filter(line => {
-        if ((line[0] == a && line[1] == b) || (line[0] == b && line[1] == a)) return true;
-    })[0][2];
-}
-
-input.map(line => {
-    if (!points.includes(line[0])) points.push(line[0]);
-    if (!points.includes(line[1])) points.push(line[1]);
+input.split("\n").map(line => {
+    let tmp = line.split(' ');
+    if (locs[tmp[0]] === undefined) locs[tmp[0]] = {d:{}};
+    if (locs[tmp[2]] === undefined) locs[tmp[2]] = {d:{}};
+    locs[tmp[0]].d[tmp[2]] = Number(tmp[4]);
+    locs[tmp[2]].d[tmp[0]] = Number(tmp[4]);
 })
 
-const progressPath = (path, missingPoints) => {
-    if (missingPoints.length == 1) {
-        path.push(missingPoints[0]);
-        paths.push(path);
-    } else missingPoints.map((mp, index) => {
-        let newMPs = missingPoints.slice();
-        newMPs.splice(index, 1);
-        let newPath = path.slice();
-        newPath.push(mp);
-        progressPath(newPath, newMPs);
-    })
+let stack = Object.keys(locs).map(loc => ({
+    current: loc,
+    toVisit: Object.keys(locs).filter(l => l != loc),
+    dist: 0
+}));
+
+while (p = stack.pop()) {
+    if (p.toVisit.length === 0 && p.dist < shortest) shortest = p.dist;
+    if (p.toVisit.length === 0 && p.dist > longest) longest = p.dist;
+    p.toVisit.forEach(newLoc => stack.push({
+        current: newLoc,
+        dist: p.dist + locs[p.current].d[newLoc],
+        toVisit: p.toVisit.filter(l => l != newLoc)
+    }))
 }
 
-points.map((p,i) => progressPath([p], points.filter((pp,ii) => ii!=i)));
-
-paths.map(path => {
-    let length = 0;
-    for (let i=1; i<path.length;i++) {
-        length += dist(path[i-1],path[i]);
-    }
-    if ((!minFound) || (length < minFound)) minFound = length;
-    if ((!maxFound) || (length > maxFound)) maxFound = length;
-})
-
-console.log('shortest path length', minFound);
-console.log('longest path length', maxFound);
+console.log('p1:', shortest, ', p2:', longest);
