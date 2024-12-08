@@ -25,7 +25,7 @@ const run1 = (ants, rows, cols) => {
     return Object.keys(pts).length;
 }
 
-const run2 = (ants, rows, cols, p1 = false) => {
+const run2 = (ants, rows, cols) => {
     const onGrid = ([x, y]) => x >= 0 && y >= 0 && x < cols && y < rows;
     let pts = {};
  
