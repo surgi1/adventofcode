@@ -1,6 +1,5 @@
 const init = input => {
-    let grid = input.split("\n").map((line, y) => line.split(''));
-    let ants = {};
+    let grid = input.split("\n").map((line, y) => line.split('')), ants = {};
     grid.forEach((row, y) => row.forEach((v, x) => {
         if (v == '.') return true;
         if (ants[v] === undefined) ants[v] = [];
@@ -9,46 +8,41 @@ const init = input => {
     return [ants, grid.length, grid[0].length]
 }
 
-const run1 = (ants, rows, cols) => {
-    const onGrid = ([x, y]) => x >= 0 && y >= 0 && x < cols && y < rows;
-    let pts = {};
-
-    Object.entries(ants).forEach(([ant, locs]) => locs.forEach((loc1, i) => locs.forEach((loc2, j) => {
+const run1 = (anodes = {}) => {
+    Object.values(ants).forEach(locs => locs.forEach((loc1, i) => locs.forEach((loc2, j) => {
         if (j <= i) return true;
-        let d = [0, 1].map(i => loc1[i] - loc2[i]);
-        let p1 = [0, 1].map(i => loc1[i] + d[i]);
-        let p2 = [0, 1].map(i => loc2[i] - d[i]);
-        if (onGrid(p1)) pts[p1.join('_')] = 1;
-        if (onGrid(p2)) pts[p2.join('_')] = 1;
+        let d = [0, 1].map(i => loc2[i] - loc1[i]);
+        [loc1, loc2].map((loc, id) => [0, 1].map(i => loc[i] + (id*2 - 1)*d[i]))
+                    .filter(loc => onGrid(loc))
+                    .forEach(loc => anodes[loc.join('_')] = 1)
     })))
-
-    return Object.keys(pts).length;
+    return Object.keys(anodes).length;
 }
 
-const run2 = (ants, rows, cols) => {
-    const onGrid = ([x, y]) => x >= 0 && y >= 0 && x < cols && y < rows;
-    let pts = {};
- 
-    Object.entries(ants).forEach(([ant, locs]) => locs.forEach((loc1, i) => locs.forEach((loc2, j) => {
+const run2 = (anodes = {}) => {
+    Object.values(ants).forEach(locs => locs.forEach((loc1, i) => locs.forEach((loc2, j) => {
         if (j <= i) return true;
-
-        let d = [0, 1].map(i => loc1[i] - loc2[i]);
+        let d = [0, 1].map(i => loc2[i] - loc1[i]);
         
-        if (d[0] == 0) d[1] = Math.sign(d[1]); // surprisingly not needed
-        if (d[1] == 0) d[0] = Math.sign(d[1]); // surprisingly not needed
+        // none of theese 3 is needed for my input, to my surprise
+        if (d[0] == 0) d[1] = Math.sign(d[1]); 
+        if (d[1] == 0) d[0] = Math.sign(d[1]);
+        if (Math.abs(d[0]) == Math.abs(d[1])) d = d.map(v => Math.sign(v));
 
         [-1, 1].forEach(dir => {
-            let p = loc1.slice();
-            while (onGrid(p)) {
-                pts[p.join('_')] = 1;
-                p = p.map((v, i) => v+dir*d[i]);
+            let loc = loc1.slice();
+            while (onGrid(loc)) {
+                anodes[loc.join('_')] = 1;
+                loc = loc.map((v, i) => v+dir*d[i]);
             }
         })
     })))
-
-    return Object.keys(pts).length;
+    return Object.keys(anodes).length;
 }
 
+const onGrid = ([x, y]) => x >= 0 && y >= 0 && x < cols && y < rows;
 
-console.log('p1', run1(...init(input)));
-console.log('p2', run2(...init(input)));
+let [ants, rows, cols] = init(input);
+
+console.log('p1', run1());
+console.log('p2', run2());
