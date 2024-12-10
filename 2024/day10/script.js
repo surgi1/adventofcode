@@ -2,7 +2,7 @@ const init = input => input.split('\n').map(line => line.split('').map(Number))
 
 const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
-const headScores = (map, sx, sy, p2 = false) => {
+const scores = (map, sx, sy, p2 = false) => {
     let res = {}, count = 0;
     let stack = [[sx, sy]], cur, cols = map[0].length, rows = map.length;
 
@@ -27,14 +27,7 @@ const headScores = (map, sx, sy, p2 = false) => {
     return p2 ? count : Object.values(res).length
 }
 
-const run = (map, p2 = false, res = 0) => {
-    map.forEach((row, y) => row.forEach((v, x) => {
-        if (v !== 0) return true;
-        res += headScores(map, x, y, p2);
-    }))
-    return res;
-}
-
+const run = (map, p2) => map.reduce((res, row, y) => res + row.reduce((a, v, x) => a + (v == 0 ? scores(map, x, y, p2) : 0), 0) , 0)
 
 console.log('p1', run(init(input)));
 console.log('p2', run(init(input), true));
