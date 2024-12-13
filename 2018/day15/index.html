@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://zeptojs.com/zepto.min.js"></script>
+    <title>AOC 2018</title>
+    <style type="text/css">
+        .mappoint, .creature {
+            position:absolute;
+            height:16px;
+            width:16px;
+            text-align: center;
+        }
+        .mappoint.W{
+            background-color: #444;
+        }
+        .mappoint.S{
+            background-color: #90ff90;
+            font-size: 10px;
+        }
+        .creature.E {
+            background-image:url(./elf.png);
+        }
+        .creature.G {
+            background-image:url(./goblin.png);
+        }
+        .creature .health {
+            color: red;
+            font-size: 9px;
+            position: relative;
+            top: -9px;
+            font-family: monospace;
+        }
+        .highlight {
+            background-color:#fff !important;
+        }
+        .message {
+            position: absolute;
+            left: 0px;
+            top: 442px;
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+            width: 512px;
+            font-family: monospace;
+            background-color: black;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <div class="message"></div>
+    <script src="input.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css?family=VT323');
+html {
+    font-family: 'VT323', monospace;
+    background-color: #0f0f23;
+}
+body {
+    margin:0;
+    padding:0;
+}
+canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 1092px;
+    height: 756px;
+}
+#nav, #footer {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 1092px;
+    color:white;
+    font-size: 24px;
+    text-align: center;
+    padding-top:6px;
+    padding-bottom:6px;
+}
+#footer {
+    position:relative;
+    top:-20px;
+}
+.sound_switch {
+    background-image: url('./resources/sndonoff.png');
+    width:16px;
+    height:16px;
+    background-repeat:no-repeat;
+    background-position: right top;
+    float: right;
+    margin-top:12px;
+    cursor: pointer;
+}
+
+.sound_switch.off {
+    background-position:left top;
+}
+
+.costs {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 1092px;
+    position:relative;
+    top:-20px;
+    height:20px;
+}
+.costsinner {
+    padding-left: 252px;
+}
+.cost {
+    color:snow;
+    float: left;
+    width: 84px;
+    margin-right: 84px;
+    text-align: center;
+}
+.cost img {
+    position:relative;
+    top:3px;
+}
+.link {
+    cursor:pointer;
+}
+
+a:link, a:visited, a:active, .link { color:lightblue;text-decoration:none; }
+a:hover, .link:hover { color:#99ff99;text-decoration:none; }        
+textarea {
+    height:96px;
+    width:200px;
+}
+.right {
+    float:right;
+    text-align:right;
+    width:350px;
+}
+.small {
+    font-size: 18px;
+}
+.inner ol {
+    text-align: left;
+    font-size: 22px;
+    line-height: 22px;
+    margin-bottom: 4px;
+    margin-top: 0px;
+}
+.left {
+    float:left;
+    text-align:left;
+    width:350px;
+}
+.score {
+    font-weight: bold;
+}
+.titleimg {
+    clear:both;
+    padding-top:4px;
+}
+.title {
+    font-size: 30px;
+    line-height: 40px;
+    width: 100%;
+    border-bottom: white solid 2px;
+    margin-bottom:6px;
+}
+
+.message {
+    position:absolute;
+    top:58px;
+    width: 380px;
+    /*height:180px;*/
+    background-image: url('./resources/mb-body.png');
+    background-repeat: repeat-y;
+    box-shadow: inset 0 -0em 3em rgb(0 0 0 / 10%), 0.93em 0.93em 0em rgb(0 0 0 / 30%);
+    transition: all 0.5s ease;
+}
+
+.message .top {
+    background-image: url('./resources/mb-top.png');
+    width: 380px;
+    height: 8px;
+}
+.message .bottom {
+    background-image: url('./resources/mb-bottom.png');
+    width: 380px;
+    height: 8px;
+}
+
+.message.out {
+    top:-350px;
+}
+.inner {
+    margin-left:8px;
+    margin-right:8px;
+    padding-top: 6px;
+    color:azure;
+    text-align: center;
+    font-size: 24px;
+    /*width:100%;*/
+    line-height:34px;
+}
+.victory {
+    background: url('./resources/stripebg.png') repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    text-fill-color: transparent;
+    animation: movebg 30s linear infinite, spaceletters 3s ease-in-out infinite;
+    color: transparent;
+
+    transform: translate3d(0,0,0);
+    backface-visibility: hidden;
+
+    font-size:30px;
+    font-weight:bold;
+    margin-bottom:6px;
+    letter-spacing: 0px;
+    text-shadow: 1px 1px 0px rgb(0 0 0 / 30%);
+    mix-blend-mode: luminosity;
+}
+.messagebuttons {
+    margin-top:12px;
+    margin-bottom: 6px;
+}
+
+.messagetitle {
+    font-size:24px;
+    margin-bottom: 8px;
+}
+
+.message a:link, .message a:visited, .message a:active { color:white;text-decoration:none; }
+.message a:hover { color:#99ff99;text-decoration:none; }    
+
+
+@keyframes spaceletters {
+    0% { letter-spacing:0px; }
+    50% { letter-spacing: 5px; }
+    100% { letter-spacing:0px; }
+}
+
+@keyframes movebg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}

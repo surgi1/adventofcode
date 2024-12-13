@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AOC 2022 - Day 24</title>
+
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300&display=swap');
+        html {
+            font-family: 'Source Code Pro', monospace;
+            background-color: #0f0f23;
+        }
+        body {
+            margin:0;
+            padding:0;
+            overflow:hidden;
+        }
+        canvas {
+            padding-left: 0;
+            padding-right: 0;
+            padding-top:32px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            width: 3904px;
+            height: 864px;
+        }
+        #elf {
+            position:absolute;
+            width:256px;
+            height:100px;
+            left:0px;
+            top:0px;
+            text-align: center;
+            color: red;
+            font-weight: bold;
+            padding-top: 82px;
+            font-size: 12px;
+        }
+        #nav {
+            position:absolute;
+            color: white;
+            left: 32px;
+            top:6px;
+        }
+        #footer {
+            position:absolute;
+            color: white;
+            left:32px;
+            top: 870px;
+        }
+        a:link, a:visited, a:hover, a:active { color:#009900;font-weight:bold;text-decoration:none; }
+        a:hover { color:#99ff99;font-weight:bold;text-decoration:none; }        
+        textarea {
+            position:absolute;
+            height:16px;
+            width:120px;
+        }
+    </style>
+</head>
+<body>
+    <div id="elf"></div>
+    <div id="nav">Ho Ho Ho! Either <b>play</b> the game ([<b>WASD</b>] to move, [<b>Space</b>] to wait), <a href="#" id="auto">auto-run</a> or load your input: <textarea onclick="this.select()" id="custom">paste here</textarea> <span style="padding-left:138px"><a href="#" id="load">load</a></span></div>
+    <div id="footer">Source is <a href="https://github.com/surgi1/adventofcode/tree/main/2022/day24" target="_blank">here</a>. Merry Christmas!</div>
+    <canvas id="canvas" width="3904" height="864"></canvas>
+    <script src="input.js"></script>
+    <script src="script.anim.js?v=2"></script>
+</body>
+</html>

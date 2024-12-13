@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AOC 2020 - Day 20</title>
+    <style type="text/css">
+        #root {
+            background-color: #dcf5fd;
+            position:absolute;
+            width: 1152px;
+            height: 1152px;
+            /*zoom:2;*/
+        }
+        .p {
+            position:absolute;
+            height: 12px;
+            width: 12px;
+            font-size: 12px;
+        }
+        .t1 {    
+            color: #70bcda;
+            margin-top: -4px;
+            -webkit-transition: opacity 1s ease-in-out;
+            -moz-transition: opacity 1s ease-in-out;
+            -ms-transition: opacity 1s ease-in-out;
+            -o-transition: opacity 1s ease-in-out;
+             opacity: 1;
+        }
+        .t1.hidden {
+            opacity:0.2;
+        }
+        .t1:after {
+            content: '~';
+            font-size:18px;
+            font-family:monospace;
+        }
+        .t2, .t3, .t4, .t5, .t6 {
+            background-color: #6B8E23;
+            z-index:10;
+            color:white;
+            font-family: sans-serif;
+            line-height:1.5;
+        }
+        .t2 {
+            border-bottom-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+        .t3 {
+            border-bottom-right-radius: 20px;
+            border-top-left-radius: 20px;
+        }
+        .t4 {
+            border-bottom-left-radius: 10px;
+            border-top-right-radius: 20px;
+        }
+        .t4:after {
+            content: 'o';
+            margin-left: 6px;
+            font-weight: bold;
+            font-size: 10px;
+        }
+        .t5 {
+            border-bottom-left-radius: 20px;
+            border-top-right-radius: 0px;
+        }
+        .t6 {
+            border-bottom-right-radius: 20px;
+            border-top-right-radius: 10px;
+        }
+        .t6:after {
+            content: 'vvv';
+            margin-left: -6px;
+        }
+        .p.animated {
+            -webkit-animation: ease-in-out infinite alternate;
+            -webkit-animation-name: run;
+            -webkit-animation-duration: 2s;
+        }
+        @-webkit-keyframes run {
+            0% {margin-left: 0}
+            50% {margin-left: 10px}
+            100% {margin-left: 0}
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="input.js"></script>
+    <script src="TileSet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

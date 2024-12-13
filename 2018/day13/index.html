@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://zeptojs.com/zepto.min.js"></script>
+    <title>AOC 2018</title>
+    <style>
+        body {
+            background-color: oldlace;
+            margin: 0;
+        }
+        #root {position:absolute}
+        /*#root, #canvas {zoom:0.5}
+        #canvas {opacity:0.8}*/
+        .cart {
+            width:56px;
+            height:56px;
+            position:absolute;
+            opacity:1;
+            z-index:10;
+            transition:opacity 2s;
+        }
+        .cart.vertical {background-image:url('./cart-top-bottom.png')}
+        .cart.horizontal {background-image:url('./cart-left-right.png')}
+        .cart.hide {opacity:0}
+        .explosion-wrapper {
+            width:256px;
+            height:256px;
+            display:table-cell;
+            text-align:center;
+            vertical-align:middle;
+            position:relative;
+            left:400px;
+            top:400px;
+            visibility: hidden;
+        }
+        .explosion {
+            width:56px;
+            height:56px;
+            border-radius: 50%;
+            background-color: gray;
+            z-index:20;
+            margin: 0 auto;
+            transition:opacity 2s, width .5s, height .5s;
+            opacity:1;
+        }
+        .explosion.hide {
+            opacity:0;
+            width:256px;
+            height:256px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="explosion-wrapper"><div class="explosion"> </div></div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>

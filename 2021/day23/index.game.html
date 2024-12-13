@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.3, maximum-scale=0.3, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <title>Troopahs The Game</title>
+</head>
+<body>
+    <div id="nav">
+        <div class="title">
+            <div class="left" style="font-size:24px;">
+                Map: <span id="maps"></span>
+            </div>
+            <strike>AMPHIPOD</strike> TROOPAHS
+            <div class="right" style="font-size:24px;">
+                <div id="sound_switch" class="sound_switch">&nbsp;</div>
+            </div>
+        </div>
+        <div class="left">
+            [<span class="selected mode" href="#!">easy</span>·<span class="link mode" href="#!">hard</span>]
+        </div>
+            Current cost: <span class="score currentscore" id="score">0</span><img src="./resources/energyicon.png"/>
+        <div class="right">
+            Best effort: <span class="score" id="topscore">N/A</span>
+        </div>
+    </div>
+
+    <canvas id="canvas" width="1092" height="756"></canvas>
+
+    <div class="costs small">
+        <div class="costsinner">
+            <div class="cost"><img src="./resources/energyicon.png"/>1</div>
+            <div class="cost"><img src="./resources/energyicon.png"/>10</div>
+            <div class="cost"><img src="./resources/energyicon.png"/>100</div>
+            <div class="cost"><img src="./resources/energyicon.png"/>1000</div>
+        </div>
+    </div>
+
+    <div id="footer">
+        <span class="left">
+            <a id="restart" href="#!">[Restart]</a>
+            <a id="openloadbox" href="#!">[Load your input]</a>
+        </span>
+        <a id="openinstructions" href="#!">[Instructions]</a>
+        <span class="right small">
+            Icons by <a href="https://www.behance.net/Bryan_Chen" target="_blank"> Bryan Chen</a> | Source is <a href="https://github.com/surgi1/adventofcode/tree/main/2021/day23" target="_blank">here</a>
+        </span>
+    </div>
+
+    <div id="message" class="message out">
+        <div class="top"></div>
+        <div class="inner">
+            <div class="victory" id="victory">GOOD JOB!</div>
+            Final cost: <span class="score currentscore" id="mbscore">0</span><img src="./resources/energyicon.png"/><br/>
+            <span id="candobetter">Maybe you can do better?</span><br />
+            <div class="messagebuttons">
+                <a id="tryagain" href="#!">[Try again]</a>
+                <a id="nextmap" href="#!">[Next map]</a>
+            </div>
+        </div>
+        <div class="bottom"></div>
+    </div>
+
+    <div id="loadbox" class="message out">
+        <div class="top"></div>
+        <div class="inner">
+            <div class="messagetitle">Load your own input!</div>
+            <textarea onclick="this.select()" id="custom">paste here</textarea>
+            <div class="messagebuttons">
+                <a id="load" href="#!">[Load]</a>
+                <a id="closeloadbox" href="#!">[Close]</a>
+            </div>
+        </div>
+        <div class="bottom"></div>
+    </div>
+
+    <div id="instructions" class="message out">
+        <div class="top"></div>
+        <div class="inner">
+            <div class="messagetitle">How to play?</div>
+            <ol>
+                <li>Help troopahs get to their cells!</li>
+                <li>Moving each unit type costs different energy.</li>
+                <li>Troopah can't stand right out of the cell.</li>
+                <li>Troopah can't move into other type of cell.</li>
+                <li>Once out of cell, troopah can only go to his own cell.</li>
+                <li>Lowest overall cost the better!<img src="./resources/energyicon.png"/></li>
+            </ol>
+            <div class="messagebuttons">
+                <a id="closeinstructions" href="#!">[Close]</a>
+            </div>
+        </div>
+        <div class="bottom"></div>
+    </div>
+
+    <script src="input.js"></script>
+    <script type="module" src="./modules/game.js"></script>
+</body>
+</html>
