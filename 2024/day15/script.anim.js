@@ -121,6 +121,11 @@ const run = (origMap, moves, width = 1) => {
     setTimeout(loop, 1000)
 }
 
+document.getElementById('load').addEventListener('click', e => {
+    input = document.getElementById('custom').value;
+    run(...init(input), 2);
+});
+
 resizeCanvas();
 
 run(...init(input), 2);

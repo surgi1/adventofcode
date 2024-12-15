@@ -3,11 +3,58 @@
 <head>
     <meta charset="utf-8">
     <title>AOC 2024 - Day 15</title>
-    <style>
-        canvas {margin:0; padding:0;top:0px;left:0px; position:absolute}
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300&display=swap');
+        html {
+            font-family: 'Source Code Pro', monospace;
+            background-color: #0f0f23;
+        }
+        body {
+            margin:0;
+            padding:0;
+            overflow:hidden;
+        }
+        canvas {
+            padding-left: 0;
+            padding-right: 0;
+            padding-top:32px;
+            display: block;
+        }
+        #elf {
+            position:absolute;
+            width:256px;
+            height:100px;
+            left:0px;
+            top:0px;
+            text-align: center;
+            color: red;
+            font-weight: bold;
+            padding-top: 82px;
+            font-size: 12px;
+        }
+        #nav {
+            position:absolute;
+            color: white;
+            left: 32px;
+            top:6px;
+        }
+        #footer {
+            position:absolute;
+            color: white;
+            left:32px;
+            top: 870px;
+        }
+        a:link, a:visited, a:hover, a:active { color:#009900;font-weight:bold;text-decoration:none; }
+        a:hover { color:#99ff99;font-weight:bold;text-decoration:none; }        
+        textarea {
+            position:absolute;
+            height:16px;
+            width:120px;
+        }
     </style>
 </head>
 <body>
+    <div id="nav">Ho Ho Ho! Load your input: <textarea onclick="this.select()" id="custom">paste here</textarea> <span style="padding-left:138px"><a href="#" id="load">load</a></span> | Source is <a href="https://github.com/surgi1/adventofcode/tree/main/2024/day15" target="_blank">here</a>.</div>
     <canvas id="root"></canvas>
     <script src="input.anim.js"></script>
     <script src="script.anim.js"></script>
