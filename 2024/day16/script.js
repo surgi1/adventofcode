@@ -2,7 +2,7 @@ const init = input => input.split("\n").map(line => line.split(''))
 
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 
-const run = (map, p2 = false) => {
+const run = map => {
     let start = [0, 0, 0], // s, y, dirId, cost
         end = [0,0];
     
@@ -13,38 +13,16 @@ const run = (map, p2 = false) => {
         map[y][x] = '.';
     }))
 
-    const findMinCost = (start, end) => {
-        let stack = [{p: start, cost: 0}], cur, seen = {};
-
+    const findAllMinPaths = (start, end) => {
+        let stack = [{p: start, path: [], cost: 0}], cur, seen = {}, paths = [];
         let minCost = Infinity;
         while (cur = stack.shift()) {
+            cur.path.push(cur.p[0]+'_'+cur.p[1]);
             if (cur.p[0] == end[0] && cur.p[1] == end[1]) {
-                if (cur.cost < minCost) minCost = cur.cost;
-                continue;
-            }
-
-            let k = cur.p.join('_');
-            if (seen[k] < cur.cost) continue;
-            seen[k] = cur.cost;
-
-            let curD = DIRS[cur.p[2]];
-            DIRS.forEach((d, dirId) => {
-                if (d[0] == -curD && d[1] == -curD[1]) return true; // no turns back
-                let p = [cur.p[0]+d[0], cur.p[1]+d[1], dirId];
-                if (map[p[1]][p[0]] == '#') return true;
-                stack.push({
-                    p: p,
-                    cost: cur.cost + (p[2] == cur.p[2] ? 1 : 1001)
-                })
-            })
-        }
-        return minCost;
-    }
-
-    const findAllMinPaths = (start, end, minCost) => {
-        let stack = [{p: start, path: [start], cost: 0}], cur, seen = {}, paths = [];
-        while (cur = stack.shift()) {
-            if (cur.p[0] == end[0] && cur.p[1] == end[1]) {
+                if (cur.cost < minCost) {
+                    paths = [];
+                    minCost = cur.cost;
+                };
                 if (cur.cost == minCost) paths.push(cur.path);
                 continue;
             }
@@ -60,29 +38,21 @@ const run = (map, p2 = false) => {
                 let p = [cur.p[0]+d[0], cur.p[1]+d[1], dirId];
                 if (map[p[1]][p[0]] == '#') return true;
                 stack.push({
-                    path: [...cur.path, [p[0], p[1]]],
+                    path: cur.path.slice(),
                     p: p,
                     cost: cur.cost + (p[2] == cur.p[2] ? 1 : 1001)
                 })
             })
         }
-        return paths;
+        return [paths, minCost];
     }
 
-    let minCost = findMinCost(start, end);
+    let [minPaths, minCost] = findAllMinPaths(start, end), o = {};
+    //minPaths.forEach(path => path.forEach(p => o[p[0]+'_'+p[1]] = 1));
+    minPaths.forEach(path => path.forEach(p => o[p] = 1));
 
-    if (!p2) return minCost; // p1
-
-    let minPaths = findAllMinPaths(start, end, minCost);
-
-    let o = {};
-    minPaths.forEach(path => path.forEach(p => {
-        let k = p.join('_');
-        o[k] = 1;
-    }))
-
-    return Object.keys(o).length;
+    console.log('p1', minCost);
+    console.log('p2', Object.keys(o).length);
 }
 
-console.log('p1', run(init(input)));
-console.log('p2', run(init(input), true));
+run(init(input))
