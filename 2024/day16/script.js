@@ -48,7 +48,6 @@ const run = map => {
     }
 
     let [minPaths, minCost] = findAllMinPaths(start, end), o = {};
-    //minPaths.forEach(path => path.forEach(p => o[p[0]+'_'+p[1]] = 1));
     minPaths.forEach(path => path.forEach(p => o[p] = 1));
 
     console.log('p1', minCost);
