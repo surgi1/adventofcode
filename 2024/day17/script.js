@@ -43,7 +43,26 @@ const run1 = (data, rega) => {
 const toOct = n => (n).toString(8);
 const toDec = s => parseInt(s, 8);
 
-// the key observation was that we need to look at the numbers in OCT radix
+/*
+2,4 ; regs[1] = regs[0] % 8;
+1,1 ; regs[1] = regs[1] ^ 1;
+7,5 ; regs[2] = Math.trunc(regs[0]/(2**regs[1]));
+0,3 ; regs[0] = Math.trunc(regs[0]/8); // regs[0] = regs[0] >> 3;
+1,4 ; regs[1] = regs[1] ^ 4;
+4,4 ; regs[1] = regs[1] ^ regs[2];
+5,5 ; output(regs[1] % 8);
+3,0 ; if (regs[0] != 0) ptr = 0;
+
+while (regs[0] != 0) {
+    regs[1] = (regs[0] % 8) ^ 1;
+    regs[2] = regs[0] >> regs[1];
+    regs[0] = regs[0] >> 3;
+    regs[1] = (regs[1] ^ 4) ^ regs[2];
+    output(regs[1] % 8);
+}
+*/
+
+// the key observation was that we need to look at the numbers in OCT radix and that the input is generated oct num by oct num (the /8) part in the instructions
 // ugly iterative semi-manual approach, till refactor happens
 // start with empty base, see what made the best match and go from there
 
