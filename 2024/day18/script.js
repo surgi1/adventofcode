@@ -38,18 +38,19 @@ const constructGrid = (bytes, cols = 71, rows = 71) => {
     return map;
 }
 
-const run1 = (bytes, n = 1024, cols = 71, rows = 71) => {
-    let map = constructGrid(bytes.slice(0, n), cols, rows)
-    let dmap = distanceMap(map, [0,0]);
+const run1 = (bytes, from = 0, to = 1024, cols = 71, rows = 71) => {
+    let dmap = distanceMap(constructGrid(bytes.slice(from, to), cols, rows), [0,0]);
     return dmap[rows-1][cols-1];
 }
 
-const run = (bytes, n = 1024, cols = 71, rows = 71) => {
-    while (n < bytes.length) {
-        if (run1(bytes, n, cols, rows) == Infinity) break;
-        n++;
+const run = (bytes, cols = 71, rows = 71) => {
+    let int = [0, bytes.length];
+    while (int[1] - int[0] > 1) {
+        let half = Math.floor(int[0] + (int[1]-int[0])/2);
+        let res = run1(bytes, 0, half, cols, rows);
+        if (res === Infinity) int[1] = half; else int[0] = half;
     }
-    return bytes[n-1].join(',');
+    return bytes[int[0]].join(',');
 }
 
 console.log('p1', run1(init(input)))
