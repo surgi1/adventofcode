@@ -92,7 +92,7 @@ const part2 = (a, b, c, ...programFull) => {
 
     let min = Infinity;
     const recur = (base = '', matches = 0) => {
-        if (matches == 16) {
+        if (matches == programFull.length) {
             let dec = toDec(base);
             if (dec < min) min = dec;
             return;
