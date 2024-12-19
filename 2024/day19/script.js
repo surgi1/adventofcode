@@ -13,7 +13,7 @@ const combs = (towel, patterns) => {
         if (memo[pos] !== undefined) return memo[pos];
         if (pos == towel.length) return 1;
 
-        let matches = patterns.filter(p => p.every((pv, i) => towel[pos+i] !== undefined && towel[pos+i] == pv));
+        let matches = patterns.filter(p => p.every((pv, i) => towel[pos+i] == pv));
         let res = 0;
         matches.forEach(p => res += recur(pos+p.length));
         memo[pos] = res;
