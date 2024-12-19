@@ -1,7 +1,7 @@
 const init = input => {
     let [patternsLit, towelsLit] = input.split("\n\n");
     return [
-        patternsLit.split(', ').map(v => v.split('')).sort((a, b) => b.length - a.length),
+        patternsLit.split(', ').map(v => v.split('')),
         towelsLit.split('\n').map(l => l.split(''))
     ]
 }
