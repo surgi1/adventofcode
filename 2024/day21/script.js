@@ -1,7 +1,7 @@
 const init = input => input.split('\n')
 
 const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
-const DIRS2 = ['^', '>', 'v', '<'];
+const DIRS_LIT = ['^', '>', 'v', '<'];
 const numpad = [['#', '#', '#', '#', '#'], ['#', '7', '8', '9', '#'], ['#', '4', '5', '6', '#'], ['#', '1', '2', '3', '#'], ['#', '#', '0', 'A', '#'], ['#', '#', '#', '#', '#']];
 const dirpad = [['#', '#', '#', '#', '#'], ['#', '#', '^', 'A', '#'], ['#', '<', 'v', '>', '#'], ['#', '#', '#', '#', '#']];
 
@@ -14,7 +14,7 @@ const findAllMinPaths = (map, startVal, endVal) => {
     let minCost = Infinity;
 
     while (cur = stack.shift()) {
-        if (cur.dirId !== undefined) cur.path.push(DIRS2[cur.dirId]);
+        if (cur.dirId !== undefined) cur.path.push(DIRS_LIT[cur.dirId]);
         if (map[cur.p[1]][cur.p[0]] === endVal) {
             if (cur.cost < minCost) {
                 paths = [];
