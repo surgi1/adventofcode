@@ -10,13 +10,12 @@ const findAllMinPaths = (map, startVal, endVal) => {
     map.forEach((row, y) => row.forEach((v, x) => {
         if (v == startVal) start = [x, y];
     }))
-    let stack = [{p: start, path: [], cost: 0}], cur, seen = {}, paths = [], endPos;
+    let stack = [{p: start, path: [], cost: 0}], cur, seen = {}, paths = [];
     let minCost = Infinity;
 
     while (cur = stack.shift()) {
         if (cur.dirId !== undefined) cur.path.push(DIRS2[cur.dirId]);
         if (map[cur.p[1]][cur.p[0]] === endVal) {
-            endPos = cur.p.slice();
             if (cur.cost < minCost) {
                 paths = [];
                 minCost = cur.cost;
