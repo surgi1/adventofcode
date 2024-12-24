@@ -13,7 +13,16 @@ Go bit by bit from LSB and check result, inspect expressions for faulty bits.
 
 Notice, that the first faulty bit is `z09`.
 
-By observing the expression tree for given `z` bits we've learnt how the expressions are constructed; they have always `XOR` on the top level of given `z` bit, where one of the input gates is `XOR` between `x` and `y` on the same level and the other is an `OR` gate.
+By observing the expression tree for given `z` bits we've learnt how the expressions are constructed; they have always `XOR` on the top level of given `z` bit, where one of the input gates is `XOR` between `x` and `y` on the same level, and the other is an `OR` gate.
+
+Important part of the expression tree for `z10` root:
+```
+     XOR
+    /   \
+  XOR    OR
+ /   \   / \
+x10 y10 .. ..
+```
 
 **This is enough to crack the whole puzzle.**
 
