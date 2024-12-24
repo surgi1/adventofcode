@@ -10,8 +10,7 @@ print out x, y, z gates:
 ```
 go bit by bit from LSB and check result, inspect expressions for faulty bits
 
-
-*1. based on wrong z09 we need to swap `qwf` s `cnk`*
+**1. based on wrong z09 we need to swap `qwf` s `cnk`** (reasons same as below)
 
 ```
 4444443333333333222222222211111111110000000000
@@ -23,9 +22,9 @@ go bit by bit from LSB and check result, inspect expressions for faulty bits
 1010010001111100001111101010000000000011101000
 ```
 
-Now we've learnt how the expressions are constructed; they have always XOR on the top level of given z bit, where one of the inputs is XOR between x and y on the same level.
+Now we've learnt how the expressions are constructed; they have always `XOR` on the top level of given `z` bit, where one of the inputs is `XOR` between `x` and `y` on the same level.
 
-This is enough to crack the puzzle.
+**This is enough to crack the whole puzzle.**
 
 `z14` is faulty; checking its expression, it must be XOR of 2 sub-expressions, one of them must be `x14 XOR y14` (or `y14 XOR x14` of course)
 
@@ -35,7 +34,7 @@ x14 XOR y14 -> rkm
 ndq XOR rkm -> vhm
 ```
 
-*2. results in swapping `z14` s `vhm`*
+**2. results in swapping `z14` s `vhm`**
 
 ```
 4444443333333333222222222211111111110000000000
@@ -53,7 +52,7 @@ snv OR jgq -> z27
 y27 XOR x27 -> kqw
 kqw XOR kqj -> mps
 ```
-*3. swap `z27` with `mps`*
+**3. swap `z27` with `mps`**
 
 ```
 4444443333333333222222222211111111110000000000
@@ -72,7 +71,7 @@ trn AND gpm -> z39
 y39 XOR x39 -> trn
 gpm XOR trn -> msq
 ```
-*4. swap `msq` with `z39`
+**4. swap `msq` with `z39`**
 
 ```
 0110000001100011011111101110011010001000111001
