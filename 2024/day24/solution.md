@@ -10,7 +10,9 @@ print out x, y, z gates:
 ```
 go bit by bit from LSB and check result, inspect expressions for faulty bits
 
-**1. based on wrong z09 we need to swap `qwf` s `cnk`** (reasons same as below)
+**Swap #1: based on wrong z09 we need to swap `qwf` s `cnk`** (reasons same as below)
+
+---
 
 ```
 4444443333333333222222222211111111110000000000
@@ -34,7 +36,9 @@ x14 XOR y14 -> rkm
 ndq XOR rkm -> vhm
 ```
 
-**2. results in swapping `z14` s `vhm`**
+**Swap #2: `z14` with `vhm`**
+
+---
 
 ```
 4444443333333333222222222211111111110000000000
@@ -52,7 +56,9 @@ snv OR jgq -> z27
 y27 XOR x27 -> kqw
 kqw XOR kqj -> mps
 ```
-**3. swap `z27` with `mps`**
+**Swap #3: `z27` with `mps`**
+
+---
 
 ```
 4444443333333333222222222211111111110000000000
@@ -71,7 +77,9 @@ trn AND gpm -> z39
 y39 XOR x39 -> trn
 gpm XOR trn -> msq
 ```
-**4. swap `msq` with `z39`**
+**Swap #4 `msq` with `z39`**
+
+---
 
 ```
 0110000001100011011111101110011010001000111001
