@@ -38,7 +38,6 @@ const run1 = (gates, logic) => {
         })
     }
 
-    console.log(gates);
     return Number('0b'+gatesToBin(gates, 'z'));
 }
 
