@@ -1,5 +1,7 @@
 # Advent of Code 2024
 
+**10th aniversary was upon us!**
+
 Rather easy set of puzzles for AoC standards, with couple outstanding pieces in it.
 
 [https://adventofcode.com/2024](https://adventofcode.com/2024)
