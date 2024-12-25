@@ -5,3 +5,5 @@ https://adventofcode.com/2024/day/14
 JavaScript implementation
 
 Check it live at https://surgi1.github.io/adventofcode/2024/day14/index.html
+
+![Christmas tree located](https://surgi1.github.io/adventofcode/screenshots/2024_14.png)

@@ -2,7 +2,7 @@
 
 During the Advent of year 2020 I realised that I finally have enough spare time to enjoy the legendary [Advent of Code](https://adventofcode.com/). While coding through the newly released puzzles, I decided to open one of the earlier years' set. Just to check a couple of those puzzles and see if it is any different. Fast-forward few days I found myself admiring the animated ASCII art that gets displayed on the calendar main page after completing the whole set. Solving these little, well-thought-through tasks became a habit, rendering me overjoyed and satisfied.
 
-Hence comes this repo, documenting my path to gathering now 450★ stars and beyond, as I was fortunate enough to enjoy the fun even in the years that followed.
+Hence comes this repo, documenting my path to gathering now 500★ stars and beyond, as I was fortunate enough to enjoy the fun even in the years that followed.
 
 ## Lessons learnt
 
@@ -39,6 +39,7 @@ Whole repo is deployed on [Github Pages](https://surgi1.github.io/adventofcode/)
 - [Summary for 2021](https://surgi1.github.io/adventofcode/2021)
 - [Summary for 2022](https://surgi1.github.io/adventofcode/2022)
 - [Summary for 2023](https://surgi1.github.io/adventofcode/2023)
+- [Summary for 2024](https://surgi1.github.io/adventofcode/2024)
 
 ## Teasers
 
