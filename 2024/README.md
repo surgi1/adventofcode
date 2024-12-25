@@ -12,7 +12,7 @@ Puzzles with exceptional entertainment value and/or unconventional thinking nece
 
 * [Day 15: Warehouse Woes](https://adventofcode.com/2024/day/15) - [code](https://github.com/surgi1/adventofcode/tree/main/2024/day15) - [live](https://surgi1.github.io/adventofcode/2024/day15/index.anim.html) - cool little warehouse reorganizing robot! Sleek visuals!
 * [Day 21: Keypad Conundrum](https://adventofcode.com/2024/day/21) - [code](https://github.com/surgi1/adventofcode/tree/main/2024/day21) - Yo Dawg! Heard you like to control robots, so we put robots in charge of controlling robots, so you can control robots while controlling robots!
-* [Day 24: Crossed Wires](https://adventofcode.com/2024/day/24) - [code](https://github.com/surgi1/adventofcode/tree/main/2024/day24) - It always feels awesome to have to resort to solving puzzle by hand!
+* [Day 24: Crossed Wires](https://adventofcode.com/2024/day/24) - [code](https://github.com/surgi1/adventofcode/tree/main/2024/day24) - It always feels awesome to solve puzzle by hand!
 
 
 ## Screenshots
