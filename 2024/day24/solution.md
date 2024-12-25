@@ -35,7 +35,7 @@ gbf OR gnt -> hhp
 x09 XOR y09 -> qwf
 ```
 
-**Swap #1: to fix `z09` we need to swap `qwf` s `cnk`**. (let's do it then)
+**Swap #1: to fix `z09` we need to swap `qwf` with `cnk`**. (let's do it then)
 
 ---
 
