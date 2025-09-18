@@ -34,7 +34,7 @@ const run = map => {
 
             let curD = DIRS[cur.p[2]];
             DIRS.forEach((d, dirId) => {
-                if (d[0] == -curD && d[1] == -curD[1]) return true; // no turns back
+                if (d[0] == -curD[0] && d[1] == -curD[1]) return true; // no turns back
                 let p = [cur.p[0]+d[0], cur.p[1]+d[1], dirId];
                 if (map[p[1]][p[0]] == '#') return true;
                 stack.push({
