@@ -2,6 +2,8 @@
 
 **New format**
 
+AoC 2025 is upon us!
+
 [https://adventofcode.com/2025](https://adventofcode.com/2025)
 
 [JavaScript implementation](https://github.com/surgi1/adventofcode/tree/main/2025)

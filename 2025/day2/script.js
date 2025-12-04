@@ -3,7 +3,7 @@ const parse = input => input.split(",").map(s => s.split('-').map(Number));
 const run = (data) => data.reduce((res, [from, to]) => {
     for (let id = from; id <= to; id++) {
         let s = ''+id;
-        if (s.length % 2 == 1) continue;
+        if (s.length % 2 !== 0) continue;
         if (s.substr(0, s.length/2) == s.substr(s.length/2)) res += id;
     }
     return res;
