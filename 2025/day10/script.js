@@ -49,8 +49,6 @@ const run = (machines) => machines.reduce((a, m) => a + runMachine(m), 0)
 // still very slow, runs for 1-2min
 // this is actually an underconstraint linear algebra / MIP problem and should be solved by some python sci lib or Z3 instead
 const runMachine2 = machine => {
-    machine.buttons.sort((a, b) => b.length-a.length);
-
     let min = Infinity;
 
     const pushButton = (state, button) => {
