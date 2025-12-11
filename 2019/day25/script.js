@@ -128,11 +128,46 @@ const processOutput = s => {
 
     if (bruteEnabled) $('#brute').removeAttr('disabled'); else $('#brute').attr('disabled', true);
 
-    if (items !== false) items.map(i => arr.push(`<button class="temp" onclick="command('take `+i+`');$(this).attr('disabled',true);">`+i+` (take)</button>`))
-    if (drops !== false) drops.map(i => arr.push(`<button class="temp" onclick="command('drop `+i+`');$(this).attr('disabled',true);">`+i+` (drop)</button>`))
+    let buttons = [];
+
+    if (items !== false) items.forEach(i => {
+        let btn = $('<button>', {
+            text: i+' (take)',
+            class: 'temp',
+            id: 'clickMeBtn'
+        });
+        btn.on('click', function () {
+            command('take '+i);
+            btn.attr('disabled', 'disabled');
+        });
+        buttons.push(btn);
+    })
+
+    if (drops !== false) drops.forEach(i => {
+        let btn = $('<button>', {
+            text: i+' (drop)',
+            class: 'temp'
+        });
+        btn.on('click', function () {
+            command('drop '+i);
+            btn.attr('disabled', 'disabled');
+        });
+        buttons.push(btn);
+    })
+
     $('#inv').html('Inventory (' + invCount + ')');
-    if (arr.length == 0) return '';
-    return '<div class="output generated">'+arr.join("<br>")+'</div>';
+
+    if (arr.length == 0 && buttons.length == 0) return '';
+
+    let div = $('<div>', {
+        class: 'output generated'
+    });
+
+    div.append(arr.join("<br>"));
+
+    buttons.forEach(btn => div.append(btn));
+
+    return div;
 }
 
 const tick = pars => {
