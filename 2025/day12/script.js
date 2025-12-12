@@ -9,9 +9,8 @@ const parse = input => input.split('\n').map(line => {
     }
 })
 
-// upper bound is just counting the necessary space, forget about the shapes
-// when tested with what I think is a sufficient extra space, it still yields the same result, so I went for it as an answer..
-
+// naive method that looks for any shapes that can't fit if using their full 3x3 grid, but could fit if used just their occupied space
+// if there are non such undetermined shapes, the answer is trivial
 let shapeSizes = [7, 7, 7, 6, 7, 5];
 let shapeSizeFull = 9;
 
