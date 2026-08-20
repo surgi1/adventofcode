@@ -48,7 +48,7 @@ const run = (bp, timeLeft) => {
         return bots;
     }
 
-    const spitPathIfPossible = (path, botType, minRemainingT) => {
+    const splitPathIfPossible = (path, botType, minRemainingT) => {
         if (!canBuildBot(botType, path.bots)) return 0;
         let t = Math.max(0, ...bp[botType].map(c => Math.ceil((c.amount-path.resourcePool[c.type])/path.bots[c.type])))
         if (path.timeLeft - t >= minRemainingT) return paths.push({
@@ -73,18 +73,18 @@ const run = (bp, timeLeft) => {
             continue;
         }
 
-        let spitPaths = 0;
+        let splitPaths = 0;
 
-        spitPaths += spitPathIfPossible(path, types.GEODE, 1);
-        spitPaths += spitPathIfPossible(path, types.OBSIDIAN, 4);
+        splitPaths += splitPathIfPossible(path, types.GEODE, 1);
+        splitPaths += splitPathIfPossible(path, types.OBSIDIAN, 4);
 
         if (path.bots[types.CLAY] < getBotCost(types.OBSIDIAN, types.CLAY)-1)
-            spitPaths += spitPathIfPossible(path, types.CLAY, 7);
+            splitPaths += splitPathIfPossible(path, types.CLAY, 7);
        
         if (path.bots[types.ORE] < 4)
-            spitPaths += spitPathIfPossible(path, types.ORE, 16);
+            splitPaths += splitPathIfPossible(path, types.ORE, 16);
 
-        if (!spitPaths) paths.push({
+        if (!splitPaths) paths.push({
             timeLeft: 0,
             bots: path.bots.slice(),
             resourcePool: advancePool(path.resourcePool, path.bots, path.timeLeft)
